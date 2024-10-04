@@ -1,0 +1,13 @@
+.navbarmenue {
+    border: none; /* Remove the button border for a cleaner look */
+    background: transparent;
+  }
+  
+  .hamberger-icon {
+    font-size: 2rem; /* Adjust size as needed */
+    color: black; /* Change to your preferred color */
+    background: transparent; /* Remove any background */
+    display: inline-block; /* Ensures the icon stays inline */
+    padding: 0; /* Remove any padding */
+    margin: 0; /* Remove any margin */
+  }
