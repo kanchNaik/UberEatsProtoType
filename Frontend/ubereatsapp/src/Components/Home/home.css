@@ -11,3 +11,13 @@
     padding: 0; /* Remove any padding */
     margin: 0; /* Remove any margin */
   }
+
+  .herocontainer{
+    margin-top: 10%;
+  }
+
+  .ho{
+    margin-bottom: 40px;
+    font-size: 52px;
+    font-weight: 700;
+  }

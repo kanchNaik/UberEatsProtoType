@@ -2,7 +2,9 @@ import React from 'react'
 import './home.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import heroback from '../../Assets/ubereatsHomeBackground.webp'
+import heroback from '../../Assets/ubereatsHomeBackground.webp';
+// import DeliverySearchContainer from '../DeliverySearch/DeliverySearchContainer';
+import DeliverySearch from '../DeliverySearch/DeliverySearch'
 
 const home = () => {
   return (
@@ -32,25 +34,16 @@ const home = () => {
     </nav>
 
     {/* Header Section */}
-    <header className="container-fluid text-center py-5" >
-      <h1 className="display-4 mb-4">Order delivery near you</h1>
-      <div className="row justify-content-center">
-        <div className="col-md-6">
-          <div className="input-group mb-3">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Enter delivery address"
-              aria-label="Delivery address"
-            />
-            <button className="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Deliver now
-            </button>
-            <button className="btn btn-dark">Search here</button>
+    <header className="container-fluid py-5" >
+      <div className='container herocontainer'>
+        <h1 className="mb-4 ho">Order delivery near you</h1>
+        <div className="row justify-content">
+          <div className="col-md-8">
+              <DeliverySearch/>
+            <b><a href="/" className="text-dark">Or Sign in</a></b>
           </div>
-          <a href="/" className="text-dark">Or Sign in</a>
         </div>
-      </div>
+        </div>
     </header>
     </div>
     {/* Food Image Section */}
