@@ -1,0 +1,21 @@
+.city-list {
+    display: flex;
+    justify-content: space-between; /* Distribute columns evenly */
+    flex-wrap: wrap; /* Allows items to wrap if necessary */
+  }
+  
+  .city-column {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .city-column p {
+    margin: 5px 0; /* Space between city names */
+    font-size: 16px;
+  }
+  
+  .city-column p:hover {
+    color: blue;
+    background-color: lightblue;
+  }
+  
