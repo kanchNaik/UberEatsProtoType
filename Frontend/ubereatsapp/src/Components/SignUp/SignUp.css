@@ -1,0 +1,47 @@
+/* PhoneEmailForm.css */
+.signup-form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background-color: #fff; /* White background */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect */
+    width: 50%; /* Fixed width */
+    margin: 10% auto; /* Center the form */
+  }
+  
+  .signup-form-title {
+    font-size: 30px;
+    margin-bottom: 20px;
+  }
+  
+  .input-field {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc; /* Light gray border */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 14px; /* Text size */
+  }
+  
+  .input-field::placeholder {
+    color: #aaa; /* Placeholder color */
+  }
+  
+  .continue-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #000; /* Black background */
+    color: #fff; /* White text */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    font-size: 16px; /* Text size */
+    cursor: pointer; /* Pointer cursor */
+  }
+  
+  .continue-button:hover {
+    background-color: #333; /* Darker shade on hover */
+  }
+  

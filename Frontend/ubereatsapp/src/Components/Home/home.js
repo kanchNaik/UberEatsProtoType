@@ -5,8 +5,9 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import heroback from '../../Assets/ubereatsHomeBackground.webp';
 import DeliverySearch from '../DeliverySearch/DeliverySearch'
 import HomeBottomCard from '../HomeBottomCard/HomeBottomCard'
-import MapWithLocations from '../MapWithLocations/MapWithLocations'
 import CityList from './CityList'
+
+
 
 const Home = () => {
   useEffect(() => {
@@ -27,27 +28,7 @@ const Home = () => {
   return (
     <div className="app">
     {/* Navbar */}
-    <nav id='navbar' className="navbar navbar-expand-lg navbar-light px-4 navbarHome">
-      <div className="container-fluid">
-      <button type="button" className='navbarmenue'>
-      <i class="bi bi-list hamberger-icon"></i>
-      </button>
-          {/* Uber Eats brand */}
-          <span className="navbar-brand ms-3">Uber Eats</span>
-
-          {/* Login and Sign up buttons */}
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav ms-auto">
-              <li className="nav-item">
-                <button className="btn btn-light btn-outline-dark me-2 roundedButton">Log in</button>
-              </li>
-              <li className="nav-item">
-                <button className="btn btn-dark roundedButton">Sign up</button>
-              </li>
-            </ul>
-          </div>
-      </div>
-    </nav>
+   
 
     {/* Header Section */}
     <header className="container-fluid py-5" style={{ background: `url(${heroback}) no-repeat center center/cover`, height: '100vh' }}>

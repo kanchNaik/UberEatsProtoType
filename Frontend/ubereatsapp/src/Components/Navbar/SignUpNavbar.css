@@ -1,0 +1,18 @@
+/* Navbar.css */
+.navbarSignup {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 20px;
+    background-color: black; /* Background color for the navbar */
+    color: white; /* Default text color */
+  }
+  
+  .navbarSignup-logo h1 {
+    font-size: 24px; /* Adjust logo font size */
+    color: #2ddc45; /* Uber Eats green color */
+    margin: 0; /* Remove default margin */
+  }
+  
+
+  
