@@ -1,17 +1,17 @@
 import React from 'react'
 
-const ImgTextCard = ({maindivclass, txtdivclass, imgclass, imgsrc, alttext, children}) => {
+const ImgTextCard = (props) => {
   return (
-    <div className={maindivclass}>
+    <div className={props.maindivclass}>
         <div>
             <img
-            src={imgsrc}  // Replace with the actual image URL
-            alt={alttext}
-            className={imgclass}
+            src={props.imgsrc}  // Replace with the actual image URL
+            alt={props.alttext}
+            className={props.imgclass}
             />
         </div>
-        <div className={txtdivclass}>
-       {children}
+        <div className={props.txtdivclass}>
+       {props.children}
         </div>
       </div>
   )

@@ -5,6 +5,12 @@ import SignUp from './Components/SignUp/SignUp'
 import './index.css';
 import HomeNavbar from './Components/Navbar/HomeNavbar'
 import SignUpNavbar from './Components/Navbar/SignUpNavbar';
+import SignIn from './Components/SignIn/SignIn'
+import RestaurantSignUp from './Components/SignUp/RestaurantSignUp'
+import Feed from './Components/Feed/Feed'
+import FeedNavbar from './Components/Navbar/FeedNavbar'
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 function App() {
   const location = useLocation();
@@ -14,12 +20,12 @@ function App() {
     switch (location.pathname) {
       case '/':
       case '/home':
-      case '/about':
         return <HomeNavbar />;
-      case '/profile':
-      case '/settings':
-      case '/orders':
+      case '/signin':
+      case '/signup':
         return <SignUpNavbar />;
+      case '/feed':
+        return <FeedNavbar/>
       default:
         return <SignUpNavbar />;
     }
@@ -32,6 +38,9 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/merchantsignup" element={<RestaurantSignUp />} />
+        <Route path="feed" element={<Feed/>} />
       </Routes>
     </div>
     </>

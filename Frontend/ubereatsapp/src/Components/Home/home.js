@@ -6,25 +6,10 @@ import heroback from '../../Assets/ubereatsHomeBackground.webp';
 import DeliverySearch from '../DeliverySearch/DeliverySearch'
 import HomeBottomCard from '../HomeBottomCard/HomeBottomCard'
 import CityList from './CityList'
-
+import { NavLink } from 'react-router-dom';
 
 
 const Home = () => {
-  useEffect(() => {
-    const navbar = document.getElementById("navbar");
-
-    const handleScroll = () => {
-        if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
-            navbar.classList.add("scrolled"); // Add class when scrolled
-        } else {
-            navbar.classList.remove("scrolled"); // Remove class when at the top
-        }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll); // Cleanup on unmount
-}, []);
-
   return (
     <div className="app">
     {/* Navbar */}
@@ -37,7 +22,7 @@ const Home = () => {
         <div className="row justify-content">
           <div className="col-md-8">
               <DeliverySearch/>
-            <b><a href="/" className="text-dark">Or Sign in</a></b>
+           <NavLink to = '/signin'> <b><a href="/" className="text-dark">Or Sign in</a></b></NavLink>
           </div>
         </div>
         </div>

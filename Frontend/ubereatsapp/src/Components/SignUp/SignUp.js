@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './SignUp.css';
 
 function SignUp() {
@@ -22,6 +22,21 @@ function SignUp() {
       // Perform your desired action here, e.g., form validation, API call, etc.
       alert(`You entered: ${inputName}`); // Example action (replace with your logic)
     };
+
+    const [data, setData] = useState(null);
+
+    useEffect(() => {
+      // Define the API call using fetch
+      fetch('http://localhost:8000/api/example/')
+        .then(response => response.json())
+        .then(data => {
+          console.log('Success:', data);
+          setData(data.message); // Update state with the response data
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    }, []);
   
     return (
       <div className="signup-form-container">

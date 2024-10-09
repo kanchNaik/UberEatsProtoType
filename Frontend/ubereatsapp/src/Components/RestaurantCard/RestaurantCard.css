@@ -1,0 +1,14 @@
+.restaurantcard{
+    margin-left: 4%;
+    margin-right: 4%;
+}
+
+.restaurantcard img {
+    border-radius: 5%;
+    height: 25Vh;
+    width: 100%;
+}
+
+.restaurantcard-text{
+margin: '2%'
+}
