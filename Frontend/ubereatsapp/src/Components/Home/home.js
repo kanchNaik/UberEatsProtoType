@@ -2,7 +2,6 @@ import React, { useEffect } from 'react'
 import './Home.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import heroback from '../../Assets/ubereatsHomeBackground.webp';
 import DeliverySearch from '../DeliverySearch/DeliverySearch'
 import HomeBottomCard from '../HomeBottomCard/HomeBottomCard'
 import CityList from './CityList'
@@ -16,7 +15,7 @@ const Home = () => {
    
 
     {/* Header Section */}
-    <header className="container-fluid py-5" style={{ background: `url(${heroback}) no-repeat center center/cover`, height: '100vh' }}>
+    <header className="container-fluid py-5" style={{ background: `url(${`${process.env.PUBLIC_URL}/Assets/ubereatsHomeBackground.webp`}) no-repeat center center/cover`, height: '100vh' }}>
       <div className='container herocontainer'>
         <h1 className="mb-4 ho">Order delivery near you</h1>
         <div className="row justify-content">

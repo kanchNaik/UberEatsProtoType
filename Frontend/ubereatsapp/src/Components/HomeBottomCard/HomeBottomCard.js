@@ -1,9 +1,5 @@
 import React from 'react'
 import ImgTextCard from '../Common/Cards/ImgTextCard/ImgTextCard'
-
-import homeimg1 from '../../Assets/homeimg1.webp'
-import homeimg2 from '../../Assets/home2.webp'
-import homeimg3 from '../../Assets/homwimg3.webp'
 import { NavLink } from 'react-router-dom'
 
 
@@ -14,7 +10,7 @@ function HomeBottomCard() {
             maindivclass = "col-md-4"
             txtdivclass = 'text-left'
             imgclass = 'img-fluid'
-            imgsrc={homeimg1}
+            imgsrc={`${process.env.PUBLIC_URL}/Assets/homeimg1.webp`}
             alttext= 'Feed Your Employees'
         >
             <h2>Feed your employees</h2>
@@ -26,7 +22,7 @@ function HomeBottomCard() {
         maindivclass = ""
         txtdivclass = 'text-left'
         imgclass = 'img-fluid'
-        imgsrc={homeimg2}
+        imgsrc={`${process.env.PUBLIC_URL}/Assets/home2.webp`}
         alttext= 'Feed Your Employees'>
             <h2>Your Restaurant Delivered</h2>
             <a href="/" className="business-account-link">Add Your Restaurant</a>
@@ -37,7 +33,7 @@ function HomeBottomCard() {
         maindivclass = "col-md-4"
         txtdivclass = 'text-left'
         imgclass = 'img-fluid'
-        imgsrc={homeimg3}
+        imgsrc={`${process.env.PUBLIC_URL}/Assets/homwimg3.webp`}
         alttext= 'Feed Your Employees'>
             <h2>Deliver with Uber Eats</h2>
             <a href="/" className="business-account-link">Create a business account</a>
