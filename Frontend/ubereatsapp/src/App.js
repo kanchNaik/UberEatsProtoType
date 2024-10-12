@@ -9,6 +9,7 @@ import SignIn from './Components/SignIn/SignIn'
 import RestaurantSignUp from './Components/SignUp/RestaurantSignUp'
 import Feed from './Components/Feed/Feed'
 import FeedNavbar from './Components/Navbar/FeedNavbar'
+import Restaurant from './Components/Restaurant/Restaurant'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
@@ -41,6 +42,7 @@ function App() {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/merchantsignup" element={<RestaurantSignUp />} />
         <Route path="feed" element={<Feed/>} />
+        <Route path="/restaurant/:id" element={<Restaurant/>} />
       </Routes>
     </div>
     </>

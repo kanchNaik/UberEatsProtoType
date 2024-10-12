@@ -4,7 +4,7 @@ import './RestaurantCard.css'
 
 const RestaurantCard = ({ restaurant }) => {
   return (
-    <div className='col-md-3'>
+    <div>
     <ImgTextCard
         maindivclass = "restaurantcard"
         txtdivclass = 'text-left restaurantcard-text'
@@ -15,9 +15,9 @@ const RestaurantCard = ({ restaurant }) => {
             <h5>{restaurant.name}</h5>
             <p>⭐ {restaurant.rating}</p>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between'}}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize:'12px'}}>
             {restaurant.uberone !== undefined && restaurant.uberone === true ? (<p>Uber One benifits apply</p>) : (<span/>)}
-            <p>{restaurant.deliveryTime} min</p>
+            <p>{restaurant.deliveryTime}</p>
             </div>
     </ImgTextCard>
     </div>

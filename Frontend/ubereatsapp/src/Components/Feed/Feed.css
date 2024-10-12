@@ -45,3 +45,18 @@
     max-width: 96vw;
   }
   
+  .featured-restaurants a {
+    text-decoration: none;
+    color: black;
+    display: inline-block;
+    width: 100%;
+  }
+
+  .featured-restaurants .restaurant-card {
+    flex-grow: 1; /* Ensure the card grows evenly */
+    margin: 0 10px; /* Adjust margin to reduce spacing */
+  }
+  
+  .featured-restaurants .d-flex {
+    gap: 20px; /* Add space between the cards */
+  }

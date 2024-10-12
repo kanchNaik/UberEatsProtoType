@@ -4,19 +4,13 @@ import './Feed.css';
 import CategoryCarousel from '../Carousel/CategoryCarousel';
 import Filter from '../Common/Filter/Filter'; // Import the Filter component
 import RestaurantCard from '../RestaurantCard/RestaurantCard'; // Import the RestaurantCard component
-
-
-const offers = [
-  { title: "BOGO Breakfast Sampler from IHOP", description: "Fluffy. Crunchy. Legendary.", expires: "10/13", image: "url_to_image", btnText: "Pass the pancakes" },
-  { title: "FREE 6PC Boneless Wings", description: "with orders of $25+", expires: "10/13", image: "url_to_image", btnText: "Just wing it" },
-  { title: "BOGO Large Specialty Pizza from Pizza Hut", expires: "10/13", image: "url_to_image", btnText: "Score a slice" }
-];
+import { NavLink } from 'react-router-dom';
 
 const featuredRestaurants = [
-  { name: "Domino's", rating: 4.4, image: `${process.env.PUBLIC_URL}/Assets/dominos.webp`, deliveryTime: "35-45 min", price: "medium", uberone: true },
-  { name: "Chipotle", rating: 4.7, image: `${process.env.PUBLIC_URL}/Assets/chipotle.webp`, deliveryTime: "25-30 min", price: "low", uberone: true  },
-  { name: "Five Guys", rating: 4.7, image: `${process.env.PUBLIC_URL}/Assets/fiveguys.webp`, deliveryTime: "15-30 min", price: "high" },
-  { name: "Jack In The Box", rating: 4.6, image: `${process.env.PUBLIC_URL}/Assets/jackinthebox.webp`, deliveryTime: "15-30 min", price: "medium", uberone: true }
+  { id: 1, name: "Domino's", rating: 4.4, image: `${process.env.PUBLIC_URL}/Assets/dominos.webp`, deliveryTime: "35-45 min", price: "medium", uberone: true },
+  { id: 2, name: "Chipotle", rating: 4.7, image: `${process.env.PUBLIC_URL}/Assets/chipotle.webp`, deliveryTime: "25-30 min", price: "low", uberone: true  },
+  { id: 3, name: "Five Guys", rating: 4.7, image: `${process.env.PUBLIC_URL}/Assets/fiveguys.webp`, deliveryTime: "15-30 min", price: "high" },
+  { id: 4, name: "Jack In The Box", rating: 4.6, image: `${process.env.PUBLIC_URL}/Assets/jackinthebox.webp`, deliveryTime: "15-30 min", price: "medium", uberone: true }
 ];
 
 const allFilters = [
@@ -95,7 +89,9 @@ function Feed() {
         <h4>Featured on Uber Eats</h4>
         <div className="d-flex justify-content-between">
           {filteredRestaurants.map((restaurant, index) => (
-            <RestaurantCard key={index} restaurant={restaurant} /> // Use RestaurantCard component
+            <NavLink to = {`/restaurant/${restaurant.id}`}>
+              <RestaurantCard key={restaurant.id} restaurant={restaurant} />
+            </NavLink>
           ))}
         </div>
       </div>

@@ -1,0 +1,75 @@
+.order-options-container {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+    justify-content: space-between;
+    gap: 4%
+  }
+  
+  .order-type {
+    display: flex;
+    gap: 15px;
+  }
+  
+  .order-button {
+    padding: 10px 20px;
+    border-radius: 25px;
+    background-color: #f2f2f2;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .order-button.active {
+    background-color: #fff;
+    border: 2px solid #ddd;
+  }
+  
+  .search-and-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .search-bar {
+    flex: 1;
+  }
+  
+  .search-input {
+    padding: 10px 15px;
+    border-radius: 25px;
+    border: 1px solid #ddd;
+    width: 100%;
+    font-size: 14px;
+  }
+  
+  .benefits-and-time {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    font-size: 14px;
+  }
+  
+  .uber-one-info {
+    color: #C58B00;
+  }
+  
+  .delivery-time {
+    color: #555;
+  }
+  
+  .info-icon {
+    background-color: #eee;
+    border-radius: 50%;
+    padding: 2px 5px;
+    font-size: 12px;
+    margin-left: 5px;
+  }
+  
+  .delivery-label {
+    color: #777;
+    font-size: 12px;
+    margin-left: 5px;
+  }
+  
