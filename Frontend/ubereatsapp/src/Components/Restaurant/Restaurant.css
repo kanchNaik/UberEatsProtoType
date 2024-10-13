@@ -64,4 +64,7 @@
     margin-right: 5px;
   }
   
+  .menu-group .d-flex {
+    gap: 20px; /* Add space between the cards */
+  }
   

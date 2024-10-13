@@ -3,6 +3,7 @@ import './Restaurant.css';
 
 import OrderOptions from '../OrderOptions/OrderOptions'
 import Menu from '../Menu/Menu'
+import MenuItem from '../MenuItem/MenuItem'
 
 const restaurant = { id: 1, name: "Domino's", rating: 4.4, 
     image: `${process.env.PUBLIC_URL}/Assets/dominos.webp`, 
@@ -12,10 +13,27 @@ const restaurant = { id: 1, name: "Domino's", rating: 4.4,
 
 const  menuCategories= ['Featured Items', 'Picked for you', 'Small Plates'];
 const  featuredItems= [
-      { name: 'Sushi Roll', label: '#1 Most Liked', image: 'path/to/item1.jpg' },
-      { name: 'Sashimi', label: '#2 Most Liked', image: 'path/to/item2.jpg' },
-      { name: 'Tempura', label: '#3 Most Liked', image: 'path/to/item3.jpg' }
+      { name: 'Sushi Roll', label: '#1 Most Liked', image: `${process.env.PUBLIC_URL}/Assets/menuPizza.webp`, groupName: 'Featured', price: 34 },
+      { name: 'Sashimi', label: '#2 Most Liked', image: `${process.env.PUBLIC_URL}/Assets/menuPizza.webp`, groupName: 'Featured', price: 36},
+      { name: 'Tempura', label: '#3 Most Liked', image: `${process.env.PUBLIC_URL}/Assets/menuPizza.webp`, groupName: 'Newly Added', price: 50 },
+      { name: 'Tempura', label: '#3 Most Liked', image: `${process.env.PUBLIC_URL}/Assets/menuPizza.webp`, groupName: 'Newly Added', price: 50 },
+      { name: 'Tempura', label: '#3 Most Liked', image: `${process.env.PUBLIC_URL}/Assets/menuPizza.webp`, groupName: 'Newly Added', price: 50 },
+      { name: 'Tempura', label: '#3 Most Liked', image: `${process.env.PUBLIC_URL}/Assets/menuPizza.webp`, groupName: 'Newly Added', price: 50 },
+      { name: 'Tempura', label: '#3 Most Liked', image: `${process.env.PUBLIC_URL}/Assets/menuPizza.webp`, groupName: 'Newly Added', price: 50 }
     ];
+
+const groupBy = (items, key) => {
+        return items.reduce((acc, item) => {
+          const group = item[key];
+          if (!acc[group]) {
+            acc[group] = [];
+          }
+          acc[group].push(item);
+          return acc;
+        }, {});
+      };
+      
+const groupedItems = groupBy(featuredItems, 'groupName');
 
 const Restaurant = () => {
   return (
@@ -45,8 +63,8 @@ const Restaurant = () => {
             className="banner-image"
             />
         </section>
-        <div style={{display:'flex'}}>
-            <div style={{display:'block', flexBasis: '25%'}}>
+        <div className="row" > {/*style={{display:'flex'}}*/}
+            <div className='col-4'>
             {/* Restaurant Details */}
             <div className="restaurant-info-container">
             <h2 className="restaurant-name">{restaurant.name}</h2>
@@ -80,8 +98,24 @@ const Restaurant = () => {
                 </div>
                 </div> */}
             </div>
-            <div style={{display:'block', flexBasis: '75%', width:'100%'}}>
+            <div className='col-8'>
                 <OrderOptions/>
+                {Object.entries(groupedItems).map(([groupName, items], index) => (
+              <div key={index} className="menu-group">
+                <h2>{groupName}</h2>
+                <div className="row">
+                
+                  {items.map((item, itemIndex) => (
+                    <div className='col-4'>
+                    <MenuItem
+                        menu = {item}
+                    />
+                     </div>
+                  ))}
+               
+                </div>
+              </div>
+            ))}
             </div>
         </div>
     </div>

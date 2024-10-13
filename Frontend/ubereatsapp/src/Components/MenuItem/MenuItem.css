@@ -1,0 +1,26 @@
+.menu-item {
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .menu-item img {
+    width: 100%;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+  
+  .menu-item p {
+    margin: 5px 0;
+    font-size: 16px;
+  }
+  
+  .menu-item button {
+    margin-top: 8px;
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
