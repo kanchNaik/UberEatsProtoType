@@ -1,10 +1,10 @@
 import React from 'react'
 
-function FeedNavbar() {
+function FeedNavbar({onclick}) {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light px-4">
         <div className="container-fluid">
-            <button type="button" className='navbarmenue'>
+            <button type="button" className='navbarmenue' onClick={onclick}>
                 <i class="bi bi-list hamberger-icon"></i>
             </button>
             <a className="navbar-brand" href="/">Uber Eats</a>

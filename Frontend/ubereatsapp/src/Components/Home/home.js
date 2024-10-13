@@ -1,14 +1,30 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import './Home.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import DeliverySearch from '../DeliverySearch/DeliverySearch'
 import HomeBottomCard from '../HomeBottomCard/HomeBottomCard'
 import CityList from './CityList'
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate   } from 'react-router-dom';
 
 
 const Home = () => {
+
+  const [selectedlocation, setLocation] = useState('');
+  const navigate = useNavigate();
+
+  const onSelectSearchItem = (selectedLocation) =>
+  {
+    setLocation(selectedLocation)
+  }
+
+   const handleSearch = (query) => {
+    console.log('Searching for:', selectedlocation);
+
+    navigate('/feed', { state: { location: selectedlocation } });
+
+  };
+
   return (
     <div className="app">
     {/* Navbar */}
@@ -20,7 +36,10 @@ const Home = () => {
         <h1 className="mb-4 ho">Order delivery near you</h1>
         <div className="row justify-content">
           <div className="col-md-8">
-              <DeliverySearch/>
+              <DeliverySearch
+              handleSearch = {handleSearch}
+              onSelect = {onSelectSearchItem}
+              />
            <NavLink to = '/signin'> <b><a href="/" className="text-dark">Or Sign in</a></b></NavLink>
           </div>
         </div>
