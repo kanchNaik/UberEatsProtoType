@@ -12,6 +12,7 @@ import Feed from './Components/Feed/Feed'
 import FeedNavbar from './Components/Navbar/FeedNavbar'
 import Restaurant from './Components/Restaurant/Restaurant'
 import UserSidebar from './Components/UserSidebar/UserSidebar';
+import UserProfile from './Components/UserProfile/UserProfile'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
@@ -72,6 +73,7 @@ function App() {
         <Route path="/merchantsignup" element={<RestaurantSignUp />} />
         <Route path="feed" element={<Feed/>} />
         <Route path="/restaurant/:id" element={<Restaurant/>} />
+        <Route path="/currentuser" element={<UserProfile/>} />
       </Routes>
     </div>
     </>

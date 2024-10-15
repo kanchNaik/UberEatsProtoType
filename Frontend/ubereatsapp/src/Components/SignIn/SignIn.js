@@ -1,74 +1,70 @@
 import React, { useState } from 'react';
-import './SignIn.css';
-import axios from 'axios';
-import Cookies from 'js-cookie';
+import './SignIn.css'; // Ensure your CSS file exists
+import axios from 'axios'; // Axios for HTTP requests
+import Cookies from 'js-cookie'; // To manage cookies
 
 function SignIn() {
-    const [inputEmail, setInputEmailValue] = useState('');
-    const [inputPassword, setInputPasswordValue] = useState('');
+  const [inputEmail, setInputEmailValue] = useState('');
+  const [inputPassword, setInputPasswordValue] = useState('');
+  const [error, setError] = useState(''); // Error state for displaying errors
 
-    const handleEmailChange = (event) => {
-        setInputEmailValue(event.target.value); // Update input value on change
-      };
+  // Handle input changes
+  const handleEmailChange = (event) => setInputEmailValue(event.target.value);
+  const handlePasswordChange = (event) => setInputPasswordValue(event.target.value);
 
-    const handlePasswordChange = (event) => {
-        setInputPasswordValue(event.target.value); // Update input value on change
-      };
+  // Handle login using Promises
+  const handleLogin = (e) => {
+    e.preventDefault(); // Prevent page refresh
 
-    const handleLogin = (e) => {
-        e.preventDefault();
-    
-        // axios.post('http://localhost:8000/apis/login/', { inputEmail, inputPassword })
-        //   .then((response) => {
-        //     const { access, refresh, user_type } = response.data;
-    
-        //     // Store tokens and user type in cookies
-        //     Cookies.set('access_token', response.data.token, { expires: 1 });
-        //     Cookies.set('refresh_token', response.data.refresh, { expires: 7 });
-        //     Cookies.set('user_type', response.data.user_type);  // Assume user_type is returned from backend
-        //     Cookies.set('user_name', inputEmail);
-        //     Cookies.set('user_id', response.data.userid)
-        //     console.log('Logged in successfully');
-        //     // Optionally redirect to a protected page
-        //     window.location.href = '/customer';
-        //   })
-        //   .catch((error) => {
-        //     console.error('Login failed:', error);
-        //   });
+    axios
+      .post('http://localhost:8000/api/login/', {
+        username: inputEmail,
+        password: inputPassword,
+      })
+      .then((response) => {
+        const {message, token, user } = response.data;
 
-            Cookies.set('user_type', 'customer');  // Assume user_type is returned from backend
-            Cookies.set('user_name', 'test');
-            Cookies.set('user_email', inputEmail);
-            Cookies.set('user_id', '1')
-            console.log('Logged in successfully');
-            // Optionally redirect to a protected page
-            window.location.href = '/feed'
-    };
-  
-    return (
-      <div className="signup-form-container">
-        <h2 className="signup-form-title">Sign In</h2>
-        <form onSubmit={handleLogin}>
+        // Store tokens and user info in cookies
+        Cookies.set('access_token', token, { expires: 1 });
+        Cookies.set('user_type', user.is_customer ? 'Customer' : 'Restaurant');
+        Cookies.set('user_name', user.username);
+        Cookies.set('user_id', user.id);
+        Cookies.set('user_email', user.email)
+
+        console.log('Logged in successfully');
+        window.location.href = '/feed'; // Redirect to feed page
+      })
+      .catch((error) => {
+        console.error('Login failed:', error);
+        setError('Invalid email or password'); // Show error message
+      });
+  };
+
+  return (
+    <div className="signup-form-container">
+      <h2 className="signup-form-title">Sign In</h2>
+      <form onSubmit={handleLogin}>
         <input
           type="text"
           className="input-field"
           placeholder="Enter your email"
           value={inputEmail}
-          onChange={handleEmailChange} // Update input value on change
+          onChange={handleEmailChange}
         />
         <input
-          type="text"
+          type="password"
           className="input-field"
           placeholder="Enter your password"
           value={inputPassword}
-          onChange={handlePasswordChange} // Update input value on change
+          onChange={handlePasswordChange}
         />
-        <button type='submit' className="continue-button">
+        {error && <p className="error-message">{error}</p>} {/* Show error if any */}
+        <button type="submit" className="continue-button">
           Continue
         </button>
-        </form>
-      </div>
-  )
+      </form>
+    </div>
+  );
 }
 
-export default SignIn
+export default SignIn;
