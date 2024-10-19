@@ -8,7 +8,7 @@ import CityList from './CityList'
 import { NavLink, useNavigate   } from 'react-router-dom';
 
 
-const Home = () => {
+const Home = ({user}) => {
 
   const [selectedlocation, setLocation] = useState('');
   const navigate = useNavigate();
@@ -40,7 +40,7 @@ const Home = () => {
               handleSearch = {handleSearch}
               onSelect = {onSelectSearchItem}
               />
-           <NavLink to = '/signin'> <b><a href="/" className="text-dark">Or Sign in</a></b></NavLink>
+           {!user && <NavLink to = '/signin'> <b><a href="/" className="text-dark">Or Sign in</a></b></NavLink>}
           </div>
         </div>
         </div>

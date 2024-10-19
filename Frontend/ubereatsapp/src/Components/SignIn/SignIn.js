@@ -30,7 +30,7 @@ function SignIn() {
         Cookies.set('user_name', user.username);
         Cookies.set('user_id', user.id);
         Cookies.set('user_email', user.email)
-
+        console.log('token', token)
         console.log('Logged in successfully');
         window.location.href = '/feed'; // Redirect to feed page
       })

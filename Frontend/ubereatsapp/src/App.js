@@ -1,82 +1,52 @@
-import { BrowserRouter as Router, Route, Routes, useLocation  } from 'react-router-dom';
-import React, { useState, useRef, useEffect } from 'react';
+// App.js
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import './App.css';
-import Home from './Components/Home/Home'
-import SignUp from './Components/SignUp/SignUp'
 import './index.css';
-import HomeNavbar from './Components/Navbar/HomeNavbar'
-import SignUpNavbar from './Components/Navbar/SignUpNavbar';
-import SignIn from './Components/SignIn/SignIn'
-import RestaurantSignUp from './Components/SignUp/RestaurantSignUp'
-import Feed from './Components/Feed/Feed'
-import FeedNavbar from './Components/Navbar/FeedNavbar'
-import Restaurant from './Components/Restaurant/Restaurant'
-import UserSidebar from './Components/UserSidebar/UserSidebar';
-import UserProfile from './Components/UserProfile/UserProfile'
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+import Home from './Components/Home/Home';
+import SignUp from './Components/SignUp/SignUp';
+import SignIn from './Components/SignIn/SignIn';
+import RestaurantSignUp from './Components/SignUp/RestaurantSignUp';
+import Feed from './Components/Feed/Feed';
+import Restaurant from './Components/Restaurant/Restaurant';
+import UserProfile from './Components/UserProfile/UserProfile';
+
+import DynamicNavbar from './Components/Navbar/DynamicNavbar';
+import UserSidebarWrapper from './Components/UserSidebar/UserSidebarWrapper';
+import Testpage from './Components/Testpage';
+import { getUserInfo } from './Utilities/UserUtils';
 
 
 function App() {
-  const location = useLocation();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const sidebarRef = useRef(null);
-
-  // Function to toggle the sidebar open/close
-  const toggleSidebar = () => {
-    setSidebarOpen((prev) => !prev);
-  };
-
-  // Handle clicks outside of the sidebar
-  const handleClickOutside = (event) => {
-    if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
-      setSidebarOpen(false);
-    }
-  };
-
+  const [user, setUser] = useState({});
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+    const userInfo = getUserInfo();
 
-  // Function to determine which navbar to render
-  const renderNavbar = () => {
-    switch (location.pathname) {
-      case '/':
-      case '/home':
-        return <HomeNavbar />;
-      case '/signin':
-      case '/signup':
-        return <SignUpNavbar />;
-      case '/feed':
-        return <FeedNavbar onclick={toggleSidebar}/>
-      default:
-        return <SignUpNavbar />;
-    }
-  };
+    if (userInfo) {
+      setUser(userInfo);
+    } 
+  }, []);
+  const toggleSidebar = () => setSidebarOpen((prev) => !prev);
+  const closeSidebar = () => setSidebarOpen(false);
 
   return (
-    <>
     <div className="App">
-    {isSidebarOpen && (
-          <div ref={sidebarRef}>
-            <UserSidebar />
-          </div>
-        )}
-    {renderNavbar()}
-    
+      <UserSidebarWrapper isOpen={isSidebarOpen} closeSidebar={closeSidebar}/>
+      <DynamicNavbar toggleSidebar={toggleSidebar} user = {user}/>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home user = {user}/>} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/merchantsignup" element={<RestaurantSignUp />} />
-        <Route path="feed" element={<Feed/>} />
-        <Route path="/restaurant/:id" element={<Restaurant/>} />
-        <Route path="/currentuser" element={<UserProfile/>} />
+        <Route path="/feed" element={<Feed />} />
+        <Route path="/restaurant/:id" element={<Restaurant />} />
+        <Route path="/currentuser" element={<UserProfile />} />
+        <Route path="/test" element={<Testpage/>}/>
       </Routes>
     </div>
-    </>
   );
 }
 

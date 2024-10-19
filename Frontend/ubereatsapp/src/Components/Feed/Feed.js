@@ -5,6 +5,7 @@ import CategoryCarousel from '../Carousel/CategoryCarousel';
 import Filter from '../Common/Filter/Filter'; // Import the Filter component
 import RestaurantCard from '../RestaurantCard/RestaurantCard'; // Import the RestaurantCard component
 import { NavLink, useLocation } from 'react-router-dom';
+import { getUserInfo } from '../../Utilities/UserUtils'
 
 const featuredRestaurants = [
   { id: 1, name: "Domino's", rating: 4.4, image: `${process.env.PUBLIC_URL}/Assets/dominos.webp`, deliveryTime: "35-45 min", price: "medium", uberone: true },
@@ -31,7 +32,8 @@ const dropdownFilters = [
 
 const Feed = () => {
   const location = useLocation();
-
+  const userInfo = getUserInfo();
+  console.log(userInfo.token)
   const [filteredRestaurants, setFilteredRestaurants] = useState(featuredRestaurants);
   const [selectedFilter, setSelectedFilter] = useState("All"); // Track selected filter
   const [selectedDropdown, setSelectedDropdown] = useState({ rating: "", price: "", dietary: "" }); // Track dropdown selections
@@ -93,9 +95,8 @@ const Feed = () => {
         <h4>Featured on Uber Eats</h4>
         <div className="d-flex justify-content-between">
           {filteredRestaurants.map((restaurant, index) => (
-            <NavLink to = {`/restaurant/${restaurant.id}`}>
+           
               <RestaurantCard key={restaurant.id} restaurant={restaurant} />
-            </NavLink>
           ))}
         </div>
       </div>
