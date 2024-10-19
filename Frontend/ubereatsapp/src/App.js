@@ -16,28 +16,20 @@ import UserProfile from './Components/UserProfile/UserProfile';
 import DynamicNavbar from './Components/Navbar/DynamicNavbar';
 import UserSidebarWrapper from './Components/UserSidebar/UserSidebarWrapper';
 import Testpage from './Components/Testpage';
-import { getUserInfo } from './Utilities/UserUtils';
 
 
 function App() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const [user, setUser] = useState({});
-  useEffect(() => {
-    const userInfo = getUserInfo();
-
-    if (userInfo) {
-      setUser(userInfo);
-    } 
-  }, []);
+ 
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
   const closeSidebar = () => setSidebarOpen(false);
 
   return (
     <div className="App">
       <UserSidebarWrapper isOpen={isSidebarOpen} closeSidebar={closeSidebar}/>
-      <DynamicNavbar toggleSidebar={toggleSidebar} user = {user}/>
+      <DynamicNavbar toggleSidebar={toggleSidebar}/>
       <Routes>
-        <Route path="/" element={<Home user = {user}/>} />
+        <Route path="/" element={<Home/>} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/merchantsignup" element={<RestaurantSignUp />} />

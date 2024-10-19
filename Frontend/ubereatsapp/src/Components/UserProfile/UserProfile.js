@@ -1,28 +1,95 @@
-import React, { useState } from 'react';
-import { Form, Button, Row, Col, Card, Container, Dropdown } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios'; // Or use fetch
+import { Form, Button, Row, Col, Card, Container } from 'react-bootstrap';
 
-// Dummy country list
-const countries = ['United States', 'India', 'Canada', 'Australia', 'Germany', 'Japan'];
-
-const ProfilePage = () => {
+// Profile Page Component
+const UserProfile = ({ userId }) => {
   const [profile, setProfile] = useState({
-    name: 'kanchan',
-    phone: '+918805947163',
-    email: 'kanchannaik55@gmail.com',
+    name: '',
+    phone: '',
+    email: '',
     dateOfBirth: '',
     city: '',
-    country: 'India',
+    state: '',
+    country: '',
     nickname: '',
-    profilePic: 'https://via.placeholder.com/150', // Placeholder image
+    profilePic: 'https://via.placeholder.com/150',
   });
 
+  const [countries, setCountries] = useState([]);
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
   const [editMode, setEditMode] = useState(false);
 
+  // Fetch initial profile data and countries when the component mounts
+  useEffect(() => {
+    fetchProfileData();
+    fetchCountries();
+  }, []);
+
+  // Fetch user profile by ID
+  const fetchProfileData = async () => {
+    try {
+      axios
+    .get('http://127.0.0.1:8000/api/customers/me', {
+      withCredentials: true, // Ensure cookies are sent
+    })
+    .then((response) => {
+      console.log('Profile data:', response.data);
+      // Handle the profile data (e.g., update the state)
+      setProfile(response.data);
+    })
+    .catch((error) => {
+      console.error('Error fetching profile data:', error);
+      // Handle errors (e.g., show a notification)
+    });
+    
+     
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    }
+  };
+
+  // Fetch countries from API
+  const fetchCountries = async () => {
+    try {
+      const response = await axios.get('/api/countries');
+      setCountries(response.data);
+    } catch (error) {
+      console.error('Error fetching countries:', error);
+    }
+  };
+
+  // Fetch states based on selected country
+  const fetchStates = async (country) => {
+    try {
+      const response = await axios.get(`/api/states?country=${country}`);
+      setStates(response.data);
+    } catch (error) {
+      console.error('Error fetching states:', error);
+    }
+  };
+
+  // Fetch cities based on selected state
+  const fetchCities = async (state) => {
+    try {
+      const response = await axios.get(`/api/cities?state=${state}`);
+      setCities(response.data);
+    } catch (error) {
+      console.error('Error fetching cities:', error);
+    }
+  };
+
+  // Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setProfile({ ...profile, [name]: value });
+
+    if (name === 'country') fetchStates(value);
+    if (name === 'state') fetchCities(value);
   };
 
+  // Handle profile picture upload
   const handleProfilePicUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -31,9 +98,9 @@ const ProfilePage = () => {
     }
   };
 
+  // Save profile changes
   const handleSave = () => {
     setEditMode(false);
-    // Here you can also add logic to send updated data to backend
     console.log('Profile saved:', profile);
   };
 
@@ -125,48 +192,52 @@ const ProfilePage = () => {
 
               <Row className="mb-3">
                 <Col md={6}>
-                  <Form.Group controlId="formCity">
-                    <Form.Label>City</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="city"
-                      value={profile.city}
-                      onChange={handleInputChange}
-                      readOnly={!editMode}
-                    />
-                  </Form.Group>
-                </Col>
-
-                <Col md={6}>
                   <Form.Group controlId="formCountry">
                     <Form.Label>Country</Form.Label>
-                    <Form.Select
-                      name="country"
-                      value={profile.country}
-                      onChange={handleInputChange}
-                      disabled={!editMode}
-                    >
-                      {countries.map((country) => (
-                        <option key={country} value={country}>
-                          {country}
-                        </option>
-                      ))}
-                    </Form.Select>
+                    {editMode ? (
+                      <Form.Select
+                        name="country"
+                        value={profile.country}
+                        onChange={handleInputChange}
+                      >
+                        {countries.map((country) => (
+                          <option key={country} value={country}>
+                            {country}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    ) : (
+                      <Form.Control
+                        type="text"
+                        value={profile.country}
+                        readOnly
+                      />
+                    )}
                   </Form.Group>
                 </Col>
-              </Row>
 
-              <Row className="mb-3">
                 <Col md={6}>
-                  <Form.Group controlId="formNickname">
-                    <Form.Label>Nickname</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="nickname"
-                      value={profile.nickname}
-                      onChange={handleInputChange}
-                      readOnly={!editMode}
-                    />
+                  <Form.Group controlId="formState">
+                    <Form.Label>State</Form.Label>
+                    {editMode ? (
+                      <Form.Select
+                        name="state"
+                        value={profile.state}
+                        onChange={handleInputChange}
+                      >
+                        {states.map((state) => (
+                          <option key={state} value={state}>
+                            {state}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    ) : (
+                      <Form.Control
+                        type="text"
+                        value={profile.state}
+                        readOnly
+                      />
+                    )}
                   </Form.Group>
                 </Col>
               </Row>
@@ -188,4 +259,4 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage;
+export default UserProfile;

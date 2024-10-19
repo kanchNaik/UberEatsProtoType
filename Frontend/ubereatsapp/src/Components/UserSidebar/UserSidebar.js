@@ -4,19 +4,18 @@ import { NavLink } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import { useNavigate  } from 'react-router-dom';
+import { getUserInfo } from '../../Utilities/UserUtils';
 
 const UserSidebar = () => {
 
   const navigate = useNavigate();
-  const csrfToken = Cookies.get('csrftoken');
+
   const handleLogout = async () => {
     console.log('Token', Cookies.get('csrftoken'))
     try {
       const response = await axios.post('http://localhost:8000/api/logout/', {}, {
           withCredentials: true, // Include cookies with the request
       });
-      console.log(response.data); // Handle successful response
-
       console.log('response status', response.status)
 
       if (response.status === 200) {
@@ -31,7 +30,8 @@ const UserSidebar = () => {
           console.log('Logged out successfully');
 
           // Redirect to the login page
-          navigate.push('/signin');}
+          navigate('/signin');
+        }
       } catch (error) {
           console.log('Logout failed:', error);
       }

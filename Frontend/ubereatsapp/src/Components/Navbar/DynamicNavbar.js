@@ -4,14 +4,18 @@ import { useLocation } from 'react-router-dom';
 import HomeNavbar from './HomeNavbar';
 import SignUpNavbar from './SignUpNavbar';
 import FeedNavbar from './FeedNavbar';
+import { getUserInfo } from '../../Utilities/UserUtils';
 
-const DynamicNavbar = ({ toggleSidebar, user }) => {
+const DynamicNavbar = ({ toggleSidebar }) => {
   const location = useLocation(); 
+
   const renderNavbar = () => {
+
+    const user = getUserInfo();
     switch (location.pathname) {
       case '/':
       case '/home':
-        return <HomeNavbar user={user}/>;
+        return <HomeNavbar onClick={toggleSidebar} user={user}/>;
       case '/signin':
       case '/signup':
         return <SignUpNavbar />;

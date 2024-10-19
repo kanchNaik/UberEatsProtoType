@@ -1,9 +1,14 @@
 // UserSidebarWrapper.js
 import React, { useRef, useEffect } from 'react';
 import UserSidebar from './UserSidebar';
+import { useLocation } from 'react-router-dom';
+import {getUserInfo} from '../../Utilities/UserUtils'
 
 const UserSidebarWrapper = ({ isOpen, closeSidebar  }) => {
+  const user = getUserInfo();
+
   const sidebarRef = useRef(null);
+  const location = useLocation();
 
   const handleClickOutside = (event) => {
     if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
@@ -18,11 +23,16 @@ const UserSidebarWrapper = ({ isOpen, closeSidebar  }) => {
     };
   }, []);
 
+  useEffect(() => {
+    // Close sidebar when the URL changes
+    closeSidebar();
+  }, [location]); 
+
   return (
     <>
       {isOpen && (
         <div ref={sidebarRef}>
-          <UserSidebar />
+          <UserSidebar userId = {user.userId}/>
         </div>
       )}
     </>
