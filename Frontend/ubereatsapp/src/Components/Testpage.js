@@ -1,93 +1,144 @@
 import React, { useState } from 'react';
-import { Card, Button, Modal, ListGroup, Row, Col, Container } from 'react-bootstrap';
 
-// Sample restaurant and menu data
-const restaurant = {
-  name: 'The Gourmet Kitchen',
-  description: 'A fine dining experience with world-class cuisine.',
-  menu: [
-    { id: 1, name: 'Spaghetti Bolognese', price: 15 },
-    { id: 2, name: 'Margherita Pizza', price: 12 },
-    { id: 3, name: 'Caesar Salad', price: 10 },
-    { id: 4, name: 'Grilled Chicken', price: 18 },
-  ],
-};
+const UserForm = () => {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    is_customer: true,
+    username: '',
+    customer: {
+      phone_number: '',
+      nickname: '',
+      date_of_birth: '',
+      city: '',
+      state: '',
+      country: '',
+      name: '',
+    },
+  });
 
-const Testpage = () => {
-  const [cart, setCart] = useState([]);
-  const [showCart, setShowCart] = useState(false);
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
 
-  const addToCart = (dish) => {
-    setCart((prevCart) => [...prevCart, dish]);
+    if (name.startsWith('customer.')) {
+      setFormData((prevData) => ({
+        ...prevData,
+        customer: {
+          ...prevData.customer,
+          [name.split('.')[1]]: value,
+        },
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: type === 'checkbox' ? checked : value,
+      }));
+    }
   };
 
-  const handleShowCart = () => setShowCart(true);
-  const handleCloseCart = () => setShowCart(false);
-
-  const handleFinalizeOrder = () => {
-    alert('Order placed successfully!');
-    setCart([]); // Clear the cart after order
-    handleCloseCart();
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission logic here (e.g., send formData to an API)
+    console.log(formData);
   };
-
-  const totalAmount = cart.reduce((total, dish) => total + dish.price, 0);
 
   return (
-    <Container className="mt-5">
-      <h2 className="text-center">{restaurant.name}</h2>
-      <p className="text-center">{restaurant.description}</p>
-
-      <h4 className="mt-4">Menu</h4>
-      <Row className="g-3">
-        {restaurant.menu.map((dish) => (
-          <Col md={6} key={dish.id}>
-            <Card>
-              <Card.Body>
-                <Card.Title>{dish.name}</Card.Title>
-                <Card.Text>Price: ${dish.price}</Card.Text>
-                <Button variant="primary" onClick={() => addToCart(dish)}>
-                  Add to Cart
-                </Button>
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
-      </Row>
-
-      <div className="text-center mt-4">
-        <Button variant="success" onClick={handleShowCart}>
-          View Cart ({cart.length} items)
-        </Button>
+    <form onSubmit={handleSubmit}>
+    
+      <div>
+        <label>Password:</label>
+        <input
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+        />
       </div>
-
-      <Modal show={showCart} onHide={handleCloseCart}>
-        <Modal.Header closeButton>
-          <Modal.Title>Your Cart</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {cart.length === 0 ? (
-            <p>Your cart is empty.</p>
-          ) : (
-            <ListGroup>
-              {cart.map((dish, index) => (
-                <ListGroup.Item key={index}>
-                  {dish.name} - ${dish.price}
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
-          )}
-        </Modal.Body>
-        {cart.length > 0 && (
-          <Modal.Footer>
-            <h5>Total: ${totalAmount}</h5>
-            <Button variant="success" onClick={handleFinalizeOrder}>
-              Finalize Order
-            </Button>
-          </Modal.Footer>
-        )}
-      </Modal>
-    </Container>
+      <div>
+        <label>Username:</label>
+        <input
+          type="text"
+          name="username"
+          value={formData.username}
+          onChange={handleChange}
+          required
+        />
+      </div>
+      <div>
+        <label>Is Customer:</label>
+        <input
+          type="checkbox"
+          name="is_customer"
+          checked={formData.is_customer}
+          onChange={handleChange}
+        />
+      </div>
+      <h3>Customer Details</h3>
+      <div>
+        <label>Phone Number:</label>
+        <input
+          type="tel"
+          name="customer.phone_number"
+          value={formData.customer.phone_number}
+          onChange={handleChange}
+          required
+        />
+      </div>
+      <div>
+        <label>Nickname:</label>
+        <input
+          type="text"
+          name="customer.nickname"
+          value={formData.customer.nickname}
+          onChange={handleChange}
+          required
+        />
+      </div>
+      <div>
+        <label>Date of Birth:</label>
+        <input
+          type="date"
+          name="customer.date_of_birth"
+          value={formData.customer.date_of_birth}
+          onChange={handleChange}
+          required
+        />
+      </div>
+      <div>
+        <label>City:</label>
+        <input
+          type="text"
+          name="customer.city"
+          value={formData.customer.city}
+          onChange={handleChange}
+          required
+        />
+      </div>
+      <div>
+        <label>State:</label>
+        <input
+          type="text"
+          name="customer.state"
+          value={formData.customer.state}
+          onChange={handleChange}
+          required
+        />
+      </div>
+      <div>
+        <label>Country:</label>
+        <input
+          type="text"
+          name="customer.country"
+          value={formData.customer.country}
+          onChange={handleChange}
+          required
+        />
+      </div>
+      
+      <button type="submit">Submit</button>
+    </form>
   );
 };
 
-export default Testpage;
+export default UserForm;

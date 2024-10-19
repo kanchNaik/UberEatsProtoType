@@ -6,10 +6,11 @@ import DeliverySearch from '../DeliverySearch/DeliverySearch'
 import HomeBottomCard from '../HomeBottomCard/HomeBottomCard'
 import CityList from './CityList'
 import { NavLink, useNavigate   } from 'react-router-dom';
+import { getUserInfo } from '../../Utilities/UserUtils';
 
 
-const Home = ({user}) => {
-
+const Home = ({}) => {
+  const user = getUserInfo();
   const [selectedlocation, setLocation] = useState('');
   const navigate = useNavigate();
 

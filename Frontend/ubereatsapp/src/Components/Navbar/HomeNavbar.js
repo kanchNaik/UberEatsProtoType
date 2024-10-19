@@ -2,11 +2,10 @@ import React,  { useEffect } from 'react'
 import { NavLink } from 'react-router-dom';
 import './HomeNavbar.css'
 
-const HomeNavbar = (user) => {
-
+const HomeNavbar = ({onClick, user}) => {
   useEffect(() => {
     const navbar = document.getElementById("navbar");
-
+    
     const handleScroll = () => {
         if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
             navbar.classList.add("scrolled"); // Add class when scrolled
@@ -23,12 +22,13 @@ const HomeNavbar = (user) => {
     <nav id='navbar' className="navbar navbar-expand-lg navbar-light px-4 navbarHome">
     <div className="container-fluid">
     <div>
-    <button type="button" className='navbarmenue'>
+    <button type="button" className='navbarmenue' onClick={onClick}>
     <i class="bi bi-list hamberger-icon"></i>
     </button>
         {/* Uber Eats brand */}
         <NavLink to="/"><span className="navbar-brand ms-3">Uber Eats</span></NavLink>
         </div>
+        
         {/* Login and Sign up buttons */}
        {!user && (<div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto">
