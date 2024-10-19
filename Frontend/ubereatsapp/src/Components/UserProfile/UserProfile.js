@@ -31,9 +31,9 @@ const UserProfile = ({ userId }) => {
   const fetchProfileData = async () => {
     try {
       axios
-    .get('http://127.0.0.1:8000/api/customers/me', {
-      withCredentials: true, // Ensure cookies are sent
-    })
+      .get('http://127.0.0.1:8000/api/customers/me', {
+        withCredentials: true, // Ensure cookies are sent
+      })
     .then((response) => {
       console.log('Profile data:', response.data);
       // Handle the profile data (e.g., update the state)
