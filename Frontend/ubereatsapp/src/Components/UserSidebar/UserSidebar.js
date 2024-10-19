@@ -8,15 +8,14 @@ import { useNavigate  } from 'react-router-dom';
 const UserSidebar = () => {
 
   const navigate = useNavigate();
-  const csrfToken = Cookies.get('access_token');
+  const csrfToken = Cookies.get('csrftoken');
   const handleLogout = async () => {
-    console.log('Token', Cookies.get('access_token'))
-      try {
-        const response = await axios.post('http://localhost:8000/api/logout/', {}, {
-          headers: {
-            'X-CSRFToken': csrfToken,
-          },
+    console.log('Token', Cookies.get('csrftoken'))
+    try {
+      const response = await axios.post('http://localhost:8000/api/logout/', {}, {
+          withCredentials: true, // Include cookies with the request
       });
+      console.log(response.data); // Handle successful response
 
       console.log('response status', response.status)
 

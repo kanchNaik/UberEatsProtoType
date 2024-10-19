@@ -15,7 +15,7 @@ function SignIn() {
   // Handle login using Promises
   const handleLogin = (e) => {
     e.preventDefault(); // Prevent page refresh
-
+    debugger;
     axios
       .post('http://localhost:8000/api/login/', {
         username: inputEmail,
@@ -23,7 +23,7 @@ function SignIn() {
       })
       .then((response) => {
         const {message, token, user } = response.data;
-
+        debugger;
         // Store tokens and user info in cookies
         Cookies.set('access_token', token, { expires: 1 });
         Cookies.set('user_type', user.is_customer ? 'Customer' : 'Restaurant');
@@ -32,6 +32,7 @@ function SignIn() {
         Cookies.set('user_email', user.email)
         console.log('token', token)
         console.log('Logged in successfully');
+        console.log(Cookies.get('csrftoken'))
         window.location.href = '/feed'; // Redirect to feed page
       })
       .catch((error) => {

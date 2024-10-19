@@ -6,6 +6,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login, logout
 from .serializers import UserSerializer, CustomerSerializer, RestaurantSerializer
 from .models import User, Customer, Restaurant
+from django.views.decorators.csrf import csrf_exempt
 
 class SignUpView(APIView):
     permission_classes = [AllowAny]
@@ -47,6 +48,7 @@ class SignUpView(APIView):
 class LoginView(APIView):
     permission_classes = [AllowAny]
 
+    @csrf_exempt
     def post(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
@@ -74,7 +76,9 @@ class LoginView(APIView):
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 class LogoutView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = []
     def post(self, request):
+        print("User authenticated:", request.user.is_authenticated)  # Check if user is authenticated
+        print("CSRF Token:", request.META.get('CSRF_COOKIE')) 
         logout(request)
         return Response({'message': 'Successfully logged out'})
