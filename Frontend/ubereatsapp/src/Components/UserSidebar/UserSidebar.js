@@ -54,7 +54,7 @@ const UserSidebar = () => {
           </div>
           <div className="user-name">
             <h5>{Cookies.get('user_name')}</h5>
-           <NavLink to="/currentuser"> <small>Manage account</small> </NavLink>
+           <NavLink to="customer/my"> <small>Manage account</small> </NavLink>
           </div>
         </div>
       </div>

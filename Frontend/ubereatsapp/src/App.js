@@ -35,7 +35,7 @@ function App() {
         <Route path="/merchantsignup" element={<RestaurantSignUp />} />
         <Route path="/feed" element={<Feed />} />
         <Route path="/restaurant/:id" element={<Restaurant />} />
-        <Route path="/currentuser" element={<UserProfile />} />
+        <Route path="/customer/my" element={<UserProfile />} />
         <Route path="/test" element={<Testpage/>}/>
       </Routes>
     </div>

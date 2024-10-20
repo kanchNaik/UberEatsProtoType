@@ -1,0 +1,75 @@
+/* CartSidebar.css */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  right: 0; /* Change to left: 0; for a left sidebar */
+  width: 40%; /* Adjust width as needed */
+  height: 100%;
+  background-color: white;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  transition: transform 0.3s ease;
+}
+
+.sidebar-content {
+  padding: 20px;
+  overflow-y: auto; /* Enable scrolling if content overflows */
+  height: 100%;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.order-note label {
+  display: block; /* Make the label a block element */
+  margin-bottom: 5px; /* Optional: Adds space below the label */
+}
+
+.order-note textarea {
+  width: 100%; /* Optional: Makes the textarea take the full width */
+  height: 100px; /* Optional: Sets the height of the textarea */
+}
+
+.item-details,
+.order-note,
+.subtotal-section {
+  margin-bottom: 20px;
+}
+
+.quantity-section {
+  display: flex;
+  align-items: baseline;
+}
+
+.quantity-section select {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+/* CartSidebar.css */
+.button-container {
+  display: flex;
+  flex-direction: column; /* Arrange buttons vertically */
+  gap: 20px; /* Adjust the gap between buttons as needed */
+}
+
+.checkout-btn,
+.add-items-btn {
+  padding: 10px;
+  background-color: #4CAF50; /* Green */
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.checkout-btn:hover,
+.add-items-btn:hover {
+  background-color: #45a049; /* Darker green */
+}
+
+
