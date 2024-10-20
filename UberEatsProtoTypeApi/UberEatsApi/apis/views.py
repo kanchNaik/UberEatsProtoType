@@ -107,17 +107,17 @@ class DishViewSet(viewsets.ModelViewSet):
         serializer.save(restaurant=restaurant)
 
 
-# class RestaurantListView(generics.ListAPIView):
-#     queryset = Restaurant.objects.all()
-#     serializer_class = RestaurantSerializer
-    #
-    # def list(self, request, *args, **kwargs):
-    #     queryset = self.get_queryset()
-    #     serializer = self.get_serializer(queryset, many=False)
-    #
-    #     # Add profile URL to each restaurant
-    #     for restaurant, rest_obj in zip(serializer.data, queryset):
-    #         restaurant_id = rest_obj['id']
-    #         restaurant['profile_url'] = request.build_absolute_uri(reverse('restaurant-detail', args=[restaurant_id]))
-    #
-    #     return Response(serializer.data)
+class RestaurantListView(generics.ListAPIView):
+    queryset = Restaurant.objects.all()
+    serializer_class = RestaurantSerializer
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=False)
+    
+        # Add profile URL to each restaurant
+        for restaurant, rest_obj in zip(serializer.data, queryset):
+            restaurant_id = rest_obj['id']
+            restaurant['profile_url'] = request.build_absolute_uri(reverse('restaurant-detail', args=[restaurant_id]))
+    
+        return Response(serializer.data)
