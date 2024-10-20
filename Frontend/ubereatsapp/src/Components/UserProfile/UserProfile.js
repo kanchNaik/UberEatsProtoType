@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'; // Or use fetch
 import { Form, Button, Row, Col, Card, Container } from 'react-bootstrap';
+import Cookies from 'js-cookie';
 
 // Profile Page Component
 const UserProfile = ({ userId }) => {
@@ -25,59 +26,60 @@ const UserProfile = ({ userId }) => {
   useEffect(() => {
     fetchProfileData();
     fetchCountries();
-  }, []);
+  }, []); // Empty dependency array ensures this runs only once when component mounts
 
-  // Fetch user profile by ID
-  const fetchProfileData = async () => {
-    try {
-      axios
-      .get('http://127.0.0.1:8000/api/customers/me', {
+  // Fetch user profile by ID using Promises
+  const fetchProfileData = () => {
+    axios
+      .get('http://localhost:8000/api/customers/me', {
+        headers: {
+          'X-CSRFToken': Cookies.get('csrftoken'), // CSRF token
+        },
         withCredentials: true, // Ensure cookies are sent
       })
-    .then((response) => {
-      console.log('Profile data:', response.data);
-      // Handle the profile data (e.g., update the state)
-      setProfile(response.data);
-    })
-    .catch((error) => {
-      console.error('Error fetching profile data:', error);
-      // Handle errors (e.g., show a notification)
-    });
-    
-     
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-    }
+      .then((response) => {
+        console.log('Profile data:', response.data);
+        setProfile(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching profile data:', error);
+      });
   };
 
-  // Fetch countries from API
-  const fetchCountries = async () => {
-    try {
-      const response = await axios.get('/api/countries');
-      setCountries(response.data);
-    } catch (error) {
-      console.error('Error fetching countries:', error);
-    }
+  // Fetch countries from API using Promises
+  const fetchCountries = () => {
+    axios
+      .get('/api/countries')
+      .then((response) => {
+        setCountries(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching countries:', error);
+      });
   };
 
   // Fetch states based on selected country
-  const fetchStates = async (country) => {
-    try {
-      const response = await axios.get(`/api/states?country=${country}`);
-      setStates(response.data);
-    } catch (error) {
-      console.error('Error fetching states:', error);
-    }
+  const fetchStates = (country) => {
+    axios
+      .get(`/api/states?country=${country}`)
+      .then((response) => {
+        setStates(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching states:', error);
+      });
   };
 
   // Fetch cities based on selected state
-  const fetchCities = async (state) => {
-    try {
-      const response = await axios.get(`/api/cities?state=${state}`);
-      setCities(response.data);
-    } catch (error) {
-      console.error('Error fetching cities:', error);
-    }
+  const fetchCities = (state) => {
+    axios
+      .get(`/api/cities?state=${state}`)
+      .then((response) => {
+        setCities(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching cities:', error);
+      });
   };
 
   // Handle input changes

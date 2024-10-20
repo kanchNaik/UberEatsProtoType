@@ -32,7 +32,7 @@ const UserSidebarWrapper = ({ isOpen, closeSidebar  }) => {
     <>
       {isOpen && (
         <div ref={sidebarRef}>
-          <UserSidebar userId = {user.userId}/>
+          <UserSidebar userId = {user?.userId}/>
         </div>
       )}
     </>

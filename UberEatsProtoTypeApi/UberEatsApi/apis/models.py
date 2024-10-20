@@ -29,7 +29,8 @@ class Customer(models.Model):
     profile_image = models.ImageField(upload_to='profile_images/', null=True, blank=True)
 
     def __str__(self):
-        return self.user.username + " " + self.nickname + " " + self.profile_image.url
+        profile_image_url = self.profile_image.url if self.profile_image else ''
+        return f"{self.user.username} {self.nickname} {profile_image_url}"
 
 class Restaurant(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)

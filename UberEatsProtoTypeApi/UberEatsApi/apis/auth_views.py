@@ -49,8 +49,9 @@ class LoginView(APIView):
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 class LogoutView(APIView):
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
     def post(self, request):
+        print("User:", request.user)
         print("User authenticated:", request.user.is_authenticated)  # Check if user is authenticated
         print("CSRF Token:", request.META.get('CSRF_COOKIE')) 
         logout(request)
