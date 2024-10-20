@@ -37,6 +37,14 @@ class Restaurant(models.Model):
     location = models.CharField(max_length=100)
     description = models.TextField()
     phone_number = models.CharField(max_length=20)
+    rating = models.IntegerField(null=True, blank=True)
+    image = models.ImageField(upload_to='restaurant_images/', null=True, blank=True)
+    price_range = models.TextField(null=True, blank=True)
+    uberone = models.BooleanField(default=False)
+    delivery_time = models.DurationField(null=True, blank=True)
+
+
+
 
     def __str__(self):
         return self.restaurant_name + " " + self.location
