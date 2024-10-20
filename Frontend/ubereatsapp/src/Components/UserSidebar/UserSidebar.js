@@ -12,10 +12,18 @@ const UserSidebar = () => {
 
   const handleLogout = async () => {
     console.log('Token', Cookies.get('csrftoken'))
+    console.log('sessionid', Cookies.get('sessionid'))
     try {
-      const response = await axios.post('http://localhost:8000/api/logout/', {}, {
-          withCredentials: true, // Include cookies with the request
-      });
+      const response = await axios.post(
+        'http://localhost:8000/api/logout/',  // URL for logout
+        {},  // No data to send in body for logout
+        {
+            headers: {
+                'X-CSRFToken': Cookies.get('csrftoken'),  // CSRF token from cookies
+            },
+            withCredentials: true,  // Include cookies with the request
+        }
+    );
       console.log('response status', response.status)
 
       if (response.status === 200) {
@@ -28,7 +36,7 @@ const UserSidebar = () => {
           Cookies.remove('user_email');
 
           console.log('Logged out successfully');
-
+          debugger;
           // Redirect to the login page
           navigate('/signin');
         }

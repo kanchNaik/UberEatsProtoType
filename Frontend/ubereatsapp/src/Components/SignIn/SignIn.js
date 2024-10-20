@@ -20,7 +20,9 @@ function SignIn() {
       .post('http://localhost:8000/api/login/', {
         username: inputEmail,
         password: inputPassword,
-      })
+      }, {
+        withCredentials: true,  // Ensure this is set to true
+    })
       .then((response) => {
         const {message, token, user } = response.data;
         debugger;
