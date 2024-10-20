@@ -9,7 +9,7 @@ class CustomerSerializer(serializers.ModelSerializer):
 class RestaurantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Restaurant
-        fields = ['restaurant_name', 'location', 'description', 'phone_number']
+        fields = ['restaurant_name', 'location', 'description', 'phone_number', 'rating', 'image', 'uberone', 'price_range', 'delivery_time']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -41,7 +41,7 @@ class UserSerializer(serializers.ModelSerializer):
 class DishSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dish
-        fields = ['id', 'dish_name', 'description', 'price', 'category']
+        fields = ['id', 'dish_name', 'description', 'price', 'category', 'restaurant']
 
 class CartSerializer(serializers.ModelSerializer):
     class Meta:
