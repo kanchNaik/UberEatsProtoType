@@ -1,15 +1,18 @@
 from rest_framework import serializers
 from .models import Cart, Customer, Favorite, Order, Restaurant, Dish, User
 
+
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
         fields = ['name', 'phone_number', 'city', 'state', 'country', 'profile_image', 'date_of_birth', 'nickname']
 
+
 class RestaurantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Restaurant
-        fields = ['restaurant_name', 'location', 'description', 'phone_number', 'rating', 'image', 'uberone', 'price_range', 'delivery_time']
+        fields = ['restaurant_name', 'location', 'description', 'phone_number', 'rating', 'image', 'uberone',
+                  'price_range', 'delivery_time']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -43,15 +46,27 @@ class DishSerializer(serializers.ModelSerializer):
         model = Dish
         fields = ['id', 'dish_name', 'description', 'price', 'category', 'restaurant']
 
+
 class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cart
-        fields = ['customer', 'dish', 'quantity', 'added_at']
+        fields = ['customer', 'dish', 'quantity', 'added_at', 'restaurant', 'is_still_in_cart']
+
+
+class CartItemSerializer(serializers.ModelSerializer):
+    dish_id = serializers.IntegerField(source='dish.id')
+
+    class Meta:
+        model = Cart
+        fields = ['dish_id', 'quantity']
+
 
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = ['id', 'status', 'total_price', 'delivery_address', 'customer', 'restaurant', 'created_at', 'updated_at']
+        fields = ['id', 'status', 'total_price', 'delivery_address', 'customer', 'restaurant', 'created_at',
+                  'updated_at']
+
 
 class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:

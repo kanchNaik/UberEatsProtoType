@@ -1,5 +1,6 @@
-from .models import Customer, Restaurant, Dish
-from .serializers import CustomerSerializer, RestaurantSerializer, DishSerializer
+from .models import Customer, Restaurant, Dish, Cart, Order
+from .serializers import CustomerSerializer, RestaurantSerializer, DishSerializer, CartSerializer, OrderSerializer, \
+    CartItemSerializer
 from rest_framework import viewsets, permissions, status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -13,12 +14,12 @@ class CustomerViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['GET', 'PUT', 'PATCH'])
     def me(self, request):
-        print("Received cookies:", request.cookies)
-        print("Received CSRF token:", request.headers.get('X-CSRFToken'))
         customer = Customer.objects.get(user=request.user)
         if request.method == 'GET':
             serializer = self.get_serializer(customer)
-            return Response(serializer.data)
+            customer_data = serializer.data
+            customer_data['email'] = request.user.email
+            return Response(customer_data)
         elif request.method in ['PUT', 'PATCH']:
             serializer = self.get_serializer(customer, data=request.data, partial=True)
             if serializer.is_valid():
@@ -35,13 +36,17 @@ class CustomerViewSet(viewsets.ModelViewSet):
 
         if request.method == 'GET':
             serializer = self.get_serializer(customer)
-            return Response(serializer.data)
+            customer_data = serializer.data
+            customer_data['email'] = request.user.email
+            return Response(customer_data)
 
         elif request.method in ['PUT', 'PATCH']:
             serializer = self.get_serializer(customer, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
-                return Response(serializer.data)
+                customer_data = serializer.data
+                customer_data['email'] = request.user.email
+                return Response(customer_data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=['PUT'], url_path='profile-picture')
@@ -64,12 +69,16 @@ class RestaurantViewSet(viewsets.ModelViewSet):
         restaurant = Restaurant.objects.get(user=request.user)
         if request.method == 'GET':
             serializer = self.get_serializer(restaurant)
-            return Response(serializer.data)
+            restaurant_data = serializer.data
+            restaurant_data['email'] = request.user.email
+            return Response(restaurant_data)
         elif request.method in ['PUT', 'PATCH']:
             serializer = self.get_serializer(restaurant, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
-                return Response(serializer.data)
+                restaurant_data = serializer.data
+                restaurant_data['email'] = request.user.email
+                return Response(restaurant_data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request, *args, **kwargs):
@@ -81,7 +90,6 @@ class RestaurantViewSet(viewsets.ModelViewSet):
             restaurant_id = query.user_id
             restaurant['id'] = restaurant_id
             restaurant['profile_url'] = request.build_absolute_uri(reverse('restaurant-detail', args=[restaurant_id]))
-
         return Response(serializer.data)
 
 
@@ -108,24 +116,6 @@ class DishViewSet(viewsets.ModelViewSet):
         serializer.save(restaurant=restaurant)
 
 
-# class RestaurantListView(generics.ListAPIView):
-#     queryset = Restaurant.objects.all()
-#     serializer_class = RestaurantSerializer
-    #
-    # def list(self, request, *args, **kwargs):
-    #     queryset = self.get_queryset()
-    #     serializer = self.get_serializer(queryset, many=False)
-    #
-    #     # Add profile URL to each restaurant
-    #     for restaurant, rest_obj in zip(serializer.data, queryset):
-    #         restaurant_id = rest_obj['id']
-    #         restaurant['profile_url'] = request.build_absolute_uri(reverse('restaurant-detail', args=[restaurant_id]))
-    #
-    #     return Response(serializer.data)
-
-from rest_framework import generics, permissions
-from .models import Dish
-from .serializers import DishSerializer
 
 class RestaurantDishesView(generics.ListAPIView):
     serializer_class = DishSerializer
@@ -134,3 +124,92 @@ class RestaurantDishesView(generics.ListAPIView):
     def get_queryset(self):
         restaurant_id = self.kwargs['restaurant_id']
         return Dish.objects.filter(restaurant_id=restaurant_id)
+
+
+class CartViewSet(viewsets.ModelViewSet):
+    queryset = Cart.objects.all()
+    serializer_class = CartSerializer
+
+    @action(detail=False, methods=['GET'])
+    def get_cart(self, request):
+        try:
+            # Get the customer from the authenticated user
+            customer = request.user.customer
+        except Customer.DoesNotExist:
+            return Response({'error': 'Customer profile not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Get all cart items for the customer
+        cart_items = Cart.objects.filter(customer=customer, is_still_in_cart=True)
+
+        if not cart_items:
+            return Response({}, status=status.HTTP_200_OK)
+
+        # Serialize the cart items
+        cart_items_serializer = CartItemSerializer(cart_items, many=True)
+        return Response({'restaurant_id': cart_items[0].restaurant.user_id, 'items': cart_items_serializer.data}, status=status.HTTP_200_OK)
+    @action(detail=False, methods=['POST'])
+    def add_to_cart(self, request):
+        if not request.user.is_authenticated and  not request.user.is_customer:
+            return Response({'message': 'Please login to add items to cart'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        customer = request.user.customer
+        dish_id = request.data.get('dish_id')
+        quantity = request.data.get('quantity', 1)
+
+        dish = Dish.objects.get(id=dish_id)
+        restaurant_id = dish.restaurant.user.id
+        restaurant = Restaurant.objects.get(user_id=restaurant_id)
+        cart_item, created = Cart.objects.get_or_create(
+            customer=customer,
+            dish=dish,
+            restaurant=restaurant,
+            defaults={'quantity': quantity}
+        )
+        if not created:
+            cart_item.quantity += quantity
+            cart_item.save()
+
+        return Response({'message': 'Item added to cart'}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['DELETE'])
+    def clear_cart(self, request):
+        cart_items = Cart.objects.filter(customer=request.user.customer, is_still_in_cart=True)
+        cart_items.delete()
+        return Response({'message': 'Cart cleared successfully'}, status=status.HTTP_200_OK)
+
+    class OrderViewSet(viewsets.ModelViewSet):
+        queryset = Order.objects.all()
+        serializer_class = OrderSerializer
+
+        def list(self, request, **kwargs):
+            customer = request.user.customer
+            orders = Order.objects.filter(customer=customer).order_by('-created_at')
+            serializer = self.get_serializer(orders, many=True)
+            return Response(serializer.data)
+        @action(detail=False, methods=['POST'])
+        def place_order(self, request):
+            customer = request.user.customer
+            # Get cart items
+            cart_items = Cart.objects.filter(customer=customer, is_still_in_cart=True)
+            # Invalidate from cart
+            cart_items.update(is_still_in_cart=False)
+            delivery_address = request.data.get('delivery_address')
+            total_price = request.data.total_price
+            restaurant_id = request.data.get('restaurant_id')
+            restaurant = Restaurant.objects.get(id=restaurant_id)
+
+            order = Order.objects.create(
+                customer=customer,
+                restaurant=restaurant,
+                total_price=total_price,
+                delivery_address=delivery_address,
+                status='New Order'
+            )
+
+            # Attach order_id to cart items
+            for cart_item in cart_items:
+                cart_item.order_history = order
+                cart_item.save()
+
+            return Response({'message': 'Order placed successfully', 'order_id': order.id},
+                            status=status.HTTP_201_CREATED)
