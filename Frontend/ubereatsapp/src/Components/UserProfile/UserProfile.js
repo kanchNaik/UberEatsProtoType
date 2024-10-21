@@ -35,7 +35,6 @@ const UserProfile = ({ userId }) => {
         withCredentials: true,
       })
       .then((response) => {
-        console.log('Profile data:', response.data);
         setProfile((prevProfile) => ({
           ...prevProfile,
           ...response.data,
@@ -99,11 +98,12 @@ const UserProfile = ({ userId }) => {
     setProfile({ ...profile, [name]: value });
   };
 
-  const handleProfilePicUpload = (e) => {
+  const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setImageFile(file);
       const imageUrl = URL.createObjectURL(file);
-      setProfile({ ...profile, profile_image: imageUrl });
+      setProfile((prevProfile) => ({ ...prevProfile, profile_image: imageUrl }));
     }
   };
 
@@ -118,40 +118,27 @@ const UserProfile = ({ userId }) => {
       .catch((error) => console.error('Error saving profile data:', error));
   };
 
-  const handlePencilClick = () => setImageModal(true);
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImageFile(file);
-      const imageUrl = URL.createObjectURL(file);
-      setProfile((prevProfile) => ({ ...prevProfile, profile_image: imageUrl }));
-    }
-  };
-
   const handleImageUpload = () => {
     if (!imageFile) return;
-  
+
     const formData = new FormData();
     formData.append('nickname', profile.nickname);
     formData.append('profile_image', imageFile);
-  
+
     axios
       .put('http://localhost:8000/api/customers/profile-picture/', formData, {
         headers: {
-          'X-CSRFToken': Cookies.get('csrftoken'), // Ensure the CSRF token is correctly fetched
+          'X-CSRFToken': Cookies.get('csrftoken'),
           'Content-Type': 'multipart/form-data',
         },
-        withCredentials: true, // This ensures the cookies are sent
+        withCredentials: true,
       })
       .then((response) => {
-        console.log('Image and nickname updated:', response.data);
-        setProfile(response.data); // Update the profile state with the new data
-        setImageModal(false); // Close the modal after success
+        setProfile(response.data);
+        setImageModal(false);
       })
       .catch((error) => console.error('Error uploading image:', error));
   };
-  
 
   return (
     <Container className="mt-5">
@@ -161,52 +148,57 @@ const UserProfile = ({ userId }) => {
           <Card className="p-4">
             <div className="text-center">
               <div className="position-relative d-inline-block">
-                <img src={profile.profile_image || 'https://via.placeholder.com/150'} alt="Profile" className="rounded-circle" width="150" height="150" />
-                <Button variant="light" className="p-1 shadow-sm" onClick={handlePencilClick}>
+                <img
+                  src={profile.profile_image || 'https://via.placeholder.com/150'}
+                  alt="Profile"
+                  className="rounded-circle"
+                  width="150"
+                  height="150"
+                />
+                <Button variant="light" className="p-1 shadow-sm" onClick={() => setImageModal(true)}>
                   <i className="bi bi-pencil"></i>
                 </Button>
               </div>
             </div>
 
             <Form className="mt-4">
-              {/* Name and Phone Number */}
               <Row className="mb-3">
                 <Col md={6}>
                   <Form.Group controlId="formName">
                     <Form.Label>Name</Form.Label>
-                    <Form.Control type="text" name="name" value={profile.name || ''} onChange={handleInputChange} readOnly={!editMode} />
+                    <Form.Control
+                      type="text"
+                      name="name"
+                      value={profile.name || ''}
+                      onChange={handleInputChange}
+                      readOnly={!editMode}
+                    />
                   </Form.Group>
                 </Col>
                 <Col md={6}>
                   <Form.Group controlId="formPhone">
                     <Form.Label>Phone Number</Form.Label>
-                    <Form.Control type="text" name="phone_number" value={profile.phone_number || ''} onChange={handleInputChange} readOnly={!editMode} />
+                    <Form.Control
+                      type="text"
+                      name="phone_number"
+                      value={profile.phone_number || ''}
+                      onChange={handleInputChange}
+                      readOnly={!editMode}
+                    />
                   </Form.Group>
                 </Col>
               </Row>
 
-              {/* Email and DOB */}
-              <Row className="mb-3">
-                <Col md={6}>
-                  <Form.Group controlId="formEmail">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control type="email" name="email" value={profile.email || ''} onChange={handleInputChange} readOnly={!editMode} />
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group controlId="formDateOfBirth">
-                    <Form.Label>Date of Birth</Form.Label>
-                    <Form.Control type="date" name="date_of_birth" value={profile.date_of_birth || ''} onChange={handleInputChange} readOnly={!editMode} />
-                  </Form.Group>
-                </Col>
-              </Row>
-
-              {/* Location Fields */}
               <Row className="mb-3">
                 <Col md={6}>
                   <Form.Group controlId="formCountry">
                     <Form.Label>Country</Form.Label>
-                    <Form.Select name="country" value={profile.country || ''} onChange={handleCountryChange} disabled={!editMode}>
+                    <Form.Select
+                      name="country"
+                      value={profile.country || ''}
+                      onChange={handleCountryChange}
+                      disabled={!editMode}
+                    >
                       <option value="">Select a country</option>
                       {countries.map((country) => (
                         <option key={country.country} value={country.country}>
@@ -219,7 +211,12 @@ const UserProfile = ({ userId }) => {
                 <Col md={6}>
                   <Form.Group controlId="formState">
                     <Form.Label>State</Form.Label>
-                    <Form.Select name="state" value={profile.state || ''} onChange={handleStateChange} disabled={!editMode}>
+                    <Form.Select
+                      name="state"
+                      value={profile.state || ''}
+                      onChange={handleStateChange}
+                      disabled={!editMode}
+                    >
                       <option value="">Select a state</option>
                       {states.map((state) => (
                         <option key={state.name} value={state.name}>
@@ -231,12 +228,23 @@ const UserProfile = ({ userId }) => {
                 </Col>
               </Row>
 
-              {/* Nickname */}
               <Row className="mb-3">
                 <Col md={6}>
-                  <Form.Group controlId="formNickname">
-                    <Form.Label>Nickname</Form.Label>
-                    <Form.Control type="text" name="nickname" value={profile.nickname || ''} onChange={handleInputChange} readOnly={!editMode} />
+                  <Form.Group controlId="formCity">
+                    <Form.Label>City</Form.Label>
+                    <Form.Select
+                      name="city"
+                      value={profile.city || ''}
+                      onChange={handleInputChange}
+                      disabled={!editMode}
+                    >
+                      <option value="">Select a city</option>
+                      {cities.map((city) => (
+                        <option key={city} value={city}>
+                          {city}
+                        </option>
+                      ))}
+                    </Form.Select>
                   </Form.Group>
                 </Col>
               </Row>
@@ -254,7 +262,6 @@ const UserProfile = ({ userId }) => {
         </Col>
       </Row>
 
-      {/* Image Upload Modal */}
       <Modal show={imageModal} onHide={() => setImageModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Upload Profile Picture</Modal.Title>

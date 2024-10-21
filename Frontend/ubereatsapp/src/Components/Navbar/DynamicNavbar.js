@@ -1,35 +1,58 @@
 // DynamicNavbar.js
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import HomeNavbar from './HomeNavbar';
 import SignUpNavbar from './SignUpNavbar';
 import FeedNavbar from './FeedNavbar';
 import GenericTitleNavbar from './GenericTitleNavbar';
+import RestaurantFeedNavbar from './RestaurantFeedNavbar';
+import UserSidebarWrapper from '../UserSidebar/UserSidebarWrapper';
+import RestaurantProfileSidebarWrapper from '../RestaurantProfileSidebar/RestaurantProfileSidebarWrapper'
 import { getUserInfo } from '../../Utilities/UserUtils';
 
-const DynamicNavbar = ({ toggleSidebar }) => {
-  const location = useLocation(); 
+const DynamicNavbar = () => {
+  const location = useLocation();
+  const [isSidebarOpen, setSidebarOpen] = useState(false); // Sidebar state
+
+  const toggleSidebar = () => setSidebarOpen((prev) => !prev); // Toggle sidebar
+  const closeSidebar = () => setSidebarOpen(false); // Close sidebar
+  const user = getUserInfo();
 
   const renderNavbar = () => {
-
-    const user = getUserInfo();
     switch (location.pathname) {
       case '/':
       case '/home':
-        return <HomeNavbar onClick={toggleSidebar} user={user}/>;
+        return <HomeNavbar onClick={toggleSidebar} user={user} />;
       case '/signin':
       case '/signup':
         return <SignUpNavbar />;
       case '/feed':
-        return <FeedNavbar onClick={toggleSidebar} user={user}/>;
+        return user && user.userType === 'Customer' ? (
+          <FeedNavbar onClick={toggleSidebar} user={user} />
+        ) : (
+          <RestaurantFeedNavbar onClick={toggleSidebar} user={user} />
+        );
       case '/customer/my':
-        return <GenericTitleNavbar title={'User Account'}/>
+        return <GenericTitleNavbar title="User Account" />;
       default:
-        return (user) ? (<FeedNavbar onClick={toggleSidebar} user={user}/>) : (<SignUpNavbar />);
+        return user ? (
+          user.userType === 'Customer' ? (
+            <FeedNavbar onClick={toggleSidebar} user={user} />
+          ) : (
+            <RestaurantFeedNavbar onClick={toggleSidebar} user={user} />
+          )
+        ) : (
+          <SignUpNavbar />
+        );
     }
   };
 
-  return <>{renderNavbar()}</>;
+  return (
+    <div>
+      {(user && user.userType === 'Customer') ?  <UserSidebarWrapper isOpen={isSidebarOpen} closeSidebar={closeSidebar} /> : <RestaurantProfileSidebarWrapper isOpen={isSidebarOpen} closeSidebar={closeSidebar}/>}
+      {renderNavbar()}
+    </div>
+  );
 };
 
 export default DynamicNavbar;

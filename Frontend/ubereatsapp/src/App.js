@@ -14,21 +14,20 @@ import Restaurant from './Components/Restaurant/Restaurant';
 import UserProfile from './Components/UserProfile/UserProfile';
 
 import DynamicNavbar from './Components/Navbar/DynamicNavbar';
-import UserSidebarWrapper from './Components/UserSidebar/UserSidebarWrapper';
 import Testpage from './Components/Testpage';
 import RestaurantHome from './Components/Feed/RestaurantHome'
+import RestaurantProfile from './Components/RestaurantProfile/RestaurantProfile';
+import RestaurantDishesList from './Components/RestaurantDishes/RestaurantDishesList'
+
+
 
 
 function App() {
-  const [isSidebarOpen, setSidebarOpen] = useState(false);
- 
-  const toggleSidebar = () => setSidebarOpen((prev) => !prev);
-  const closeSidebar = () => setSidebarOpen(false);
+
 
   return (
     <div className="App">
-      <UserSidebarWrapper isOpen={isSidebarOpen} closeSidebar={closeSidebar}/>
-      <DynamicNavbar toggleSidebar={toggleSidebar}/>
+      <DynamicNavbar/>
       <Routes>
         <Route path="/" element={<Home/>} />
         <Route path="/signup" element={<SignUp />} />
@@ -39,6 +38,8 @@ function App() {
         <Route path="/customer/my" element={<UserProfile />} />
         <Route path="/test" element={<Testpage/>}/>
         <Route path="/restaurant/home" element={<RestaurantHome/>}/>
+        <Route path="restaurant/my" element={<RestaurantProfile/>}/>
+        <Route path="restaurant/dishes" element={<RestaurantDishesList/>} />
       </Routes>
     </div>
   );
