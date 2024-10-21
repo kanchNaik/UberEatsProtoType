@@ -1,6 +1,6 @@
 from rest_framework.routers import DefaultRouter
 from django.urls import include, path
-from .views import CustomerViewSet, RestaurantViewSet, DishViewSet, RestaurantListView
+from .views import CustomerViewSet, RestaurantViewSet, DishViewSet, RestaurantDishesView
 from .auth_views import SignUpView, LoginView, LogoutView
 
 # Create a router to handle the viewsets
@@ -15,5 +15,7 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name='logout'),
 
     path('', include(router.urls)),
+
+    path('restaurants/<int:restaurant_id>/dishes/', RestaurantDishesView.as_view(), name='restaurant-dishes'),
 
 ]

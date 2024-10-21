@@ -79,9 +79,11 @@ class RestaurantViewSet(viewsets.ModelViewSet):
         # Add profile URL to each restaurant
         for restaurant,query in zip(serializer.data,queryset):
             restaurant_id = query.user_id
+            restaurant['id'] = restaurant_id
             restaurant['profile_url'] = request.build_absolute_uri(reverse('restaurant-detail', args=[restaurant_id]))
 
         return Response(serializer.data)
+
 
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
@@ -100,7 +102,6 @@ class DishViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         # Filter dishes by the restaurant of the authenticated user
         return Dish.objects.filter(restaurant__user=self.request.user)
-
     def perform_create(self, serializer):
         # Set the restaurant to the authenticated user's restaurant
         restaurant = Restaurant.objects.get(user=self.request.user)
@@ -121,3 +122,15 @@ class DishViewSet(viewsets.ModelViewSet):
     #         restaurant['profile_url'] = request.build_absolute_uri(reverse('restaurant-detail', args=[restaurant_id]))
     #
     #     return Response(serializer.data)
+
+from rest_framework import generics, permissions
+from .models import Dish
+from .serializers import DishSerializer
+
+class RestaurantDishesView(generics.ListAPIView):
+    serializer_class = DishSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        restaurant_id = self.kwargs['restaurant_id']
+        return Dish.objects.filter(restaurant_id=restaurant_id)
