@@ -76,7 +76,7 @@ const Feed = () => {
       try {
         const response = await axios.get('http://localhost:8000/api/restaurants', {
           headers: {
-            'X-CSRFToken': 'b9PERbwbwSIGAdiAv8pgynuASATJuCsc',
+            'X-CSRFToken': Cookies.get('csrftoken'),
           },
           withCredentials: true, // Enable sending cookies with the request
         });
@@ -111,7 +111,7 @@ const Feed = () => {
       {/* Featured Restaurants */}
       <div className="container-fluid featured-restaurants py-5">
         <h4>Featured on Uber Eats</h4>
-        <div className="d-flex justify-content-between">
+        <div className="d-flex row">
           {filteredRestaurants.map((restaurant, index) => (
               <RestaurantCard key={restaurant.id} restaurant={restaurant} />
           ))}

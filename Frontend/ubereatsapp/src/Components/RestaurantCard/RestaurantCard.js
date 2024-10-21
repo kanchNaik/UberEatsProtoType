@@ -15,24 +15,24 @@ const RestaurantCard = ({ restaurant }) => {
   };
 
   return (
-    <div>
+    <div className='col-sm-3'>
       <div className="restaurantcard">
         <NavLink to={`/restaurant/${restaurant.id}`}>
           <div>
             <img
-              src={restaurant.image} // Replace with the actual image URL
+              src={`${process.env.PUBLIC_URL}/Assets/dominos.webp`} // Replace with the actual image URL
               alt="Feed Your Employees"
               className="img-fluid"
             />
           </div>
           <div className="text-left restaurantcard-text">
-            <div style={{ display: 'flex', justifyContent: 'space-between', height: '3vh' }}>
-              <h5>{restaurant.name}</h5>
+            <div style={{ display: 'flex', justifyContent: 'space-between', height: '5vh' }}>
+              <h5>{restaurant.restaurant_name}</h5>
               <p>⭐ {restaurant.rating}</p>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
               {restaurant.uberone ? <p>Uber One benefits apply</p> : <span />}
-              <p>{restaurant.deliveryTime}</p>
+              <p>{restaurant.delivery_time}</p>
             </div>
           </div>
         </NavLink>

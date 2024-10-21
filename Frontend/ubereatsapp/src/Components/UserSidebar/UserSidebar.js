@@ -36,7 +36,6 @@ const UserSidebar = () => {
           Cookies.remove('user_email');
 
           console.log('Logged out successfully');
-          debugger;
           // Redirect to the login page
           navigate('/signin');
         }

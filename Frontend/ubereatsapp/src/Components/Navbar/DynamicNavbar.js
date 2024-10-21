@@ -11,7 +11,6 @@ const DynamicNavbar = ({ toggleSidebar }) => {
   const location = useLocation(); 
 
   const renderNavbar = () => {
-debugger
 
     const user = getUserInfo();
     switch (location.pathname) {

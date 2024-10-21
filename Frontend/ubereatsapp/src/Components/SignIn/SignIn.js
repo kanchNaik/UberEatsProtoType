@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import './SignIn.css'; // Ensure your CSS file exists
 import axios from 'axios'; // Axios for HTTP requests
 import Cookies from 'js-cookie'; // To manage cookies
+import { useNavigate  } from 'react-router-dom';
 
 function SignIn() {
+  const navigate = useNavigate();
+
   const [inputEmail, setInputEmailValue] = useState('');
   const [inputPassword, setInputPasswordValue] = useState('');
   const [error, setError] = useState(''); // Error state for displaying errors
@@ -15,7 +18,6 @@ function SignIn() {
   // Handle login using Promises
   const handleLogin = (e) => {
     e.preventDefault(); // Prevent page refresh
-    debugger;
     axios
       .post('http://localhost:8000/api/login/', {
         username: inputEmail,
@@ -25,7 +27,6 @@ function SignIn() {
     })
       .then((response) => {
         const {message, token, user } = response.data;
-        debugger;
         // Store tokens and user info in cookies
         Cookies.set('access_token', token, { expires: 1 });
         Cookies.set('user_type', user.is_customer ? 'Customer' : 'Restaurant');
@@ -33,9 +34,15 @@ function SignIn() {
         Cookies.set('user_id', user.id);
         Cookies.set('user_email', user.email)
         console.log('token', token)
-        console.log('Logged in successfully');
-        console.log(Cookies.get('csrftoken'))
-        window.location.href = '/feed'; // Redirect to feed page
+        console.log('Logged in successfully')
+
+        if(user.is_customer) 
+        {
+           navigate('/feed')
+        }
+        else{
+           navigate('/restaurant/home')
+          }
       })
       .catch((error) => {
         console.error('Login failed:', error);

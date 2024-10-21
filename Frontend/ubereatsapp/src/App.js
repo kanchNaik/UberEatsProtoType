@@ -16,6 +16,7 @@ import UserProfile from './Components/UserProfile/UserProfile';
 import DynamicNavbar from './Components/Navbar/DynamicNavbar';
 import UserSidebarWrapper from './Components/UserSidebar/UserSidebarWrapper';
 import Testpage from './Components/Testpage';
+import RestaurantHome from './Components/Feed/RestaurantHome'
 
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
         <Route path="/restaurant/:id" element={<Restaurant />} />
         <Route path="/customer/my" element={<UserProfile />} />
         <Route path="/test" element={<Testpage/>}/>
+        <Route path="/restaurant/home" element={<RestaurantHome/>}/>
       </Routes>
     </div>
   );
