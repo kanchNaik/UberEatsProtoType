@@ -59,7 +59,7 @@ const Restaurant = () => {
         <section className="restaurant-banner">
             <img
             src={restaurant.bannerImage}
-            alt={restaurant.name}
+            alt={restaurant.restaurant_name}
             className="banner-image"
             />
         </section>
@@ -67,7 +67,7 @@ const Restaurant = () => {
             <div className='col-4'>
             {/* Restaurant Details */}
             <div className="restaurant-info-container">
-            <h2 className="restaurant-name">{restaurant.name}</h2>
+            <h2 className="restaurant-name">{restaurant.restaurant_name}</h2>
             <div className="restaurant-details">
                 <span className="restaurant-rating">
                 {restaurant.rating} <span className="star">★</span> ({restaurant.totalReviews}+)

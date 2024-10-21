@@ -1,0 +1,19 @@
+/* Navbar.css */
+.navbar {
+    background-color: black;  /* Black background */
+    padding: 15px;            /* Padding for spacing */
+    display: flex;
+    align-items: center;
+  }
+  
+  .navbar-title {
+    color: white;             /* White text color */
+    font-size: 24px;           /* Adjust font size */
+    font-weight: bold;
+    font-family: Arial, sans-serif; /* Optional font */
+  }
+
+  .navbar a
+  {
+    text-decoration: none;
+  }

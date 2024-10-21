@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import HomeNavbar from './HomeNavbar';
 import SignUpNavbar from './SignUpNavbar';
 import FeedNavbar from './FeedNavbar';
+import GenericTitleNavbar from './GenericTitleNavbar';
 import { getUserInfo } from '../../Utilities/UserUtils';
 
 const DynamicNavbar = ({ toggleSidebar }) => {
@@ -21,8 +22,10 @@ const DynamicNavbar = ({ toggleSidebar }) => {
         return <SignUpNavbar />;
       case '/feed':
         return <FeedNavbar onClick={toggleSidebar} user={user}/>;
+      case '/customer/my':
+        return <GenericTitleNavbar title={'User Account'}/>
       default:
-        return <SignUpNavbar />;
+        return (user) ? (<FeedNavbar onClick={toggleSidebar} user={user}/>) : (<SignUpNavbar />);
     }
   };
 

@@ -57,6 +57,3 @@
     margin: 0 10px; /* Adjust margin to reduce spacing */
   }
   
-  .featured-restaurants .d-flex {
-    gap: 20px; /* Add space between the cards */
-  }

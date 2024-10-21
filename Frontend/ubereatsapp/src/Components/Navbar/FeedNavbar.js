@@ -1,36 +1,58 @@
-import React from 'react'
-import CartIcon from '../Common/Cart/CartIcon'
+import React, { useState } from 'react';
+import CartIcon from '../Common/Cart/CartIcon';
+import CartSidebar from '../Cart/CartSidebar';
+import './FeedNavbar.css';
 
-function FeedNavbar({onClick, user}) {
+function FeedNavbar({ onClick, user }) {
+    const [isCartOpen, setIsCartOpen] = useState(false);
     
-    const itemCount = 0
-  return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light px-4">
-        <div className="container-fluid">
-            <button type="button" className='navbarmenue' onClick={onClick}>
-                <i class="bi bi-list hamberger-icon"></i>
-            </button>
-            <a className="navbar-brand" href="/">Uber Eats</a>
-            <div className="collapse navbar-collapse">
-                <ul className="navbar-nav mr-auto">
-                    <li className="nav-item active">
+    const openCart = () => setIsCartOpen(true);
+    const closeCart = () => setIsCartOpen(false);
+
+    const itemCount = 0; // replace with dynamic value based on cart
+
+    return (
+        <nav className="navbar navbar-expand-lg navbar-light bg-light feed-navbar">
+            <div className="container-fluid">
+                {/* Hamburger Menu Icon */}
+                <button type="button" className='navbarmenue' onClick={onClick}>
+                    <i className="bi bi-list hamberger-icon"></i>
+                </button>
+
+                {/* Brand Name */}
+                <a className="navbar-brand" href="/">Uber Eats</a>
+
+                {/* Delivery & Pickup Options */}
+                <div className="navbar-options">
                     <a className="nav-link" href="/">Delivery</a>
-                    </li>
-                    <li className="nav-item">
                     <a className="nav-link" href="/">Pickup</a>
-                    </li>
-                    <li className="nav-item">
-                    <a className="nav-link" href="/">San Jose Diridon Station</a>
-                    </li>
-                </ul>
-            <form className="form-inline my-2 my-lg-0">
-                <input className="form-control mr-sm-2" type="search" placeholder="Search Uber Eats" />
-            </form>
-            <CartIcon itemCount={itemCount} />
+                </div>
+
+                {/* Location */}
+                <div className="location-select">
+                    <a className="nav-link" href="/">San Jose Diridon VTA Bus</a>
+                </div>
+
+                {/* Search */}
+                <form className="search-form">
+                    <input 
+                        className="form-control" 
+                        type="search" 
+                        placeholder="Search Uber Eats" 
+                        aria-label="Search"
+                    />
+                </form>
+
+                {/* Cart Icon */}
+                <button className="cart-button" onClick={openCart}>
+                    <CartIcon itemCount={itemCount} />
+                </button>
             </div>
-        </div>
-  </nav>
-  )
+
+            {/* Sidebar for Cart */}
+            {isCartOpen && <CartSidebar closeCart={closeCart} />}
+        </nav>
+    );
 }
 
-export default FeedNavbar
+export default FeedNavbar;

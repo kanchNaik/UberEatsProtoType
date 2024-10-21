@@ -6,7 +6,7 @@
     position: fixed; /* Fixed position */
     height: 100%; /* Full height */
     overflow-y: auto; /* Scroll if needed */
-    z-index: 1000;
+    z-index: 2000;
   }
   
   .sidebar-header {
