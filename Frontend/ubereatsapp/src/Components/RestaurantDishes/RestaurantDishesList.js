@@ -41,16 +41,15 @@ class RestaurantDishesList extends Component {
     const { dishes, error } = this.state;
 
     return (
+    <div className='container'>
       <div className="row">
         {error && <p style={{ color: 'red' }}>{error}</p>}
         {dishes.map((dish) => (
           <div className="col-4" key={dish.id}>
-            <div className="dish-info-container">
-              <h2 className="dish-name">{dish.name}</h2>
-            </div>
             <DishCard dish={dish} />
           </div>
         ))}
+      </div>
       </div>
     );
   }

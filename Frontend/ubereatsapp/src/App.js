@@ -18,6 +18,7 @@ import Testpage from './Components/Testpage';
 import RestaurantHome from './Components/Feed/RestaurantHome'
 import RestaurantProfile from './Components/RestaurantProfile/RestaurantProfile';
 import RestaurantDishesList from './Components/RestaurantDishes/RestaurantDishesList'
+import DishAdd from './Components/RestaurantDishes/DishAdd'
 
 
 
@@ -38,8 +39,10 @@ function App() {
         <Route path="/customer/my" element={<UserProfile />} />
         <Route path="/test" element={<Testpage/>}/>
         <Route path="/restaurant/home" element={<RestaurantHome/>}/>
-        <Route path="restaurant/my" element={<RestaurantProfile/>}/>
-        <Route path="restaurant/dishes" element={<RestaurantDishesList/>} />
+        <Route path="/restaurant/my" element={<RestaurantProfile/>}/>
+        <Route path="/restaurant/dishes" element={<RestaurantDishesList/>} />
+        <Route path="/restaurant/dish/add" element={<DishAdd/>}/>
+        <Route path="/restaurant/dish/edit/:id" element={<DishAdd isEdit />} />
       </Routes>
     </div>
   );

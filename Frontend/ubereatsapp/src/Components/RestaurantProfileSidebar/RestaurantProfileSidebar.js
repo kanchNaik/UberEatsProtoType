@@ -53,7 +53,7 @@ const RestaurantProfileSidebar = () => {
           </div>
           <div className="user-name">
             <h5>{Cookies.get('user_name')}</h5>
-           <NavLink to="restaurant/my"> <small>Manage account</small> </NavLink>
+           <NavLink to="/restaurant/my"> <small>Manage account</small> </NavLink>
           </div>
         </div>
       </div>
@@ -61,7 +61,7 @@ const RestaurantProfileSidebar = () => {
       <ul className="sidebar-menu">
         <li>Orders</li>
         <li>Help</li>
-        <li>Dishes</li>
+        <NavLink to="/restaurant/dishes"> <li>Dishes</li></NavLink>
       </ul>
 
       <div className="sidebar-footer">
