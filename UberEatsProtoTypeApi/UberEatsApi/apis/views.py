@@ -2,9 +2,9 @@ from decimal import Decimal
 
 from django.db.models import Sum, F
 
-from .models import Customer, Restaurant, Dish, Cart, Order
+from .models import Customer, Restaurant, Dish, Cart, Order, Favorite
 from .serializers import CustomerSerializer, RestaurantSerializer, DishSerializer, CartSerializer, OrderSerializer, \
-    CartItemSerializer
+    CartItemSerializer, FavoriteSerializer
 from rest_framework import viewsets, permissions, status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -96,7 +96,13 @@ class RestaurantViewSet(viewsets.ModelViewSet):
             restaurant['profile_url'] = request.build_absolute_uri(reverse('restaurant-detail', args=[restaurant_id]))
         return Response(serializer.data)
 
-
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        data = serializer.data
+        data['profile_url'] = request.build_absolute_uri(reverse('restaurant-detail', args=[instance.user_id]))
+        data['id'] = instance.user_id
+        return Response(data)
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
@@ -286,3 +292,27 @@ class OrderViewSet(viewsets.ModelViewSet):
     def partial_update(self, request, *args, **kwargs):
         kwargs['partial'] = True
         return self.update(request, *args, **kwargs)
+
+class FavoriteViewSet(viewsets.ModelViewSet):
+    queryset = Favorite.objects.all()
+    serializer_class = FavoriteSerializer
+    def list(self, request, **kwargs):
+        if request.user.is_authenticated and  request.user.is_customer:
+            customer = request.user.customer
+            favorites = Favorite.objects.filter(customer=customer)
+            serializer = self.get_serializer(favorites, many=True)
+            return Response(serializer.data)
+        else:
+            return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
+    def create(self, request, *args, **kwargs):
+        if request.user.is_authenticated and  request.user.is_customer:
+            customer = request.user.customer
+            restaurant = Restaurant.objects.get(user_id=request.data.get('restaurant_id'))
+            favorite = Favorite.objects.create(
+                customer=customer,
+                restaurant=restaurant
+            )
+            serializer = self.get_serializer(favorite)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
