@@ -55,10 +55,14 @@ class CartSerializer(serializers.ModelSerializer):
 
 class CartItemSerializer(serializers.ModelSerializer):
     dish_id = serializers.IntegerField(source='dish.id')
+    dish_name = serializers.CharField(source='dish.dish_name')
+    description = serializers.CharField(source='dish.description')
+    price = serializers.CharField(source='dish.price')
+    category = serializers.CharField(source='dish.category')
 
     class Meta:
         model = Cart
-        fields = ['dish_id', 'quantity']
+        fields = ['dish_id', 'quantity', 'dish_name', 'description', 'price', 'category']
 
 
 class OrderSerializer(serializers.ModelSerializer):

@@ -148,7 +148,7 @@ class CartViewSet(viewsets.ModelViewSet):
 
         # Serialize the cart items
         cart_items_serializer = CartItemSerializer(cart_items, many=True)
-        return Response({'restaurant_id': cart_items[0].restaurant.user_id, 'items': cart_items_serializer.data}, status=status.HTTP_200_OK)
+        return Response({'restaurant_id': cart_items[0].restaurant.user_id, 'restaurant_name': cart_items[0].restaurant.restaurant_name, 'items': cart_items_serializer.data}, status=status.HTTP_200_OK)
     @action(detail=False, methods=['POST'])
     def add_to_cart(self, request):
         if not request.user.is_authenticated and  not request.user.is_customer:
@@ -192,10 +192,17 @@ class OrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
 
     def list(self, request, **kwargs):
-        customer = request.user.customer
-        orders = Order.objects.filter(customer=customer).order_by('-created_at')
-        serializer = self.get_serializer(orders, many=True)
-        return Response(serializer.data)
+        if request.user.is_authenticated and  request.user.is_customer:
+            customer = request.user.customer
+            orders = Order.objects.filter(customer=customer).order_by('-created_at')
+            serializer = self.get_serializer(orders, many=True)
+            return Response(serializer.data)
+        elif request.user.is_authenticated and  request.user.is_restaurant:
+            orders = Order.objects.filter(restaurant=request.user.restaurant).order_by('-created_at')
+            serializer = self.get_serializer(orders, many=True)
+            return Response(serializer.data)
+        else:
+            return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
     @action(detail=False, methods=['POST'])
     def place_order(self, request):
         if not request.user.is_authenticated and  not request.user.is_customer:
