@@ -1,5 +1,7 @@
 from decimal import Decimal
 
+from django.db.models import Sum, F
+
 from .models import Customer, Restaurant, Dish, Cart, Order
 from .serializers import CustomerSerializer, RestaurantSerializer, DishSerializer, CartSerializer, OrderSerializer, \
     CartItemSerializer
@@ -148,7 +150,8 @@ class CartViewSet(viewsets.ModelViewSet):
 
         # Serialize the cart items
         cart_items_serializer = CartItemSerializer(cart_items, many=True)
-        return Response({'restaurant_id': cart_items[0].restaurant.user_id, 'restaurant_name': cart_items[0].restaurant.restaurant_name, 'items': cart_items_serializer.data}, status=status.HTTP_200_OK)
+        cart_total_price = cart_items.aggregate(total_price=Sum(F('quantity') * F('dish__price')))
+        return Response({'restaurant_id': cart_items[0].restaurant.user_id, 'restaurant_name': cart_items[0].restaurant.restaurant_name, 'cart_total_price': cart_total_price['total_price'], 'items': cart_items_serializer.data}, status=status.HTTP_200_OK)
     @action(detail=False, methods=['POST'])
     def add_to_cart(self, request):
         if not request.user.is_authenticated and  not request.user.is_customer:
