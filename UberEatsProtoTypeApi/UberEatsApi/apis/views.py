@@ -205,6 +205,18 @@ class OrderViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance)
         data = serializer.data
 
+        ordered_items = Cart.objects.filter(order_history=instance.id, is_still_in_cart=False)
+        ordered_items_data = [
+            {
+                'dish_id': item.dish.id,
+                'dish_name': item.dish.dish_name,
+                'quantity': item.quantity,
+                'price': item.dish.price
+            }
+            for item in ordered_items
+        ]
+        data['ordered_items'] = ordered_items_data
+
         if request.user.is_authenticated and request.user.is_restaurant:
             # Add customer URL for restaurant users
             data['customer_url'] = request.build_absolute_uri(reverse('customer-detail', args=[data['customer']]))
@@ -234,16 +246,41 @@ class OrderViewSet(viewsets.ModelViewSet):
             return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
     @action(detail=False, methods=['POST'])
     def place_order(self, request):
-        if not request.user.is_authenticated and  not request.user.is_customer:
+        if not request.user.is_authenticated and not request.user.is_customer:
             return Response({'message': 'Please login to place an order'}, status=status.HTTP_401_UNAUTHORIZED)
 
         customer = request.user.customer
+
         # Get cart items
         cart_items = Cart.objects.filter(customer=customer, is_still_in_cart=True)
-        delivery_address = request.data.get('delivery_address')
-        total_price = sum(Decimal(item.dish.price) * item.quantity for item in cart_items)
         restaurant_id = cart_items[0].restaurant.user.id
         restaurant = Restaurant.objects.get(user_id=restaurant_id)
+
+        items = request.data.get('items', [])
+        if not items:
+            return Response({'message': 'Cart is empty'}, status=status.HTTP_400_BAD_REQUEST)
+
+        for item in items:
+        #     check if item is in the cart
+            if not Cart.objects.filter(dish_id=item['dish_id'], customer=customer, is_still_in_cart=True).exists():
+                Cart.objects.create(customer=customer, dish=Dish.objects.get(id=item['dish_id']), quantity=item['quantity'], restaurant=restaurant, is_still_in_cart=True)
+            else :
+                cart_item = Cart.objects.get(dish_id=item['dish_id'], customer=customer, is_still_in_cart=True)
+                cart_item.quantity = item['quantity']
+                cart_item.save()
+        # delete the cart items which are not in the order
+        # Extract dish_ids from request items
+        requested_dish_ids = {item['dish_id'] for item in items}
+
+        # Delete cart items not in requested_dish_ids
+        Cart.objects.filter(customer=customer, is_still_in_cart=True).exclude(dish_id__in=requested_dish_ids).delete()
+
+        cart_items = Cart.objects.filter(customer=customer, is_still_in_cart=True)
+        # if delivery address is empty, return error
+        if not request.data.get('delivery_address'):
+            return Response({'message': 'Delivery address is required'}, status=status.HTTP_400_BAD_REQUEST)
+        delivery_address = request.data.get('delivery_address')
+        total_price = sum(Decimal(item.dish.price) * item.quantity for item in cart_items)
         order = Order.objects.create(
             customer=customer,
             restaurant=restaurant,
