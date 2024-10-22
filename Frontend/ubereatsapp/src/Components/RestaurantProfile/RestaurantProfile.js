@@ -5,17 +5,16 @@ import Cookies from 'js-cookie';
 
 // Profile Page Component
 const RestaurantProfile = ({ userId }) => {
-   const [profile, setProfile] = useState({
+  const [profile, setProfile] = useState({
     restaurant_name: '',
     phone_number: '',
     location: '',
-    state: '',
-    country: '',
     profile_image: null,
-    username:'',
-    description:'',
-    timings:'',
-    images:[]
+    username: '',
+    description: '',
+    timings: '',
+    images: [],
+    uberone: false, // Add Uber One state
   });
 
   const [editMode, setEditMode] = useState(false);
@@ -28,7 +27,7 @@ const RestaurantProfile = ({ userId }) => {
 
   const fetchProfileData = () => {
     axios
-      .get('http://localhost:8000/api/customers/me', {
+      .get('http://localhost:8000/api/restaurants/me', {
         headers: { 'X-CSRFToken': Cookies.get('csrftoken') },
         withCredentials: true,
       })
@@ -43,10 +42,14 @@ const RestaurantProfile = ({ userId }) => {
       .catch((error) => console.error('Error fetching profile data:', error));
   };
 
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setProfile({ ...profile, [name]: value });
+  };
+
+  const handleCheckboxChange = (e) => {
+    const { checked } = e.target;
+    setProfile({ ...profile, uberone: checked });
   };
 
   const handleProfilePicUpload = (e) => {
@@ -60,7 +63,7 @@ const RestaurantProfile = ({ userId }) => {
   const handleSave = () => {
     setEditMode(false);
     axios
-      .put('http://localhost:8000/api/customers/me/', profile, {
+      .put('http://localhost:8000/api/restaurants/me/', profile, {
         headers: { 'X-CSRFToken': Cookies.get('csrftoken') },
         withCredentials: true,
       })
@@ -81,11 +84,11 @@ const RestaurantProfile = ({ userId }) => {
 
   const handleImageUpload = () => {
     if (!imageFile) return;
-  
+
     const formData = new FormData();
     formData.append('nickname', profile.nickname);
     formData.append('profile_image', imageFile);
-  
+
     axios
       .put('http://localhost:8000/api/customers/profile-picture/', formData, {
         headers: {
@@ -101,7 +104,6 @@ const RestaurantProfile = ({ userId }) => {
       })
       .catch((error) => console.error('Error uploading image:', error));
   };
-  
 
   return (
     <Container className="mt-5">
@@ -111,7 +113,12 @@ const RestaurantProfile = ({ userId }) => {
           <Card className="p-4">
             <div className="text-center">
               <div className="position-relative d-inline-block">
-                <img src={profile.profile_image || 'https://via.placeholder.com/150'} alt="Profile" width="700" height="150" />
+                <img
+                  src={profile.profile_image || 'https://via.placeholder.com/150'}
+                  alt="Profile"
+                  width="700"
+                  height="150"
+                />
                 <Button variant="light" className="p-1 shadow-sm" onClick={handlePencilClick}>
                   <i className="bi bi-pencil"></i>
                 </Button>
@@ -119,47 +126,94 @@ const RestaurantProfile = ({ userId }) => {
             </div>
 
             <Form className="mt-4">
-              {/* Name and Phone Number */}
+              {/* Restaurant Name and Phone Number */}
               <Row className="mb-3">
                 <Col md={6}>
                   <Form.Group controlId="formName">
                     <Form.Label>Restaurant Name</Form.Label>
-                    <Form.Control type="text" name="name" value={profile.name || ''} onChange={handleInputChange} readOnly={!editMode} />
+                    <Form.Control
+                      type="text"
+                      name="restaurant_name"
+                      value={profile.restaurant_name || ''}
+                      onChange={handleInputChange}
+                      readOnly={!editMode}
+                    />
                   </Form.Group>
                 </Col>
                 <Col md={6}>
                   <Form.Group controlId="formPhone">
                     <Form.Label>Phone Number</Form.Label>
-                    <Form.Control type="text" name="phone_number" value={profile.phone_number || ''} onChange={handleInputChange} readOnly={!editMode} />
+                    <Form.Control
+                      type="text"
+                      name="phone_number"
+                      value={profile.phone_number || ''}
+                      onChange={handleInputChange}
+                      readOnly={!editMode}
+                    />
                   </Form.Group>
                 </Col>
               </Row>
 
-              {/* Email and DOB */}
+              {/* Email and Location */}
               <Row className="mb-3">
                 <Col md={6}>
                   <Form.Group controlId="formEmail">
                     <Form.Label>Email</Form.Label>
-                    <Form.Control type="email" name="email" value={profile.email || ''} onChange={handleInputChange} readOnly={!editMode} />
+                    <Form.Control
+                      type="email"
+                      name="email"
+                      value={profile.email || ''}
+                      onChange={handleInputChange}
+                      readOnly={!editMode}
+                    />
                   </Form.Group>
                 </Col>
                 <Col md={6}>
-                  <Form.Group controlId="formDateOfBirth">
+                  <Form.Group controlId="location">
                     <Form.Label>Location</Form.Label>
-                    <Form.Control type="text" name="location" value={profile.location || ''} onChange={handleInputChange} readOnly={!editMode} />
+                    <Form.Control
+                      type="text"
+                      name="location"
+                      value={profile.location || ''}
+                      onChange={handleInputChange}
+                      readOnly={!editMode}
+                    />
                   </Form.Group>
                 </Col>
               </Row>
 
-              {/* Nickname */}
+              {/* Description */}
               <Row className="mb-3">
                 <Col md={6}>
-                  <Form.Group controlId="formNickname">
-                    <Form.Label>Nickname</Form.Label>
-                    <Form.Control type="text" name="nickname" value={profile.nickname || ''} onChange={handleInputChange} readOnly={!editMode} />
+                  <Form.Group controlId="description">
+                    <Form.Label>Description</Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      rows={3}
+                      name="description"
+                      value={profile.description || ''}
+                      onChange={handleInputChange}
+                      readOnly={!editMode}
+                    />
                   </Form.Group>
                 </Col>
               </Row>
+
+              {/* Uber One Checkbox */}
+              <Row className="mb-3">
+                <Col md={6}>
+                    <Form.Group controlId="formUberOne">
+                    <Form.Check
+                        type="checkbox"
+                        label="Uber One"
+                        checked={profile.uberone}
+                        onChange={editMode ? handleCheckboxChange : null}
+                        disabled={!editMode}
+                    />
+                    </Form.Group>
+                </Col>
+            </Row>
+
 
               <Button variant="primary" onClick={() => setEditMode(!editMode)}>
                 {editMode ? 'Cancel' : 'Edit Profile'}

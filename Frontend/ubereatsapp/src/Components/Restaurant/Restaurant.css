@@ -68,3 +68,13 @@
     gap: 20px; /* Add space between the cards */
   }
   
+
+  .sticky-menu {
+    position: sticky;
+    top: 10px; /* Adjust the offset based on your header or layout */
+    z-index: 10; /* Ensure it stays on top if needed */
+    background-color: white; /* Optional: background to make it stand out */
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Optional shadow effect */
+  }

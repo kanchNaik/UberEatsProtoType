@@ -66,8 +66,6 @@ const RestaurantProfileSidebar = () => {
 
       <div className="sidebar-footer">
         <button className="btn btn-link" onClick={handleLogout}>Sign out</button>
-        <hr />
-        <p className="sidebar-footer-item">Add your restaurant</p>
       </div>
     </div>
   );
