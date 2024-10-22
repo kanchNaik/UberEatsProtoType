@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from .models import Customer, Restaurant, Dish, Cart, Order
 from .serializers import CustomerSerializer, RestaurantSerializer, DishSerializer, CartSerializer, OrderSerializer, \
     CartItemSerializer
@@ -159,57 +161,66 @@ class CartViewSet(viewsets.ModelViewSet):
         dish = Dish.objects.get(id=dish_id)
         restaurant_id = dish.restaurant.user.id
         restaurant = Restaurant.objects.get(user_id=restaurant_id)
-        cart_item, created = Cart.objects.get_or_create(
-            customer=customer,
-            dish=dish,
-            restaurant=restaurant,
-            defaults={'quantity': quantity}
-        )
-        if not created:
-            cart_item.quantity += quantity
+        if Cart.objects.filter(customer=customer, dish=dish, is_still_in_cart=True).exists():
+            # Update the quantity of the existing cart item
+            cart_item = Cart.objects.get(customer=customer, dish=dish, is_still_in_cart=True)
+            cart_item.quantity = quantity
             cart_item.save()
+            return Response({'message': 'Item updated in cart'}, status=status.HTTP_200_OK)
+        else:
+            # Create a new cart item if the dish is not present in the cart
+            cart_item, created = Cart.objects.get_or_create(
+                customer=customer,
+                dish=dish,
+                restaurant=restaurant,
+                defaults={'quantity': quantity},
+                is_still_in_cart=True
+            )
+            if not created:
+                cart_item.quantity += quantity
+                cart_item.save()
 
-        return Response({'message': 'Item added to cart'}, status=status.HTTP_200_OK)
-
+            return Response({'message': 'Item added to cart'}, status=status.HTTP_200_OK)
     @action(detail=False, methods=['DELETE'])
     def clear_cart(self, request):
         cart_items = Cart.objects.filter(customer=request.user.customer, is_still_in_cart=True)
         cart_items.delete()
         return Response({'message': 'Cart cleared successfully'}, status=status.HTTP_200_OK)
 
-    class OrderViewSet(viewsets.ModelViewSet):
-        queryset = Order.objects.all()
-        serializer_class = OrderSerializer
+class OrderViewSet(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
 
-        def list(self, request, **kwargs):
-            customer = request.user.customer
-            orders = Order.objects.filter(customer=customer).order_by('-created_at')
-            serializer = self.get_serializer(orders, many=True)
-            return Response(serializer.data)
-        @action(detail=False, methods=['POST'])
-        def place_order(self, request):
-            customer = request.user.customer
-            # Get cart items
-            cart_items = Cart.objects.filter(customer=customer, is_still_in_cart=True)
-            # Invalidate from cart
-            cart_items.update(is_still_in_cart=False)
-            delivery_address = request.data.get('delivery_address')
-            total_price = request.data.total_price
-            restaurant_id = request.data.get('restaurant_id')
-            restaurant = Restaurant.objects.get(id=restaurant_id)
+    def list(self, request, **kwargs):
+        customer = request.user.customer
+        orders = Order.objects.filter(customer=customer).order_by('-created_at')
+        serializer = self.get_serializer(orders, many=True)
+        return Response(serializer.data)
+    @action(detail=False, methods=['POST'])
+    def place_order(self, request):
+        if not request.user.is_authenticated and  not request.user.is_customer:
+            return Response({'message': 'Please login to place an order'}, status=status.HTTP_401_UNAUTHORIZED)
 
-            order = Order.objects.create(
-                customer=customer,
-                restaurant=restaurant,
-                total_price=total_price,
-                delivery_address=delivery_address,
-                status='New Order'
-            )
+        customer = request.user.customer
+        # Get cart items
+        cart_items = Cart.objects.filter(customer=customer, is_still_in_cart=True)
+        delivery_address = request.data.get('delivery_address')
+        total_price = sum(Decimal(item.dish.price) * item.quantity for item in cart_items)
+        restaurant_id = cart_items[0].restaurant.user.id
+        restaurant = Restaurant.objects.get(user_id=restaurant_id)
+        order = Order.objects.create(
+            customer=customer,
+            restaurant=restaurant,
+            total_price=total_price,
+            delivery_address=delivery_address,
+            status='New Order'
+        )
 
-            # Attach order_id to cart items
-            for cart_item in cart_items:
-                cart_item.order_history = order
-                cart_item.save()
+        # Attach order_id to cart items and invalidate the items from the cart
+        for cart_item in cart_items:
+            cart_item.order_history = order
+            cart_item.is_still_in_cart = False
+            cart_item.save()
 
-            return Response({'message': 'Order placed successfully', 'order_id': order.id},
-                            status=status.HTTP_201_CREATED)
+        return Response({'message': 'Order placed successfully', 'order_id': order.id},
+                        status=status.HTTP_201_CREATED)
