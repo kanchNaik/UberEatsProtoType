@@ -173,7 +173,7 @@ class CartViewSet(viewsets.ModelViewSet):
         if Cart.objects.filter(customer=customer, dish=dish, is_still_in_cart=True).exists():
             # Update the quantity of the existing cart item
             cart_item = Cart.objects.get(customer=customer, dish=dish, is_still_in_cart=True)
-            cart_item.quantity = quantity
+            cart_item.quantity += quantity
             cart_item.save()
             return Response({'message': 'Item updated in cart'}, status=status.HTTP_200_OK)
         else:
@@ -262,6 +262,7 @@ class OrderViewSet(viewsets.ModelViewSet):
                         status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
+
         if not request.user.is_authenticated or not request.user.is_restaurant:
             return Response({'error': 'Only restaurants can update orders'}, status=status.HTTP_403_FORBIDDEN)
 
