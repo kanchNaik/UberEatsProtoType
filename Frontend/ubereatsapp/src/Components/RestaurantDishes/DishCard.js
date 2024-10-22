@@ -17,7 +17,7 @@ function DishCard({dish}) {
     imgsrc= {`${process.env.PUBLIC_URL}/Assets/menuPizza.webp`}       
     alttext= 'Feed Your Employees'>
         <h5>{dish.dish_name}</h5>
-        <h6>{dish.description}</h6>
+        <p className='description'>{dish.description}</p>
         <div style={{ display: 'flex', justifyContent: 'space-between', height: '3vh'}}>
         <h6>{dish.category}</h6>
         <button className="btn btn-primary w-40 d-flex justify-content-center align-items-center p-3" onClick={openClick}>

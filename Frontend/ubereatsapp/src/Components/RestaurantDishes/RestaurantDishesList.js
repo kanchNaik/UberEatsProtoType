@@ -21,7 +21,7 @@ class RestaurantDishesList extends Component {
   fetchRestaurants = () => {
     const restaurantId =  Cookies.get('user_id')
     axios
-      .get(`http://127.0.0.1:8000/api/restaurants/${restaurantId}/dishes`, {
+      .get(`http://localhost:8000/api/restaurants/${restaurantId}/dishes`, {
         headers: {
           'X-CSRFToken': Cookies.get('csrftoken'),
         },

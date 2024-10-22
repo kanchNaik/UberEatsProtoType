@@ -18,10 +18,12 @@ const MenuItem = ({ menu }) => {
         maindivclass = "menu-item"
         txtdivclass = 'text-left menu-item-text'
         imgclass = 'img-fluid'
-        imgsrc={menu.image}
+        imgsrc={`${process.env.PUBLIC_URL}/Assets/menuPizza.webp`}   
         alttext= 'Feed Your Employees'>
+            <h5>{menu.dish_name}</h5>
+            <h6>{menu.description}</h6>
             <div style={{ display: 'flex', justifyContent: 'space-between', height: '3vh'}}>
-            <h5>{menu.name}</h5>
+            <h6>{menu.category}</h6>
             <button className="btn btn-primary w-40 d-flex justify-content-center align-items-center p-3" onClick={openModal}>
                 <FaPlus className="me-1" /> {/* Icon with margin */}
                 Add

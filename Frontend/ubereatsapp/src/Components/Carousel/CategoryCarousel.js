@@ -28,7 +28,6 @@ const CategoryCarousel = () => {
 
     var start = i;
     var diff = categories.length - i;
-    console.log(i)
     if(start != 0){
       start = start - 1
     }
@@ -36,7 +35,6 @@ const CategoryCarousel = () => {
     if(diff < itemsPerSlide){
       start = i - diff -1
     }
-    console.log(start, diff)
     groupedItems.push(categories.slice(start, start + itemsPerSlide));
   }
 

@@ -26,7 +26,7 @@ const RestaurantCard = ({ restaurant }) => {
             />
           </div>
           <div className="text-left restaurantcard-text">
-            <div style={{ display: 'flex', justifyContent: 'space-between', height: '5vh' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <h5>{restaurant.restaurant_name}</h5>
               <p>⭐ {restaurant.rating}</p>
             </div>
