@@ -194,15 +194,35 @@ class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        data = serializer.data
+
+        if request.user.is_authenticated and request.user.is_restaurant:
+            # Add customer URL for restaurant users
+            data['customer_url'] = request.build_absolute_uri(reverse('customer-detail', args=[data['customer']]))
+        elif request.user.is_authenticated and request.user.is_customer:
+            # Add restaurant URL for customer users
+            data['restaurant_url'] = request.build_absolute_uri(reverse('restaurant-detail', args=[data['restaurant']]))
+
+        return Response(data)
     def list(self, request, **kwargs):
         if request.user.is_authenticated and  request.user.is_customer:
             customer = request.user.customer
             orders = Order.objects.filter(customer=customer).order_by('-created_at')
             serializer = self.get_serializer(orders, many=True)
+            for order in serializer.data:
+                # Build customer URL
+                order['restaurant_url'] = request.build_absolute_uri(reverse('restaurant-detail', args=[order['restaurant']]))
             return Response(serializer.data)
         elif request.user.is_authenticated and  request.user.is_restaurant:
             orders = Order.objects.filter(restaurant=request.user.restaurant).order_by('-created_at')
             serializer = self.get_serializer(orders, many=True)
+            order_data = serializer.data
+            for order in order_data:
+                # Build customer URL
+                order['customer_url'] = request.build_absolute_uri(reverse('customer-detail', args=[order['customer']]))
             return Response(serializer.data)
         else:
             return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -234,3 +254,35 @@ class OrderViewSet(viewsets.ModelViewSet):
 
         return Response({'message': 'Order placed successfully', 'order_id': order.id},
                         status=status.HTTP_201_CREATED)
+
+    def update(self, request, *args, **kwargs):
+        if not request.user.is_authenticated or not request.user.is_restaurant:
+            return Response({'error': 'Only restaurants can update orders'}, status=status.HTTP_403_FORBIDDEN)
+
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+
+        # Check if the restaurant owns this order
+        if instance.restaurant.user != request.user:
+            return Response({'error': 'You can only update orders for your restaurant'},
+                            status=status.HTTP_403_FORBIDDEN)
+
+        # Only allow updating the status field
+        data = {'status': request.data.get('status')}
+        serializer = self.get_serializer(instance, data=data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+
+        if 'status' not in request.data:
+            return Response({'error': 'Only status can be updated'}, status=status.HTTP_400_BAD_REQUEST)
+
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            instance._prefetched_objects_cache = {}
+        order_data = serializer.data
+        order_data['customer_url'] = request.build_absolute_uri(reverse('customer-detail', args=[order_data['customer']]))
+        return Response(order_data)
+
+    def partial_update(self, request, *args, **kwargs):
+        kwargs['partial'] = True
+        return self.update(request, *args, **kwargs)

@@ -70,6 +70,8 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = ['id', 'status', 'total_price', 'delivery_address', 'customer', 'restaurant', 'created_at',
                   'updated_at']
+        read_only_fields = ['id', 'total_price', 'delivery_address', 'customer', 'restaurant', 'created_at',
+                            'updated_at']
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
