@@ -186,7 +186,7 @@ class CartViewSet(viewsets.ModelViewSet):
                 is_still_in_cart=True
             )
             if not created:
-                cart_item.quantity += quantity
+                cart_item.quantity = quantity
                 cart_item.save()
 
             return Response({'message': 'Item added to cart'}, status=status.HTTP_200_OK)
