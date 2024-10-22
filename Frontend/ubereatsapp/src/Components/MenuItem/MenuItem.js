@@ -21,14 +21,14 @@ const MenuItem = ({ menu }) => {
         imgsrc={`${process.env.PUBLIC_URL}/Assets/menuPizza.webp`}   
         alttext= 'Feed Your Employees'>
             <h5>{menu.dish_name}</h5>
-            <h6>{menu.description}</h6>
+            <p>{menu.description}</p>
             <div style={{ display: 'flex', justifyContent: 'space-between', height: '3vh'}}>
             <h6>{menu.category}</h6>
             <button className="btn btn-primary w-40 d-flex justify-content-center align-items-center p-3" onClick={openModal}>
                 <FaPlus className="me-1" /> {/* Icon with margin */}
                 Add
             </button>
-            {isModalOpen && <MenuItemAddModal closeModal={closeModal} />}
+            {isModalOpen && <MenuItemAddModal item = {menu} closeModal={closeModal} />}
             </div>
             <p style={{textAlign:'left'}}>${menu.price}</p>
     </ImgTextCard>

@@ -3,13 +3,11 @@ import CartIcon from '../Common/Cart/CartIcon';
 import CartSidebar from '../Cart/CartSidebar';
 import './FeedNavbar.css';
 
-function FeedNavbar({ onClick, user }) {
+function FeedNavbar({ onClick, user, itemCount }) {
     const [isCartOpen, setIsCartOpen] = useState(false);
     
     const openCart = () => setIsCartOpen(true);
     const closeCart = () => setIsCartOpen(false);
-
-    const itemCount = 0; // replace with dynamic value based on cart
 
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light feed-navbar">
