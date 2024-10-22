@@ -90,7 +90,7 @@ class RestaurantViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
 
         # Add profile URL to each restaurant
-        for restaurant,query in zip(serializer.data,queryset):
+        for restaurant, query in zip(serializer.data, queryset):
             restaurant_id = query.user_id
             restaurant['id'] = restaurant_id
             restaurant['profile_url'] = request.build_absolute_uri(reverse('restaurant-detail', args=[restaurant_id]))
@@ -103,6 +103,7 @@ class RestaurantViewSet(viewsets.ModelViewSet):
         data['profile_url'] = request.build_absolute_uri(reverse('restaurant-detail', args=[instance.user_id]))
         data['id'] = instance.user_id
         return Response(data)
+
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
@@ -120,11 +121,11 @@ class DishViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         # Filter dishes by the restaurant of the authenticated user
         return Dish.objects.filter(restaurant__user=self.request.user)
+
     def perform_create(self, serializer):
         # Set the restaurant to the authenticated user's restaurant
         restaurant = Restaurant.objects.get(user=self.request.user)
         serializer.save(restaurant=restaurant)
-
 
 
 class RestaurantDishesView(generics.ListAPIView):
@@ -134,6 +135,35 @@ class RestaurantDishesView(generics.ListAPIView):
     def get_queryset(self):
         restaurant_id = self.kwargs['restaurant_id']
         return Dish.objects.filter(restaurant_id=restaurant_id)
+
+
+def update_cart_with_new_items(items, customer):
+    cart_items = Cart.objects.filter(customer=customer, is_still_in_cart=True)
+    if cart_items.count() > 0:
+        restaurant_id = cart_items[0].restaurant.user.id
+        restaurant = Restaurant.objects.get(user_id=restaurant_id)
+
+    if not items:
+        return Response({'message': 'Cart is empty'}, status=status.HTTP_400_BAD_REQUEST)
+    if not cart_items.count() > 0:
+        restaurant_id = Dish.objects.get(id=items[0]['dish_id']).restaurant.user.id
+        restaurant = Restaurant.objects.get(user_id=restaurant_id)
+
+    for item in items:
+        #     check if item is in the cart
+        if not Cart.objects.filter(dish_id=item['dish_id'], customer=customer, is_still_in_cart=True).exists():
+            Cart.objects.create(customer=customer, dish=Dish.objects.get(id=item['dish_id']), restaurant=restaurant
+                                , is_still_in_cart=True, quantity=item['quantity'])
+        else:
+            cart_item = Cart.objects.get(dish_id=item['dish_id'], customer=customer, is_still_in_cart=True)
+            cart_item.quantity = item['quantity']
+            cart_item.save()
+    # delete the cart items which are not in the order
+    # Extract dish_ids from request items
+    requested_dish_ids = {item['dish_id'] for item in items}
+
+    # Delete cart items not in requested_dish_ids
+    Cart.objects.filter(customer=customer, is_still_in_cart=True).exclude(dish_id__in=requested_dish_ids).delete()
 
 
 class CartViewSet(viewsets.ModelViewSet):
@@ -157,10 +187,14 @@ class CartViewSet(viewsets.ModelViewSet):
         # Serialize the cart items
         cart_items_serializer = CartItemSerializer(cart_items, many=True)
         cart_total_price = cart_items.aggregate(total_price=Sum(F('quantity') * F('dish__price')))
-        return Response({'restaurant_id': cart_items[0].restaurant.user_id, 'restaurant_name': cart_items[0].restaurant.restaurant_name, 'cart_total_price': cart_total_price['total_price'], 'items': cart_items_serializer.data}, status=status.HTTP_200_OK)
+        return Response({'restaurant_id': cart_items[0].restaurant.user_id,
+                         'restaurant_name': cart_items[0].restaurant.restaurant_name,
+                         'cart_total_price': cart_total_price['total_price'], 'items': cart_items_serializer.data},
+                        status=status.HTTP_200_OK)
+
     @action(detail=False, methods=['POST'])
     def add_to_cart(self, request):
-        if not request.user.is_authenticated and  not request.user.is_customer:
+        if not request.user.is_authenticated and not request.user.is_customer:
             return Response({'message': 'Please login to add items to cart'}, status=status.HTTP_401_UNAUTHORIZED)
 
         customer = request.user.customer
@@ -190,11 +224,25 @@ class CartViewSet(viewsets.ModelViewSet):
                 cart_item.save()
 
             return Response({'message': 'Item added to cart'}, status=status.HTTP_200_OK)
+
+    # Add a API to add multiple dishes in cart
+    @action(detail=False, methods=['POST'])
+    def add_multiple_to_cart(self, request):
+        if not request.user.is_authenticated:
+            return Response({'message': 'Please login to add items to cart'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        customer = request.user.customer
+        items = request.data.get('items', [])
+        update_cart_with_new_items(items, customer)
+
+        return Response({'message': 'Cart updated'}, status=status.HTTP_200_OK)
+
     @action(detail=False, methods=['DELETE'])
     def clear_cart(self, request):
         cart_items = Cart.objects.filter(customer=request.user.customer, is_still_in_cart=True)
         cart_items.delete()
         return Response({'message': 'Cart cleared successfully'}, status=status.HTTP_200_OK)
+
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
@@ -205,6 +253,18 @@ class OrderViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance)
         data = serializer.data
 
+        ordered_items = Cart.objects.filter(order_history=instance.id, is_still_in_cart=False)
+        ordered_items_data = [
+            {
+                'dish_id': item.dish.id,
+                'dish_name': item.dish.dish_name,
+                'quantity': item.quantity,
+                'price': item.dish.price
+            }
+            for item in ordered_items
+        ]
+        data['ordered_items'] = ordered_items_data
+
         if request.user.is_authenticated and request.user.is_restaurant:
             # Add customer URL for restaurant users
             data['customer_url'] = request.build_absolute_uri(reverse('customer-detail', args=[data['customer']]))
@@ -213,16 +273,18 @@ class OrderViewSet(viewsets.ModelViewSet):
             data['restaurant_url'] = request.build_absolute_uri(reverse('restaurant-detail', args=[data['restaurant']]))
 
         return Response(data)
+
     def list(self, request, **kwargs):
-        if request.user.is_authenticated and  request.user.is_customer:
+        if request.user.is_authenticated and request.user.is_customer:
             customer = request.user.customer
             orders = Order.objects.filter(customer=customer).order_by('-created_at')
             serializer = self.get_serializer(orders, many=True)
             for order in serializer.data:
                 # Build customer URL
-                order['restaurant_url'] = request.build_absolute_uri(reverse('restaurant-detail', args=[order['restaurant']]))
+                order['restaurant_url'] = request.build_absolute_uri(
+                    reverse('restaurant-detail', args=[order['restaurant']]))
             return Response(serializer.data)
-        elif request.user.is_authenticated and  request.user.is_restaurant:
+        elif request.user.is_authenticated and request.user.is_restaurant:
             orders = Order.objects.filter(restaurant=request.user.restaurant).order_by('-created_at')
             serializer = self.get_serializer(orders, many=True)
             order_data = serializer.data
@@ -232,18 +294,28 @@ class OrderViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         else:
             return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
+
     @action(detail=False, methods=['POST'])
     def place_order(self, request):
-        if not request.user.is_authenticated and  not request.user.is_customer:
+        if not request.user.is_authenticated and not request.user.is_customer:
             return Response({'message': 'Please login to place an order'}, status=status.HTTP_401_UNAUTHORIZED)
 
         customer = request.user.customer
+
         # Get cart items
         cart_items = Cart.objects.filter(customer=customer, is_still_in_cart=True)
-        delivery_address = request.data.get('delivery_address')
-        total_price = sum(Decimal(item.dish.price) * item.quantity for item in cart_items)
         restaurant_id = cart_items[0].restaurant.user.id
         restaurant = Restaurant.objects.get(user_id=restaurant_id)
+
+        update_cart_with_new_items(request.data.get('items'), customer)
+
+        # Get delivery address
+        cart_items = Cart.objects.filter(customer=customer, is_still_in_cart=True)
+        # if delivery address is empty, return error
+        if not request.data.get('delivery_address'):
+            return Response({'message': 'Delivery address is required'}, status=status.HTTP_400_BAD_REQUEST)
+        delivery_address = request.data.get('delivery_address')
+        total_price = sum(Decimal(item.dish.price) * item.quantity for item in cart_items)
         order = Order.objects.create(
             customer=customer,
             restaurant=restaurant,
@@ -287,26 +359,30 @@ class OrderViewSet(viewsets.ModelViewSet):
         if getattr(instance, '_prefetched_objects_cache', None):
             instance._prefetched_objects_cache = {}
         order_data = serializer.data
-        order_data['customer_url'] = request.build_absolute_uri(reverse('customer-detail', args=[order_data['customer']]))
+        order_data['customer_url'] = request.build_absolute_uri(
+            reverse('customer-detail', args=[order_data['customer']]))
         return Response(order_data)
 
     def partial_update(self, request, *args, **kwargs):
         kwargs['partial'] = True
         return self.update(request, *args, **kwargs)
 
+
 class FavoriteViewSet(viewsets.ModelViewSet):
     queryset = Favorite.objects.all()
     serializer_class = FavoriteSerializer
+
     def list(self, request, **kwargs):
-        if request.user.is_authenticated and  request.user.is_customer:
+        if request.user.is_authenticated and request.user.is_customer:
             customer = request.user.customer
             favorites = Favorite.objects.filter(customer=customer)
             serializer = self.get_serializer(favorites, many=True)
             return Response(serializer.data)
         else:
             return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
+
     def create(self, request, *args, **kwargs):
-        if request.user.is_authenticated and  request.user.is_customer:
+        if request.user.is_authenticated and request.user.is_customer:
             customer = request.user.customer
             restaurant = Restaurant.objects.get(user_id=request.data.get('restaurant_id'))
             favorite = Favorite.objects.create(
