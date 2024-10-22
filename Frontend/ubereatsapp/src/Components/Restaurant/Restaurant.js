@@ -4,7 +4,6 @@ import axios from 'axios';
 import './Restaurant.css';
 import OrderOptions from '../OrderOptions/OrderOptions';
 import Menu from '../Menu/Menu';
-import DishCard from '../RestaurantDishes/DishCard';
 import MenuItem from '../MenuItem/MenuItem'
 
 // Group items by category key

@@ -1,4 +1,3 @@
-// DynamicNavbar.js
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import HomeNavbar from './HomeNavbar';
@@ -9,8 +8,11 @@ import RestaurantFeedNavbar from './RestaurantFeedNavbar';
 import UserSidebarWrapper from '../UserSidebar/UserSidebarWrapper';
 import RestaurantProfileSidebarWrapper from '../RestaurantProfileSidebar/RestaurantProfileSidebarWrapper'
 import { getUserInfo } from '../../Utilities/UserUtils';
+import { useSelector } from 'react-redux';
 
 const DynamicNavbar = () => {
+  const cartCount = useSelector((state) => state.cart?.cartItemCount ?? 0);
+
   const location = useLocation();
   const [isSidebarOpen, setSidebarOpen] = useState(false); // Sidebar state
 
@@ -28,7 +30,7 @@ const DynamicNavbar = () => {
         return <SignUpNavbar />;
       case '/feed':
         return user && user.userType === 'Customer' ? (
-          <FeedNavbar onClick={toggleSidebar} user={user} />
+          <FeedNavbar onClick={toggleSidebar} user={user} itemCount = {cartCount}/>
         ) : (
           <RestaurantFeedNavbar onClick={toggleSidebar} user={user} />
         );
@@ -37,7 +39,7 @@ const DynamicNavbar = () => {
       default:
         return user ? (
           user.userType === 'Customer' ? (
-            <FeedNavbar onClick={toggleSidebar} user={user} />
+            <FeedNavbar onClick={toggleSidebar} user={user} itemCount = {cartCount}/>
           ) : (
             <RestaurantFeedNavbar onClick={toggleSidebar} user={user} />
           )

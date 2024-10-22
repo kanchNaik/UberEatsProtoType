@@ -20,9 +20,6 @@ import RestaurantProfile from './Components/RestaurantProfile/RestaurantProfile'
 import RestaurantDishesList from './Components/RestaurantDishes/RestaurantDishesList'
 import DishAdd from './Components/RestaurantDishes/DishAdd'
 
-
-
-
 function App() {
 
 
