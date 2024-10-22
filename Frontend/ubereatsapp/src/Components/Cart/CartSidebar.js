@@ -71,10 +71,26 @@ const CartSidebar = ({ closeCart }) => {
   };
 
   const handleCheckout = () => {
-    const formattedItems = getFormattedItems();
-    console.log(formattedItems); // Output the formatted items for debugging or further processing
-    // Here, you can send formattedItems to your API or perform any other action
+    
   };
+
+  const handleClearCart = async () => {
+    try {
+      await axios.delete('http://localhost:8000/api/cart/clear_cart/', {
+        withCredentials: true, // Enable sending cookies with the request
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': Cookies.get('csrftoken'),
+        },
+      });
+
+      // Clear local cartItems state
+      setCartItemsState([]);
+      dispatch(setCartItems({ items: [], reset: true })); // Dispatch to Redux to clear the cart
+    } catch (error) {
+      console.error('Error clearing the cart:', error);
+    }
+  }
 
   return (
     <div className="sidebar-overlay">
@@ -129,7 +145,8 @@ const CartSidebar = ({ closeCart }) => {
         </div>
 
         <div className="button-container">
-          <button className="checkout-btn" onClick={handleCheckout}>Go to checkout</button> {/* Call handleCheckout on button click */}
+        <button className="checkout-btn" onClick={handleCheckout}>Go to checkout</button>
+        <button className="checkout-btn" onClick={handleClearCart}>Clear Cart</button>  {/* Button to clear cart */}
         </div>
       </div>
     </div>

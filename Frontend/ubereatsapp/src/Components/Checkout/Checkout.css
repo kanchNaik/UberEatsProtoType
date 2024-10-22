@@ -1,0 +1,113 @@
+.card {
+    max-width: 60%;
+    margin: 30px auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Card shadow */
+    transition: 0.3s;
+}
+
+.card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Hover effect */
+}
+
+.cart-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.cart-summary h2 {
+    font-size: 1.2rem;
+}
+
+.item-details {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.item-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+}
+
+.item-info {
+    flex-grow: 1;
+}
+
+.item-info h3 {
+    font-size: 1rem;
+    margin: 0;
+}
+
+.item-info p {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 5px 0;
+}
+
+.price {
+    text-align: right;
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.promo-section {
+    margin-bottom: 20px;
+}
+
+.promo-section a {
+    color: #0070f3;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.order-total {
+    margin-bottom: 20px;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0;
+    font-size: 0.95rem;
+}
+
+.total {
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: right;
+    margin-top: 10px;
+}
+
+.footer-text {
+    font-size: 0.8rem;
+    color: #999;
+    text-align: center;
+    margin-top: 20px;
+}
+
+
+.place-order-btn {
+    width: 80%;
+    background-color: #0070f3;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+    align-self: center;
+}
+
+.place-order-btn:hover {
+    background-color: #005bb5;
+}

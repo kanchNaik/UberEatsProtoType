@@ -19,8 +19,18 @@ import RestaurantHome from './Components/Feed/RestaurantHome'
 import RestaurantProfile from './Components/RestaurantProfile/RestaurantProfile';
 import RestaurantDishesList from './Components/RestaurantDishes/RestaurantDishesList'
 import DishAdd from './Components/RestaurantDishes/DishAdd'
+import Checkout from './Components/Checkout/Checkout'
+import { useDispatch } from 'react-redux';
+import { fetchCartData } from './Components/Cart/FetchCustomerCart';
 
 function App() {
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // Fetch cart data when the app loads
+    fetchCartData(dispatch);
+  }, [dispatch]);
 
 
   return (
@@ -40,6 +50,7 @@ function App() {
         <Route path="/restaurant/dishes" element={<RestaurantDishesList/>} />
         <Route path="/restaurant/dish/add" element={<DishAdd/>}/>
         <Route path="/restaurant/dish/edit/:id" element={<DishAdd isEdit />} />
+        <Route path="/order/checkout" element={<Checkout/>}/>
       </Routes>
     </div>
   );
