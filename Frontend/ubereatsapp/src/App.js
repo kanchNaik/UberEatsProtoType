@@ -26,6 +26,7 @@ import CustomerOrderList from './Components/Order/CustomerOrderList/CustomerOrde
 import CustomerOrder from './Components/Order/CustomerOrder/CustomerOrder'
 import RestaurantOrderList from './Components/Order/RestaurantOrder/RestaurantOrderList/RestaurantOrderList';
 import FavoriteRestaurants from './Components/FavoriteRestaurants/FavoriteRestaurants'
+import CustomerProfile from './Components/UserProfile/CustomerProfile/CustomerProfile';
 
 function App() {
 
@@ -59,6 +60,7 @@ function App() {
         <Route path="/orders/:id" element={<CustomerOrder />} />
         <Route path="/restaurant/orders" element={<RestaurantOrderList />} />
         <Route path="/favorites" element={<FavoriteRestaurants/>}/>
+        <Route path="/customers/profile/:id" element={<CustomerProfile />}/>
       </Routes>
     </div>
   );

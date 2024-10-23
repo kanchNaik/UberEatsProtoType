@@ -1,0 +1,49 @@
+.orders-container {
+    display: flex;             /* Enable flexbox layout */
+    flex-wrap: wrap;           /* Allow wrapping for smaller screens */
+    gap: 20px;                 /* Add space between the cards */
+    justify-content: flex-start; /* Align items at the start */
+    margin: 20px;   
+    padding: 20px;           /* Margin for the container */
+}
+
+.filter-container {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    margin-top: 3%;
+}
+
+.filter-label {
+    font-size: 1rem;
+    margin-right: 10px;
+    font-weight: 500;
+}
+
+.status-filter {
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+}
+
+.no-orders {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.no-orders-icon {
+    width: 150px;
+    margin-bottom: 20px;
+}
+
+.no-orders h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.no-orders p {
+    color: #666;
+    font-size: 1rem;
+}
