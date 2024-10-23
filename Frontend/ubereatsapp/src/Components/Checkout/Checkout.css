@@ -111,3 +111,16 @@
 .place-order-btn:hover {
     background-color: #005bb5;
 }
+
+.special-note-section {
+    margin: 20px 0;
+}
+
+.special-note-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: none;
+}

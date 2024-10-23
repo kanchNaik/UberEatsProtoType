@@ -4,14 +4,63 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons';
 import { NavLink } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import axios from 'axios';
 
 const RestaurantCard = ({ restaurant }) => {
   const [isFavorite, setIsFavorite] = useState(false);
 
-  // Prevent the NavLink from triggering when clicking the heart
-  const toggleFavorite = (e) => {
-    e.preventDefault(); // Stop NavLink navigation
-    setIsFavorite(!isFavorite);
+  const toggleFavorite = async (e) => {
+    e.preventDefault(); // Prevent NavLink navigation
+    debugger;
+    if (isFavorite) {
+      // If already a favorite, remove it from favorites
+      try {
+        const response = await axios.delete(
+          'http://localhost:8000/api/favorite/',
+          {
+            data: { restaurant_id: restaurant.id }, // Axios requires 'data' for DELETE requests
+            withCredentials: true, // Send cookies with request
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': Cookies.get('csrftoken'), // Get CSRF token from cookies
+            },
+          }
+        );
+
+        if (response.status === 200) {
+          console.log(`Restaurant ${restaurant.id} removed from favorites.`);
+          setIsFavorite(false); // Update UI to reflect unfavorited status
+        }
+      } catch (error) {
+        console.error('Error removing from favorites:', error);
+      }
+    } else {
+      // If not a favorite, add it to favorites
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/api/favorite/',
+          {
+            restaurant_id: restaurant.id,
+          },
+          {
+            // Send cookies with request
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': Cookies.get('csrftoken'), // Get CSRF token from cookies
+            },
+            withCredentials: true,
+          }
+        );
+
+        if (response.status === 201) {
+          console.log(`Restaurant ${restaurant.id} added to favorites.`);
+          setIsFavorite(true); // Update UI to reflect favorited status
+        }
+      } catch (error) {
+        console.error('Error adding to favorites:', error);
+      }
+    }
   };
 
   return (
