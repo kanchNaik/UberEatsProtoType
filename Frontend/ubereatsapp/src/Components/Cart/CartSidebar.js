@@ -7,7 +7,8 @@ import { setCartItems } from '../../Reducers/cartReducer';
 import { useNavigate  } from 'react-router-dom';
 
 const CartSidebar = ({ closeCart }) => {
-  const [cartItems, setCartItemsState] = useState([]); // Local state for cart items
+  const [cartItems, setCartItemsState] = useState([]); 
+  const [restaurantName, setRestaurantName] = useState('')// Local state for cart items
   const navigate = useNavigate()
   const dispatch = useDispatch();
 

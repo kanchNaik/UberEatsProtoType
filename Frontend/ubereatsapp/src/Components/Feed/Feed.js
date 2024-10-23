@@ -29,7 +29,8 @@ const Feed = () => {
   const location = useLocation();
   const userInfo = getUserInfo();
   
-  const [filteredRestaurants, setFilteredRestaurants] = useState([]); // Initialize with an empty array
+  const [restaurants, setRestaurants] = useState([]); // All restaurants with favorite flag
+  const [filteredRestaurants, setFilteredRestaurants] = useState([]); // Filtered restaurants
   const [selectedFilter, setSelectedFilter] = useState("All"); // Track selected filter
   const [selectedDropdown, setSelectedDropdown] = useState({ rating: "", price: "", dietary: "" }); // Track dropdown selections
 
@@ -47,7 +48,7 @@ const Feed = () => {
         setFilteredRestaurants(prev => prev.filter(restaurant => restaurant.rating >= 4.5));
         break;
       default:
-        setFilteredRestaurants(filteredRestaurants); // Reset to fetched data
+        setFilteredRestaurants(restaurants); // Reset to fetched data
     }
   };
 
@@ -71,27 +72,54 @@ const Feed = () => {
   };
 
   useEffect(() => {
-    // Function to fetch restaurant data
-    const fetchRestaurants = async () => {
+    const fetchRestaurantsAndFavorites = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/restaurants', {
-          headers: {
-            'X-CSRFToken': Cookies.get('csrftoken'),
-          },
-          withCredentials: true, // Enable sending cookies with the request
-        });
-
-        // Update the state with the fetched restaurants
-        setFilteredRestaurants(response.data); // Assuming response.data is the array of restaurants
+          // Fetch restaurants
+          const restaurantResponse = await axios.get('http://localhost:8000/api/restaurants', {
+              headers: {
+                  'X-CSRFToken': Cookies.get('csrftoken'),
+              },
+              withCredentials: true, // Enable sending cookies with the request
+          });
+  
+          const fetchedRestaurants = restaurantResponse.data; // Assuming response.data is the array of restaurants
+  
+          // Fetch favorites
+          const favoriteResponse = await axios.get('http://localhost:8000/api/favorite/', {
+              headers: {
+                  'X-CSRFToken': Cookies.get('csrftoken'),
+              },
+              withCredentials: true,
+          });
+  
+          // Map the favorite restaurants and extract both favorite id and restaurant_id
+          const favoriteData = favoriteResponse.data.map(entry => ({
+              favoriteId: entry.id, // The id of the favorite entry
+              restaurantId: entry.restaurant.restaurant_id, // The id of the restaurant
+          }));
+  
+          const favoriteIds = favoriteData.map(fav => fav.restaurantId);
+  
+          // Mark restaurants as favorite based on favoriteIds and include the favoriteId
+          const updatedRestaurants = fetchedRestaurants.map(restaurant => {
+              const favoriteEntry = favoriteData.find(fav => fav.restaurantId === restaurant.id);
+              return {
+                  ...restaurant,
+                  isFavorite: favoriteEntry !== undefined, // Set favorite flag
+                  favoriteId: favoriteEntry ? favoriteEntry.favoriteId : null, // Store the favorite entry's id, if it exists
+              };
+          });
+  
+          // Set state with the updated restaurant list
+          setRestaurants(updatedRestaurants); // Set full restaurant list with favorite flag and favoriteId
+          setFilteredRestaurants(updatedRestaurants); // Initialize filtered list with all restaurants
       } catch (error) {
-        // Handle errors here
-        console.error('Error fetching restaurants:', error);
+          console.error('Error fetching data:', error);
       }
-    };
+  };  
 
-    // Call the fetch function
-    fetchRestaurants();
-  }, []);
+    fetchRestaurantsAndFavorites();
+  }, []); // Run on component mount
 
   return (
     <div className="App container">

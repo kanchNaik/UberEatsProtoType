@@ -25,6 +25,8 @@ import { fetchCartData } from './Components/Cart/FetchCustomerCart';
 import CustomerOrderList from './Components/Order/CustomerOrderList/CustomerOrderList';
 import CustomerOrder from './Components/Order/CustomerOrder/CustomerOrder'
 import RestaurantOrderList from './Components/Order/RestaurantOrder/RestaurantOrderList/RestaurantOrderList';
+import FavoriteRestaurants from './Components/FavoriteRestaurants/FavoriteRestaurants'
+
 function App() {
 
   const dispatch = useDispatch();
@@ -56,6 +58,7 @@ function App() {
         <Route path="/orders" element={<CustomerOrderList />}/>
         <Route path="/orders/:id" element={<CustomerOrder />} />
         <Route path="/restaurant/orders" element={<RestaurantOrderList />} />
+        <Route path="/favorites" element={<FavoriteRestaurants/>}/>
       </Routes>
     </div>
   );
