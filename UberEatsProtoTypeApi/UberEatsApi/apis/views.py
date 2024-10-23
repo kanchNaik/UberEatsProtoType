@@ -268,6 +268,8 @@ class OrderViewSet(viewsets.ModelViewSet):
         if request.user.is_authenticated and request.user.is_restaurant:
             # Add customer URL for restaurant users
             data['customer_url'] = request.build_absolute_uri(reverse('customer-detail', args=[data['customer']]))
+            data['customer_name'] = Customer.objects.get(user_id=data['customer']).name
+
         elif request.user.is_authenticated and request.user.is_customer:
             # Add restaurant URL for customer users
             data['restaurant_url'] = request.build_absolute_uri(reverse('restaurant-detail', args=[data['restaurant']]))
