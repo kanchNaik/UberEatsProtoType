@@ -407,6 +407,10 @@ class FavoriteViewSet(viewsets.ModelViewSet):
             customer = request.user.customer
             favorites = Favorite.objects.filter(customer=customer)
             serializer = self.get_serializer(favorites, many=True)
+            favorite_data = serializer.data
+            for favorite, _favorite in zip(favorite_data, favorites):
+                favorite['restaurant']['restaurant_id'] = _favorite.restaurant.user_id
+                favorite['restaurant']['restaurant_url'] = request.build_absolute_uri(reverse('restaurant-detail', args=[_favorite.restaurant.user_id]))
             return Response(serializer.data)
         else:
             return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
