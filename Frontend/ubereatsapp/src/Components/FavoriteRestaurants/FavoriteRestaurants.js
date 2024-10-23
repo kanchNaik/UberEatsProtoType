@@ -20,13 +20,36 @@ const FavoriteRestaurants = () => {
       });
 
       if (response.status === 200) {
-        setFavorites(response.data); // Set the favorite restaurants
+        const favoriteRestaurants = response.data.map((entry) => ({
+          ...entry.restaurant, // Keep all restaurant details
+          favoriteId: entry.id, // Store the favorite entry's id for removal
+        }));
+        setFavorites(favoriteRestaurants); // Set the favorite restaurants
       }
     } catch (error) {
       console.error('Error fetching favorite restaurants:', error);
       setError('Failed to load favorite restaurants. Please try again.');
     } finally {
       setLoading(false); // Stop loading when the fetch is complete
+    }
+  };
+
+  // Handle removing a restaurant from favorites
+  const removeFavorite = async (favoriteId) => {
+    try {
+      const response = await axios.delete(`http://localhost:8000/api/favorite/${favoriteId}/`, {
+        withCredentials: true, // Include credentials (session cookies)
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': Cookies.get('csrftoken'), // Get CSRF token from cookies
+        },
+      });
+
+      if (response.status === 204) { // Success, no content response
+        setFavorites(favorites.filter(favorite => favorite.favoriteId !== favoriteId)); // Remove from list
+      }
+    } catch (error) {
+      console.error('Error removing favorite:', error);
     }
   };
 
@@ -52,17 +75,26 @@ const FavoriteRestaurants = () => {
       <h2>Your Favorite Restaurants</h2>
       <div className="favorites-container">
         {favorites.map((restaurant) => (
-          <div key={restaurant.id} className="favorite-card">
+          <div key={restaurant.favoriteId} className="favorite-card">
             <img
-              src={restaurant.image_url || 'default-image.png'} // Placeholder if no image
-              alt={restaurant.name}
+              src={restaurant.image || 'default-image.png'} // Placeholder if no image
+              alt={restaurant.restaurant_name}
               className="favorite-image"
             />
             <div className="favorite-details">
               <h4>{restaurant.restaurant_name}</h4>
+              <h6>{restaurant.location}</h6>
               <p>Rating: ⭐ {restaurant.rating}</p>
               <p>Delivery Time: {restaurant.delivery_time}</p>
-              {/* Add more details as necessary */}
+              <p>Price Range: {restaurant.price_range}</p>
+              <p>Contact: {restaurant.phone_number}</p>
+              {/* Remove Favorite Button */}
+              <button 
+                className="remove-favorite-button" 
+                onClick={() => removeFavorite(restaurant.favoriteId)}
+              >
+                Remove from Favorites
+              </button>
             </div>
           </div>
         ))}

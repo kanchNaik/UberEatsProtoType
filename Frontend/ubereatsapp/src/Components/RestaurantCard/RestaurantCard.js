@@ -7,8 +7,9 @@ import { NavLink } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 
-const RestaurantCard = ({ restaurant }) => {
-  const [isFavorite, setIsFavorite] = useState(false);
+const RestaurantCard = ({restaurantid, restaurant }) => {
+  const [isFavorite, setIsFavorite] = useState(restaurant.isFavorite);
+  const [favoriteId, setFavoriteId] = useState(restaurant.favoriteId);
 
   const toggleFavorite = async (e) => {
     e.preventDefault(); // Prevent NavLink navigation
@@ -17,9 +18,8 @@ const RestaurantCard = ({ restaurant }) => {
       // If already a favorite, remove it from favorites
       try {
         const response = await axios.delete(
-          'http://localhost:8000/api/favorite/',
+          `http://localhost:8000/api/favorite/${favoriteId}/`,
           {
-            data: { restaurant_id: restaurant.id }, // Axios requires 'data' for DELETE requests
             withCredentials: true, // Send cookies with request
             headers: {
               'Content-Type': 'application/json',
@@ -28,9 +28,10 @@ const RestaurantCard = ({ restaurant }) => {
           }
         );
 
-        if (response.status === 200) {
+        if (response.status === 204) {
           console.log(`Restaurant ${restaurant.id} removed from favorites.`);
           setIsFavorite(false); // Update UI to reflect unfavorited status
+          setFavoriteId(null)
         }
       } catch (error) {
         console.error('Error removing from favorites:', error);
@@ -56,6 +57,7 @@ const RestaurantCard = ({ restaurant }) => {
         if (response.status === 201) {
           console.log(`Restaurant ${restaurant.id} added to favorites.`);
           setIsFavorite(true); // Update UI to reflect favorited status
+          setFavoriteId(response.data.favorite_id)
         }
       } catch (error) {
         console.error('Error adding to favorites:', error);

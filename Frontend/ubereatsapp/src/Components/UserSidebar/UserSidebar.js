@@ -60,11 +60,7 @@ const UserSidebar = () => {
 
       <ul className="sidebar-menu">
       <NavLink to='/orders'><li>Orders</li></NavLink>
-        <li>Wallet</li>
-        <li>Meal plan</li>
-        <li>Help</li>
-        <li>Get a ride</li>
-        <li>Promotions</li>
+      <NavLink to='/favorites'><li>Favorites</li></NavLink>
         <li>Uber One <span className="badge">Expires Oct 15</span></li>
         <li>Invite friends <span className="badge">You get ₹100 off</span></li>
       </ul>
