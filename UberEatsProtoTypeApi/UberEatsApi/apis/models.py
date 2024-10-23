@@ -103,6 +103,7 @@ class Order(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    special_notes = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.id + ": " + self.status + " " + self.total_price + " " + self.delivery_address

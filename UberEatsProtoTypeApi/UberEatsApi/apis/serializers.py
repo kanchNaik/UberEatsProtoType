@@ -69,9 +69,9 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ['id', 'status', 'total_price', 'delivery_address', 'customer', 'restaurant', 'created_at',
-                  'updated_at']
+                  'updated_at', 'special_notes']
         read_only_fields = ['id', 'total_price', 'delivery_address', 'customer', 'restaurant', 'created_at',
-                            'updated_at']
+                            'updated_at', 'special_notes']
 
 
 class FavoriteSerializer(serializers.ModelSerializer):

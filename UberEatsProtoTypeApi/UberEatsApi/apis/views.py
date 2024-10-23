@@ -271,6 +271,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         elif request.user.is_authenticated and request.user.is_customer:
             # Add restaurant URL for customer users
             data['restaurant_url'] = request.build_absolute_uri(reverse('restaurant-detail', args=[data['restaurant']]))
+            data['restaurant_name'] = Restaurant.objects.get(user_id=data['restaurant']).restaurant_name
 
         return Response(data)
 
@@ -347,7 +348,8 @@ class OrderViewSet(viewsets.ModelViewSet):
             restaurant=restaurant,
             total_price=total_price,
             delivery_address=delivery_address,
-            status='New Order'
+            status='New Order',
+            special_notes=request.data.get('special_notes')
         )
 
         # Attach order_id to cart items and invalidate the items from the cart
@@ -356,7 +358,7 @@ class OrderViewSet(viewsets.ModelViewSet):
             cart_item.is_still_in_cart = False
             cart_item.save()
 
-        return Response({'message': 'Order placed successfully', 'order_id': order.id},
+        return Response({'message': 'Order placed successfully', 'order_id': order.id, 'total_price': total_price, 'restaurant_name': restaurant.restaurant_name},
                         status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
