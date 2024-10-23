@@ -280,17 +280,43 @@ class OrderViewSet(viewsets.ModelViewSet):
             orders = Order.objects.filter(customer=customer).order_by('-created_at')
             serializer = self.get_serializer(orders, many=True)
             for order in serializer.data:
+                ordered_items = Cart.objects.filter(order_history=order["id"], is_still_in_cart=False)
+                ordered_items_data = [
+                    {
+                        'dish_id': item.dish.id,
+                        'dish_name': item.dish.dish_name,
+                        'quantity': item.quantity,
+                        'price': item.dish.price
+                    }
+                    for item in ordered_items
+                ]
+                order['items'] = ordered_items_data
                 # Build customer URL
+                order['item_count'] = Cart.objects.filter(order_history=order['id']).count()
                 order['restaurant_url'] = request.build_absolute_uri(
                     reverse('restaurant-detail', args=[order['restaurant']]))
+                order['restaurant_name'] = Restaurant.objects.get(user_id=order['restaurant']).restaurant_name
             return Response(serializer.data)
         elif request.user.is_authenticated and request.user.is_restaurant:
             orders = Order.objects.filter(restaurant=request.user.restaurant).order_by('-created_at')
             serializer = self.get_serializer(orders, many=True)
             order_data = serializer.data
             for order in order_data:
+                ordered_items = Cart.objects.filter(order_history=order["id"], is_still_in_cart=False)
+                ordered_items_data = [
+                    {
+                        'dish_id': item.dish.id,
+                        'dish_name': item.dish.dish_name,
+                        'quantity': item.quantity,
+                        'price': item.dish.price
+                    }
+                    for item in ordered_items
+                ]
+                order['items'] = ordered_items_data
                 # Build customer URL
+                order['item_count'] = Cart.objects.filter(order_history=order['id']).count()
                 order['customer_url'] = request.build_absolute_uri(reverse('customer-detail', args=[order['customer']]))
+                order['customer_name'] = Customer.objects.get(user_id=order['customer']).customer_name
             return Response(serializer.data)
         else:
             return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
