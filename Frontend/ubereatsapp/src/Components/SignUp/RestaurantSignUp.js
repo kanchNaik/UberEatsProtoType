@@ -66,9 +66,9 @@ const RestaurantSignUp = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-  
+    const ip_address = 'http://13.56.179.210/'
     axios
-      .post('http://localhost:8000/api/signup/', formData, {
+      .post(ip_address+'/api/signup/', formData, {
         headers: {
           'Content-Type': 'application/json',
         },
