@@ -1,24 +1,43 @@
 .navbarmenue {
-    border: none; /* Remove the button border for a cleaner look */
-    background: transparent;
-  }
-  
-  .hamberger-icon {
-    font-size: 2rem; /* Adjust size as needed */
-    color: black; /* Change to your preferred color */
-    background: transparent; /* Remove any background */
-    display: inline-block; /* Ensures the icon stays inline */
-    padding: 0; /* Remove any padding */
-    margin: 0; /* Remove any margin */
+  border: none; /* Remove the button border for a cleaner look */
+  background: transparent;
+}
+
+.hamberger-icon {
+  font-size: 2rem; /* Adjust size as needed */
+  color: black; /* Change to your preferred color */
+  background: transparent; /* Remove any background */
+  display: inline-block; /* Ensures the icon stays inline */
+  padding: 0; /* Remove any padding */
+  margin: 0; /* Remove any margin */
+}
+
+.herocontainer {
+  margin-top: 10%;
+}
+
+.ho {
+  margin-bottom: 40px;
+  font-size: 4rem;
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .ho {
+    font-size: 2.5rem;
   }
 
-  .herocontainer{
-    margin-top: 10%;
+  .herocontainer {
+    margin-top: 20%;
+  }
+}
+
+@media (max-width: 576px) {
+  .ho {
+    font-size: 2rem;
   }
 
-  .ho{
-    margin-bottom: 40px;
-    font-size: 52px;
-    font-weight: 700;
+  .herocontainer {
+    margin-top: 25%;
   }
-
+}
