@@ -75,6 +75,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
+    restaurant = RestaurantSerializer()
     class Meta:
         model = Favorite
         fields = ['customer', 'restaurant', 'created_at']
