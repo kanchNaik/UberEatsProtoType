@@ -24,7 +24,7 @@ import { useDispatch } from 'react-redux';
 import { fetchCartData } from './Components/Cart/FetchCustomerCart';
 import CustomerOrderList from './Components/Order/CustomerOrderList/CustomerOrderList';
 import CustomerOrder from './Components/Order/CustomerOrder/CustomerOrder'
-
+import RestaurantOrderList from './Components/Order/RestaurantOrder/RestaurantOrderList/RestaurantOrderList';
 function App() {
 
   const dispatch = useDispatch();
@@ -55,6 +55,7 @@ function App() {
         <Route path="/order/checkout" element={<Checkout/>}/>
         <Route path="/orders" element={<CustomerOrderList />}/>
         <Route path="/orders/:id" element={<CustomerOrder />} />
+        <Route path="/restaurant/orders" element={<RestaurantOrderList />} />
       </Routes>
     </div>
   );
