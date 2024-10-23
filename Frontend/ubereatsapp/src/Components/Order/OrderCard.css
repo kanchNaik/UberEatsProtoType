@@ -1,0 +1,72 @@
+.order-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    max-width: 400px;
+    margin: 20px auto;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.restaurant-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.partner-logo {
+    width: 20px;
+    height: 20px;
+}
+
+.order-details {
+    margin: 8px 0;
+}
+
+.order-info {
+    color: #555;
+    font-size: 14px;
+    margin: 4px 0;
+}
+
+.item-list {
+    color: #333;
+    font-weight: 500;
+    margin: 4px 0;
+}
+
+.review-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+}
+
+.stars {
+    display: flex;
+}
+
+.star {
+    font-size: 20px;
+    color: #ccc;
+    cursor: pointer;
+    margin-right: 4px;
+}
+
+.review-link {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.review-link:hover {
+    text-decoration: underline;
+}

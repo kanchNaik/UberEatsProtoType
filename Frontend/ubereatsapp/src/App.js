@@ -15,14 +15,16 @@ import UserProfile from './Components/UserProfile/UserProfile';
 
 import DynamicNavbar from './Components/Navbar/DynamicNavbar';
 import Testpage from './Components/Testpage';
-import RestaurantHome from './Components/Feed/RestaurantHome'
+import RestaurantHome from './Components/Feed/RestaurantHome';
 import RestaurantProfile from './Components/RestaurantProfile/RestaurantProfile';
-import RestaurantDishesList from './Components/RestaurantDishes/RestaurantDishesList'
-import DishAdd from './Components/RestaurantDishes/DishAdd'
-import Checkout from './Components/Checkout/Checkout'
+import RestaurantDishesList from './Components/RestaurantDishes/RestaurantDishesList';
+import DishAdd from './Components/RestaurantDishes/DishAdd';
+import Checkout from './Components/Checkout/Checkout';
 import { useDispatch } from 'react-redux';
 import { fetchCartData } from './Components/Cart/FetchCustomerCart';
-
+import CustomerOrderList from './Components/Order/CustomerOrderList/CustomerOrderList';
+import CustomerOrder from './Components/Order/CustomerOrder/CustomerOrder'
+import RestaurantOrderList from './Components/Order/RestaurantOrder/RestaurantOrderList/RestaurantOrderList';
 function App() {
 
   const dispatch = useDispatch();
@@ -51,6 +53,9 @@ function App() {
         <Route path="/restaurant/dish/add" element={<DishAdd/>}/>
         <Route path="/restaurant/dish/edit/:id" element={<DishAdd isEdit />} />
         <Route path="/order/checkout" element={<Checkout/>}/>
+        <Route path="/orders" element={<CustomerOrderList />}/>
+        <Route path="/orders/:id" element={<CustomerOrder />} />
+        <Route path="/restaurant/orders" element={<RestaurantOrderList />} />
       </Routes>
     </div>
   );

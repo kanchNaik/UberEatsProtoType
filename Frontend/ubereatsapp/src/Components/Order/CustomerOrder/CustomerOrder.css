@@ -1,0 +1,121 @@
+/* General styling for the order details card */
+.order-details-card {
+    width: 100%;
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+}
+
+h2 {
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+    color: #333;
+    text-align: center;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 10px;
+}
+
+p {
+    font-size: 1rem;
+    margin: 0.5rem 0;
+}
+
+.error-message {
+    color: red;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* Order items section */
+.order-items {
+    margin: 1.5rem 0;
+}
+
+.order-items h3 {
+    font-size: 1.5rem;
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+/* Styling for individual order item */
+.order-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s;
+}
+
+.order-item:hover {
+    transform: scale(1.02);
+}
+
+.order-image {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-right: 1rem;
+}
+
+.order-item-info h4 {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 0.3rem;
+}
+
+.order-item-info p {
+    font-size: 1rem;
+    color: #555;
+}
+
+.order-price {
+    font-weight: bold;
+    color: #111;
+}
+
+/* Order summary section */
+.order-summary {
+    padding: 1.5rem;
+    border-top: 2px solid #f0f0f0;
+}
+
+.order-summary h3 {
+    font-size: 1.5rem;
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+.order-summary p {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.order-summary h4 {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #333;
+}
+
+@media (max-width: 600px) {
+    .order-details-card {
+        padding: 1.5rem;
+    }
+
+    .order-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .order-image {
+        margin-bottom: 1rem;
+    }
+}

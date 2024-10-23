@@ -59,7 +59,7 @@ const RestaurantProfileSidebar = () => {
       </div>
 
       <ul className="sidebar-menu">
-        <li>Orders</li>
+      <NavLink to="/restaurant/orders"><li>Orders</li></NavLink>
         <li>Help</li>
         <NavLink to="/restaurant/dishes"> <li>Dishes</li></NavLink>
       </ul>

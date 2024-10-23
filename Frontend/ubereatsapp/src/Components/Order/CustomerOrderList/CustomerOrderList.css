@@ -1,0 +1,54 @@
+.order-list {
+    text-align: center;
+    margin: 50px auto;
+    max-width: 600px;
+}
+
+.loading,
+.error {
+    font-size: 1.5rem;
+    color: #666;
+}
+
+.no-orders {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 50px;
+}
+
+.no-orders-icon {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 20px;
+}
+
+.no-orders h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.no-orders p {
+    font-size: 1rem;
+    color: #666;
+}
+
+.order-list ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.order-list li {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+
+.order-list a{
+    text-decoration: none;
+    color: black;
+}

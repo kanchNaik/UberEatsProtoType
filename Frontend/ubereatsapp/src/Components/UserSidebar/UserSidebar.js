@@ -59,7 +59,7 @@ const UserSidebar = () => {
       </div>
 
       <ul className="sidebar-menu">
-        <li>Orders</li>
+      <NavLink to='/orders'><li>Orders</li></NavLink>
         <li>Wallet</li>
         <li>Meal plan</li>
         <li>Help</li>

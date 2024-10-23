@@ -4,11 +4,11 @@ import './CartSidebar.css'; // Change to the new CSS file for the sidebar
 import Cookies from 'js-cookie';
 import { useDispatch } from 'react-redux';
 import { setCartItems } from '../../Reducers/cartReducer';
+import { useNavigate  } from 'react-router-dom';
 
 const CartSidebar = ({ closeCart }) => {
-  const [specialNote, setSpecialNote] = useState('');
   const [cartItems, setCartItemsState] = useState([]); // Local state for cart items
-
+  const navigate = useNavigate()
   const dispatch = useDispatch();
 
   // Function to fetch cart data
@@ -53,8 +53,6 @@ const CartSidebar = ({ closeCart }) => {
     }
   };
 
-  const handleNoteChange = (e) => setSpecialNote(e.target.value);
-
   // Calculate subtotal
   const calculateSubtotal = () => {
     return cartItems.reduce((total, item) => {
@@ -70,8 +68,34 @@ const CartSidebar = ({ closeCart }) => {
     }));
   };
 
-  const handleCheckout = () => {
-    
+  
+  const handleCheckout = async () => {
+    try {
+      const formattedItems = cartItems.map((item) => ({
+        dish_id: item.dish_id, // Assuming item.id is the dish ID
+        quantity: item.quantity || 1, // Get the quantity or default to 1
+      }));
+
+      const response = await axios.post(
+          'http://localhost:8000/api/cart/add_multiple_to_cart/',
+          {
+            formattedItems
+          },
+          {
+              headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': Cookies.get('csrftoken'),
+              },
+              withCredentials: true, // Ensure that cookies are included in the request
+          }
+      );
+      
+      console.log('Response:', response.data);
+      closeCart() // Handle the response data here
+      navigate('/order/checkout')
+  } catch (error) {
+      console.error('Error adding to cart:', error.response ? error.response.data : error.message);
+  }
   };
 
   const handleClearCart = async () => {
@@ -86,7 +110,8 @@ const CartSidebar = ({ closeCart }) => {
 
       // Clear local cartItems state
       setCartItemsState([]);
-      dispatch(setCartItems({ items: [], reset: true })); // Dispatch to Redux to clear the cart
+      dispatch(setCartItems({ items: [], reset: true }));
+      closeCart() // Dispatch to Redux to clear the cart
     } catch (error) {
       console.error('Error clearing the cart:', error);
     }
@@ -125,17 +150,6 @@ const CartSidebar = ({ closeCart }) => {
             </div>
           </div>
         ))}
-
-        <div className="order-note">
-          <label htmlFor="specialNote" className='order-note label'><h6>Add an order note:</h6></label>
-          <textarea
-            id="specialNote"
-            placeholder="Utensils, special instructions, etc."
-            value={specialNote}
-            onChange={handleNoteChange}
-            className='order-note textarea'
-          />
-        </div>
 
         <hr />
 
