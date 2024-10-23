@@ -317,7 +317,7 @@ class OrderViewSet(viewsets.ModelViewSet):
                 # Build customer URL
                 order['item_count'] = Cart.objects.filter(order_history=order['id']).count()
                 order['customer_url'] = request.build_absolute_uri(reverse('customer-detail', args=[order['customer']]))
-                order['customer_name'] = Customer.objects.get(user_id=order['customer']).customer_name
+                order['customer_name'] = Customer.objects.get(user_id=order['customer']).name
             return Response(serializer.data)
         else:
             return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
