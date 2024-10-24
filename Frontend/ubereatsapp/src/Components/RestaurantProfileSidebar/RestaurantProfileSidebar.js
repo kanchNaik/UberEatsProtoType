@@ -5,6 +5,9 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import { useNavigate  } from 'react-router-dom';
 import { getUserInfo } from '../../Utilities/UserUtils';
+import { BASE_API_URL } from '../../Setupconstants';
+import { messageService } from '../Common/Message/MessageService';
+
 
 const RestaurantProfileSidebar = () => {
 
@@ -15,7 +18,7 @@ const RestaurantProfileSidebar = () => {
     console.log('sessionid', Cookies.get('sessionid'))
     try {
       const response = await axios.post(
-        'http://localhost:8000/api/logout/',  // URL for logout
+        `${BASE_API_URL}/api/logout/`,  // URL for logout
         {},  // No data to send in body for logout
         {
             headers: {

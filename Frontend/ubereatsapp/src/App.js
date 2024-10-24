@@ -48,7 +48,7 @@ function App() {
         <Route path="/merchantsignup" element={<RestaurantSignUp />} />
         <Route path="/feed" element={<Feed />} />
         <Route path="/restaurant/:id" element={<Restaurant />} />
-        <Route path="/customer/my" element={<UserProfile />} />
+        <Route path="/customer/me" element={<UserProfile />} />
         <Route path="/test" element={<Testpage/>}/>
         <Route path="/restaurant/home" element={<RestaurantHome/>}/>
         <Route path="/restaurant/my" element={<RestaurantProfile/>}/>

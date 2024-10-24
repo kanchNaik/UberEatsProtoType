@@ -24,7 +24,9 @@ function SignIn() {
       .post(`${BASE_API_URL}/api/login/`, {
         username: inputEmail,
         password: inputPassword,
-      })
+      }, {
+        withCredentials: true,  // Ensure this is set to true
+    })
       .then((response) => {
         const {message, token, user } = response.data;
         // Store tokens and user info in cookies
