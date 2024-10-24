@@ -34,12 +34,8 @@
     color: #666;
 }
 
-.order-list ul {
-    list-style-type: none;
-    padding: 0;
-}
 
-.order-list a{
+.orders-container a{
     text-decoration: none;
     color: black;
 }

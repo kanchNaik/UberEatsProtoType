@@ -1,10 +1,10 @@
 .orders-container {
-    display: flex;             /* Enable flexbox layout */
-    flex-wrap: wrap;           /* Allow wrapping for smaller screens */
-    gap: 20px;                 /* Add space between the cards */
-    justify-content: flex-start; /* Align items at the start */
+    display: flex;             
+    flex-wrap: wrap;           
+    gap: 20px;                 
+    justify-content: center; 
     margin: 20px;   
-    padding: 20px;           /* Margin for the container */
+    padding: 20px;          
 }
 
 .filter-container {

@@ -21,7 +21,7 @@ export const fetchCartData = async (dispatch) => {
       quantity: item.quantity || 1, // Get the quantity or default to 1
     }));
 
-    dispatch(setCartItems({ items: formattedItems, reset: true })); // Dispatch action to update Redux store with formatted items
+    dispatch(setCartItems({ items: formattedItems, restaurantId: response.data.restaurant_id, reset: true })); // Dispatch action to update Redux store with formatted items
   } catch (error) {
     console.error('Error fetching cart data:', error);
   }

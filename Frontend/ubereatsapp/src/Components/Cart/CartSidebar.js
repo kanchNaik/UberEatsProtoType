@@ -31,7 +31,7 @@ const CartSidebar = ({ closeCart }) => {
       }));
 
       setCartItemsState(items); // Update local state
-      dispatch(setCartItems({ items: formattedItems, reset: true })); // Dispatch action to update Redux store with formatted items
+      dispatch(setCartItems({ items: formattedItems, restaurantId: response.data.restaurant_id, reset: true })); // Dispatch action to update Redux store with formatted items
     } catch (error) {
       console.error('Error fetching cart data:', error);
     }

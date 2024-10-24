@@ -3,7 +3,8 @@ import axios from 'axios';
 import './RestaurantOrderList.css'; // Add styling for the page
 import Cookies from 'js-cookie';
 import RestaurantOrderCard from '../../RestaurantOrderCard';
-import { NavLink } from 'react-router-dom';
+import { BASE_API_URL } from '../../../../Setupconstants';
+import { messageService } from '../../../Common/Message/MessageService';
 
 const RestaurantOrderList = () => {
     const [orders, setOrders] = useState([]);
@@ -16,7 +17,7 @@ const RestaurantOrderList = () => {
         // Function to fetch the order list from the API
         const fetchOrders = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/api/order/', {
+                const response = await axios.get(`${BASE_API_URL}/api/order/`, {
                     headers: {
                         'X-CSRFToken': Cookies.get('csrftoken'),
                     },
@@ -28,6 +29,7 @@ const RestaurantOrderList = () => {
             } catch (err) {
                 setError(err);
                 setLoading(false);
+                messageService.showMessage('error', 'Failed to load orders. Please try again.')
             }
         };
 
