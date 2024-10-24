@@ -1,0 +1,10 @@
+.sticky-message {
+    position: fixed; /* Fixed positioning */
+    top: 20px; /* Distance from the top */
+    right: 20px; /* Distance from the right */
+    z-index: 1050; /* Ensure it is above other content */
+    width: auto; /* Adjust width as needed */
+    max-width: 300px; /* Set a maximum width to avoid stretching too much */
+    transition: opacity 0.3s ease-in-out; /* Smooth transition for fading */
+  }
+  

@@ -1,4 +1,4 @@
-/* App.css */
+
 
 .categories .category {
     text-align: center;
@@ -27,22 +27,16 @@
   }
   
 
-  /* Category Icons */
+ 
 .categories .category .icon {
-    font-size: 2rem; /* Adjust this value to control the size */
+    font-size: 2rem; 
   }
   
-  /* Alternatively, if using image icons */
-  .categories .category img {
-    width: 50px;  /* Set the width of the icons */
-    height: 50px; /* Set the height of the icons */
-    object-fit: contain; /* Maintain aspect ratio */
-  }
 
-  .container{
-    margin-left: 2%;
-    margin-right: 2%;
-    max-width: 96vw;
+  .categories .category img {
+    width: 50px;  
+    height: 50px; 
+    object-fit: contain; 
   }
   
   .featured-restaurants a {
@@ -50,10 +44,23 @@
     color: black;
     display: inline-block;
     width: 100%;
+    padding: 20px 0;
   }
 
   .featured-restaurants .restaurant-card {
-    flex-grow: 1; /* Ensure the card grows evenly */
-    margin: 0 10px; /* Adjust margin to reduce spacing */
+    flex-grow: 1; 
+    margin: 0 10px; 
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    background-color: #f8f9fa;
   }
   
+
+.container {
+  max-width: 96vw;
+  margin-left: auto; 
+  margin-right: auto; 
+}
+

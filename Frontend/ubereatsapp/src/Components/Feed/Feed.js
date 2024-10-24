@@ -4,10 +4,10 @@ import './Feed.css';
 import CategoryCarousel from '../Carousel/CategoryCarousel';
 import Filter from '../Common/Filter/Filter'; // Import the Filter component
 import RestaurantCard from '../RestaurantCard/RestaurantCard'; // Import the RestaurantCard component
-import { NavLink, useLocation } from 'react-router-dom';
-import { getUserInfo } from '../../Utilities/UserUtils';
 import Cookies from 'js-cookie';
 import axios from 'axios';
+import { BASE_API_URL } from '../../Setupconstants';
+import { messageService } from '../Common/Message/MessageService';
 
 const allFilters = [
   "Uber One",
@@ -26,15 +26,10 @@ const dropdownFilters = [
 ];
 
 const Feed = () => {
-  const location = useLocation();
-  const userInfo = getUserInfo();
-  
   const [restaurants, setRestaurants] = useState([]); // All restaurants with favorite flag
   const [filteredRestaurants, setFilteredRestaurants] = useState([]); // Filtered restaurants
   const [selectedFilter, setSelectedFilter] = useState("All"); // Track selected filter
   const [selectedDropdown, setSelectedDropdown] = useState({ rating: "", price: "", dietary: "" }); // Track dropdown selections
-
-  const { location: selectedLocation } = location.state || {}
 
   const handleSelectFilter = (filter) => {
     setSelectedFilter(filter); // Set the selected filter
@@ -74,49 +69,50 @@ const Feed = () => {
   useEffect(() => {
     const fetchRestaurantsAndFavorites = async () => {
       try {
-          // Fetch restaurants
-          const restaurantResponse = await axios.get('http://localhost:8000/api/restaurants', {
-              headers: {
-                  'X-CSRFToken': Cookies.get('csrftoken'),
-              },
-              withCredentials: true, // Enable sending cookies with the request
-          });
-  
-          const fetchedRestaurants = restaurantResponse.data; // Assuming response.data is the array of restaurants
-  
-          // Fetch favorites
-          const favoriteResponse = await axios.get('http://localhost:8000/api/favorite/', {
-              headers: {
-                  'X-CSRFToken': Cookies.get('csrftoken'),
-              },
-              withCredentials: true,
-          });
-  
-          // Map the favorite restaurants and extract both favorite id and restaurant_id
-          const favoriteData = favoriteResponse.data.map(entry => ({
-              favoriteId: entry.id, // The id of the favorite entry
-              restaurantId: entry.restaurant.restaurant_id, // The id of the restaurant
-          }));
-  
-          const favoriteIds = favoriteData.map(fav => fav.restaurantId);
-  
-          // Mark restaurants as favorite based on favoriteIds and include the favoriteId
-          const updatedRestaurants = fetchedRestaurants.map(restaurant => {
-              const favoriteEntry = favoriteData.find(fav => fav.restaurantId === restaurant.id);
-              return {
-                  ...restaurant,
-                  isFavorite: favoriteEntry !== undefined, // Set favorite flag
-                  favoriteId: favoriteEntry ? favoriteEntry.favoriteId : null, // Store the favorite entry's id, if it exists
-              };
-          });
-  
-          // Set state with the updated restaurant list
-          setRestaurants(updatedRestaurants); // Set full restaurant list with favorite flag and favoriteId
-          setFilteredRestaurants(updatedRestaurants); // Initialize filtered list with all restaurants
+        // Fetch restaurants
+        const restaurantResponse = await axios.get(`${BASE_API_URL}/api/restaurants`, {
+          headers: {
+            'X-CSRFToken': Cookies.get('csrftoken'),
+          },
+          withCredentials: true, // Enable sending cookies with the request
+        });
+
+        const fetchedRestaurants = restaurantResponse.data; // Assuming response.data is the array of restaurants
+
+        // Fetch favorites
+        const favoriteResponse = await axios.get(`${BASE_API_URL}/api/favorite/`, {
+          headers: {
+            'X-CSRFToken': Cookies.get('csrftoken'),
+          },
+          withCredentials: true,
+        });
+
+        // Map the favorite restaurants and extract both favorite id and restaurant_id
+        const favoriteData = favoriteResponse.data.map(entry => ({
+          favoriteId: entry.id, // The id of the favorite entry
+          restaurantId: entry.restaurant.restaurant_id, // The id of the restaurant
+        }));
+
+        const favoriteIds = favoriteData.map(fav => fav.restaurantId);
+
+        // Mark restaurants as favorite based on favoriteIds and include the favoriteId
+        const updatedRestaurants = fetchedRestaurants.map(restaurant => {
+          const favoriteEntry = favoriteData.find(fav => fav.restaurantId === restaurant.id);
+          return {
+            ...restaurant,
+            isFavorite: favoriteEntry !== undefined, // Set favorite flag
+            favoriteId: favoriteEntry ? favoriteEntry.favoriteId : null, // Store the favorite entry's id, if it exists
+          };
+        });
+
+        // Set state with the updated restaurant list
+        setRestaurants(updatedRestaurants); // Set full restaurant list with favorite flag and favoriteId
+        setFilteredRestaurants(updatedRestaurants); // Initialize filtered list with all restaurants
       } catch (error) {
-          console.error('Error fetching data:', error);
+        console.error('Error fetching data:', error);
+        messageService.showMessage('error', 'Sorry, Could not find any restaurants near you!');
       }
-  };  
+    };
 
     fetchRestaurantsAndFavorites();
   }, []); // Run on component mount
@@ -124,7 +120,7 @@ const Feed = () => {
   return (
     <div className="App container">
       {/* Categories */}
-      <CategoryCarousel/>
+      <CategoryCarousel />
 
       {/* Filters */}
       <Filter
@@ -139,9 +135,11 @@ const Feed = () => {
       {/* Featured Restaurants */}
       <div className="container-fluid featured-restaurants py-5">
         <h4>Featured on Uber Eats</h4>
-        <div className="d-flex row">
-          {filteredRestaurants.map((restaurant, index) => (
-              <RestaurantCard key={restaurant.id} restaurant={restaurant} />
+        <div className="row">
+          {filteredRestaurants.map((restaurant) => (
+            <div className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" key={restaurant.id}>
+              <RestaurantCard restaurant={restaurant} />
+            </div>
           ))}
         </div>
       </div>

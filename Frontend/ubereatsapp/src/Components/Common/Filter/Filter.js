@@ -2,11 +2,11 @@ import React from 'react';
 
 const Filter = ({ filters, onSelectFilter, selectedFilter, dropdownFilters, onSelectDropdown, selectedDropdown }) => {
   return (
-    <div className="filters container-fluid d-flex justify-content-around py-2">
+    <div className="filters container-fluid d-flex flex-wrap py-2" style={{ gap: '20px' }}> {/* Added gap here */}
       {filters.map((filter) => {
         if (dropdownFilters.includes(filter)) {
           return (
-            <div key={filter} className="dropdown">
+            <div key={filter} className="dropdown"> 
               <label className="me-2">{filter}:</label>
               <select 
                 className="form-select" 

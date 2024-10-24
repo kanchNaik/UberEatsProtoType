@@ -28,6 +28,7 @@ const DynamicNavbar = () => {
         return <HomeNavbar onClick={toggleSidebar} user={user} />;
       case '/signin':
       case '/signup':
+      case '/merchantsignup':
         return <SignUpNavbar />;
       case '/feed':
         return user && user.userType === 'Customer' ? (
