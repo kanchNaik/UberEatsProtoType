@@ -5,7 +5,7 @@ from .models import Cart, Customer, Favorite, Order, Restaurant, Dish, User
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ['name', 'phone_number', 'city', 'state', 'country', 'profile_image', 'date_of_birth', 'nickname']
+        fields = ['name', 'phone_number', 'city', 'state', 'country', 'profile_image', 'date_of_birth', 'nickname', 'profile_image']
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
@@ -44,7 +44,7 @@ class UserSerializer(serializers.ModelSerializer):
 class DishSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dish
-        fields = ['id', 'dish_name', 'description', 'price', 'category', 'restaurant']
+        fields = ['id', 'dish_name', 'description', 'price', 'category', 'restaurant', 'dish_image']
 
 
 class CartSerializer(serializers.ModelSerializer):
@@ -56,13 +56,14 @@ class CartSerializer(serializers.ModelSerializer):
 class CartItemSerializer(serializers.ModelSerializer):
     dish_id = serializers.IntegerField(source='dish.id')
     dish_name = serializers.CharField(source='dish.dish_name')
+    dish_image = serializers.ImageField(source='dish.dish_image')
     description = serializers.CharField(source='dish.description')
     price = serializers.CharField(source='dish.price')
     category = serializers.CharField(source='dish.category')
 
     class Meta:
         model = Cart
-        fields = ['dish_id', 'quantity', 'dish_name', 'description', 'price', 'category']
+        fields = ['dish_id', 'quantity', 'dish_name', 'description', 'price', 'category', 'dish_image']
 
 
 class OrderSerializer(serializers.ModelSerializer):

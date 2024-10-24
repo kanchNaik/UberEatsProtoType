@@ -62,6 +62,7 @@ class Dish(models.Model):
     description = models.TextField()
     price = models.DecimalField(max_digits=5, decimal_places=2)
     category = models.CharField(max_length=100)
+    dish_image = models.ImageField(upload_to='dish_images/', null=True, blank=True)
 
     def __str__(self):
         return self.dish_name
