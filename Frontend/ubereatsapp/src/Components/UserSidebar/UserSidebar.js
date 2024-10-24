@@ -7,7 +7,8 @@ import { useNavigate  } from 'react-router-dom';
 import { getUserInfo } from '../../Utilities/UserUtils';
 
 const UserSidebar = () => {
-
+debugger
+  const user = getUserInfo()
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -45,7 +46,7 @@ const UserSidebar = () => {
   };
 
   return (
-    <div className="sidebar">
+    user ? (<div className="sidebar">
       <div className="sidebar-header">
         <div className="user-info">
           <div className="user-avatar">
@@ -70,7 +71,12 @@ const UserSidebar = () => {
         <hr />
         <p className="sidebar-footer-item">Add your restaurant</p>
       </div>
-    </div>
+    </div>) : 
+    (<div className="sidebar">
+        <div className="sidebar-header">
+        <NavLink to = '/signin'> <b><a href="/" className="text-dark">Or Sign in</a></b></NavLink>
+        </div>
+    </div>)
   );
 };
 

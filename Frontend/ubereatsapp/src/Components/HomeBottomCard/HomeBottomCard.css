@@ -1,0 +1,12 @@
+.homebottomcard a
+{
+    text-decoration: none;
+    color: black;
+}
+
+@media (max-width: 576px) {
+    .homebottomcarditem
+    {
+        margin-bottom: 5%;
+    }
+}

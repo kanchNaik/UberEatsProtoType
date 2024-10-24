@@ -52,7 +52,7 @@ const DynamicNavbar = () => {
 
   return (
     <div>
-      {(user && user.userType === 'Customer') ?  <UserSidebarWrapper isOpen={isSidebarOpen} closeSidebar={closeSidebar} /> : <RestaurantProfileSidebarWrapper isOpen={isSidebarOpen} closeSidebar={closeSidebar}/>}
+      {(!user) ?  <UserSidebarWrapper isOpen={isSidebarOpen} closeSidebar={closeSidebar} /> : (user.userType === 'Customer' ? <UserSidebarWrapper isOpen={isSidebarOpen} closeSidebar={closeSidebar} /> : <RestaurantProfileSidebarWrapper isOpen={isSidebarOpen} closeSidebar={closeSidebar}/>)}
       {renderNavbar()}
     </div>
   );

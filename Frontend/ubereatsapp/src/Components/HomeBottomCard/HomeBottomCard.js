@@ -1,13 +1,14 @@
 import React from 'react'
 import ImgTextCard from '../Common/Cards/ImgTextCard/ImgTextCard'
 import { NavLink } from 'react-router-dom'
+import './HomeBottomCard.css'
 
 
 function HomeBottomCard() {
   return (
-    <div className="row align-items-center">
+    <div className="homebottomcard row align-items-center">
         <ImgTextCard
-            maindivclass = "col-md-4"
+            maindivclass = "homebottomcarditem col-md-4"
             txtdivclass = 'text-left'
             imgclass = 'img-fluid'
             imgsrc={`${process.env.PUBLIC_URL}/Assets/homeimg1.webp`}
@@ -19,7 +20,7 @@ function HomeBottomCard() {
 
         <NavLink to = '/merchantsignup' className='col-md-4'>
         <ImgTextCard
-        maindivclass = ""
+        maindivclass = "homebottomcarditem"
         txtdivclass = 'text-left'
         imgclass = 'img-fluid'
         imgsrc={`${process.env.PUBLIC_URL}/Assets/home2.webp`}
@@ -30,7 +31,7 @@ function HomeBottomCard() {
         </NavLink>
 
         <ImgTextCard
-        maindivclass = "col-md-4"
+        maindivclass = "homebottomcarditem col-md-4"
         txtdivclass = 'text-left'
         imgclass = 'img-fluid'
         imgsrc={`${process.env.PUBLIC_URL}/Assets/homwimg3.webp`}

@@ -41,19 +41,19 @@ const CustomerOrderList = () => {
     }
 
     return (
-        <div className="order-list">
+        <div className="orders-container">
             {orders.length > 0 ? (
-                <ul>
+                <>
                     {orders.map((order, index) => (
                         <NavLink to={`/orders/${order.id}`}>
-                        <li key={index}>
+                        <div className="" key={index}>
                            <OrderCard 
                             order={order}
                            />
-                        </li>
+                        </div>
                         </NavLink>
                     ))}
-                </ul>
+                </>
             ) : (
                 <div className="no-orders">
                     <img src="no-orders-icon.png" alt="No Orders" className="no-orders-icon" />
