@@ -12,6 +12,10 @@ class SignUpView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
+        # Convert this minute string to second string by multiplying with 60 and theren convert it to string
+        if "restaurant" in request.data:
+            request.data["restaurant"]["delivery_time"] = str(int(request.data["restaurant"]["delivery_time"]) * 60)
+
         user_serializer = UserSerializer(data=request.data)
         if user_serializer.is_valid():
             user_serializer.save()

@@ -77,6 +77,8 @@ class RestaurantViewSet(viewsets.ModelViewSet):
             restaurant_data['email'] = request.user.email
             return Response(restaurant_data)
         elif request.method in ['PUT', 'PATCH']:
+            if "delivery_time" in request.data:
+                request.data["delivery_time"] = str(int(request.data["delivery_time"]) * 60)
             serializer = self.get_serializer(restaurant, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
@@ -104,6 +106,14 @@ class RestaurantViewSet(viewsets.ModelViewSet):
         data['id'] = instance.user_id
         return Response(data)
 
+    @action(detail=False, methods=['PUT'], url_path='profile-picture')
+    def update_profile_picture(self, request):
+        restaurant = Restaurant.objects.get(user=request.user)
+        if 'profile_image' in request.data:
+            restaurant.image = request.data['profile_image']
+            restaurant.save()
+            return Response({'message': 'Profile picture updated successfully'}, status=status.HTTP_200_OK)
+        return Response({'error': 'No image file provided'}, status=status.HTTP_400_BAD_REQUEST)
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
