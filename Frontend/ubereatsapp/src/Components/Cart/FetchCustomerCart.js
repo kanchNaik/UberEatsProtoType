@@ -1,28 +1,31 @@
-// src/utils/fetchCartData.js
+
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { setCartItems } from '../../Reducers/cartReducer'; // Adjust the path as necessary
+import { setCartItems } from '../../Reducers/cartReducer';
+import { BASE_API_URL } from '../../Setupconstants';
+import { messageService } from '../Common/Message/MessageService';
 
 export const fetchCartData = async (dispatch) => {
   try {
-    const response = await axios.get('http://localhost:8000/api/cart/get_cart', {
-      withCredentials: true, // Enable sending cookies with the request
+    const response = await axios.get(`${BASE_API_URL}/api/cart/get_cart`, {
+      withCredentials: true, 
       headers: {
         'Content-Type': 'application/json',
         'X-CSRFToken': Cookies.get('csrftoken'),
       },
     });
 
-    const items = response.data.items; // Assuming response.data.items contains the cart items
+    const items = response.data.items; 
 
-    // Map items to include only dish_id and quantity
+  
     const formattedItems = items.map((item) => ({
-      dish_id: item.dish_id, // Assuming item.dish_id is the dish ID
-      quantity: item.quantity || 1, // Get the quantity or default to 1
+      dish_id: item.dish_id,
+      quantity: item.quantity || 1, 
     }));
 
     dispatch(setCartItems({ items: formattedItems, restaurantId: response.data.restaurant_id, reset: true })); // Dispatch action to update Redux store with formatted items
   } catch (error) {
     console.error('Error fetching cart data:', error);
+    messageService.showMessage('error', 'Error in fetching cart')
   }
 };

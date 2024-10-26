@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios'; // Using axios for API calls
 import { Form, Button, Row, Col, Card, Container, Modal } from 'react-bootstrap';
 import Cookies from 'js-cookie';
+import { BASE_API_URL } from '../../Setupconstants';
+import { messageService } from '../Common/Message/MessageService';
 
 // Profile Page Component
 const RestaurantProfile = ({ userId }) => {
@@ -27,7 +29,7 @@ const RestaurantProfile = ({ userId }) => {
 
   const fetchProfileData = () => {
     axios
-      .get('http://localhost:8000/api/restaurants/me', {
+      .get(`${BASE_API_URL}/api/restaurants/me`, {
         headers: { 'X-CSRFToken': Cookies.get('csrftoken') },
         withCredentials: true,
       })
@@ -39,7 +41,10 @@ const RestaurantProfile = ({ userId }) => {
           profile_image: response.data.profile_image,
         }));
       })
-      .catch((error) => console.error('Error fetching profile data:', error));
+      .catch((error) => {
+        console.error('Error fetching profile data:', error)
+        messageService.showMessage('error', 'Error fetching profile data')
+      });
   };
 
   const handleInputChange = (e) => {
@@ -63,12 +68,19 @@ const RestaurantProfile = ({ userId }) => {
   const handleSave = () => {
     setEditMode(false);
     axios
-      .put('http://localhost:8000/api/restaurants/me/', profile, {
+      .put(`${BASE_API_URL}/api/restaurants/me/`, profile, {
         headers: { 'X-CSRFToken': Cookies.get('csrftoken') },
         withCredentials: true,
       })
-      .then((response) => setProfile(response.data))
-      .catch((error) => console.error('Error saving profile data:', error));
+      .then((response) => 
+        {
+          setProfile(response.data)
+          messageService.showMessage('success', 'Your profile is saved successfully')
+        })
+      .catch((error) => {
+        console.error('Error saving profile data:', error)
+        messageService.showMessage('error', 'Error saving profile data')
+      });
   };
 
   const handlePencilClick = () => setImageModal(true);
@@ -90,7 +102,7 @@ const RestaurantProfile = ({ userId }) => {
     formData.append('profile_image', imageFile);
 
     axios
-      .put('http://localhost:8000/api/customers/profile-picture/', formData, {
+      .put(`${BASE_API_URL}/api/customers/profile-picture/`, formData, {
         headers: {
           'X-CSRFToken': Cookies.get('csrftoken'), // Ensure the CSRF token is correctly fetched
           'Content-Type': 'multipart/form-data',
@@ -101,8 +113,13 @@ const RestaurantProfile = ({ userId }) => {
         console.log('Image and nickname updated:', response.data);
         setProfile(response.data); // Update the profile state with the new data
         setImageModal(false); // Close the modal after success
+        messageService.showMessage('success', 'Successfully uploaded profile picture')
       })
-      .catch((error) => console.error('Error uploading image:', error));
+      .catch((error) => 
+        {
+          console.error('Error uploading image:', error)
+          messageService.showMessage('error', 'Error saving profile picture')
+        });
   };
 
   return (

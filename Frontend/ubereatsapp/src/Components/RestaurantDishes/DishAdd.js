@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useNavigate, useParams } from 'react-router-dom';
+import { BASE_API_URL } from '../../Setupconstants';
+import { messageService } from '../Common/Message/MessageService';
 
 const DishAdd = ({ isEdit }) => {
   const [dishDetails, setDishDetails] = useState({
@@ -24,7 +26,7 @@ const DishAdd = ({ isEdit }) => {
 
   const fetchDishDetails = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/api/dishes/${id}`, {
+      const response = await axios.get(`${BASE_API_URL}/api/dishes/${id}`, {
         headers: {
           'X-CSRFToken': Cookies.get('csrftoken'),
         },
@@ -34,6 +36,7 @@ const DishAdd = ({ isEdit }) => {
     } catch (error) {
       console.error('Error fetching dish details:', error);
       setError('Failed to fetch dish details');
+      messageService.showMessage('error', 'Failed to fetch dish details')
     }
   };
 
@@ -48,7 +51,7 @@ const DishAdd = ({ isEdit }) => {
 
   const addDish = async () => {
     try {
-      await axios.post(`http://localhost:8000/api/dishes/`, dishDetails, {
+      await axios.post(`${BASE_API_URL}/api/dishes/`, dishDetails, {
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': Cookies.get('csrftoken'),
@@ -56,16 +59,18 @@ const DishAdd = ({ isEdit }) => {
         withCredentials: true,
       });
       setSuccessMessage('Dish added successfully!');
+      messageService.showMessage('success', 'Dish added successfully!')
       navigate('/restaurant/dishes');
     } catch (error) {
       console.error('Error adding dish:', error);
       setError('Failed to add dish');
+      messageService.showMessage('error', 'Failed to add dish')
     }
   };
 
   const updateDish = async () => {
     try {
-      await axios.put(`http://localhost:8000/api/dishes/${id}/`, dishDetails, {
+      await axios.put(`${BASE_API_URL}/api/dishes/${id}/`, dishDetails, {
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': Cookies.get('csrftoken'),
@@ -73,10 +78,12 @@ const DishAdd = ({ isEdit }) => {
         withCredentials: true,
       });
       setSuccessMessage('Dish updated successfully!');
+      messageService.showMessage('success', 'Dish updated successfully!')
       navigate('/restaurant/dishes');
     } catch (error) {
       console.error('Error updating dish:', error);
       setError('Failed to update dish');
+      messageService.showMessage('success', 'Failed to update dish')
     }
   };
 

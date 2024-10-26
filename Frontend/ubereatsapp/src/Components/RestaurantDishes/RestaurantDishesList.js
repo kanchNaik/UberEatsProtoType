@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import DishCard from './DishCard';
 import Cookies from 'js-cookie';
+import { BASE_API_URL } from '../../Setupconstants';
+import { messageService } from '../Common/Message/MessageService';
 
 class RestaurantDishesList extends Component {
   constructor(props) {
@@ -21,7 +23,7 @@ class RestaurantDishesList extends Component {
   fetchRestaurants = () => {
     const restaurantId =  Cookies.get('user_id')
     axios
-      .get(`http://localhost:8000/api/restaurants/${restaurantId}/dishes`, {
+      .get(`${BASE_API_URL}/api/restaurants/${restaurantId}/dishes`, {
         headers: {
           'X-CSRFToken': Cookies.get('csrftoken'),
         },
@@ -34,6 +36,7 @@ class RestaurantDishesList extends Component {
       .catch((error) => {
         console.error('Error fetching dishes:', error);
         this.setState({ error: 'Failed to fetch dishes' });
+        messageService.showMessage('error', 'Error fetching dishes');
       });
   };
 
