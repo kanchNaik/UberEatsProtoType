@@ -1,7 +1,8 @@
 import React from 'react';
+import RestaurantDishesList from './../RestaurantDishes/RestaurantDishesList'
 
 const RestaurantHome = () => {
-  return <h1>Hello</h1>;
+  return <RestaurantDishesList />
 };
 
 export default RestaurantHome;

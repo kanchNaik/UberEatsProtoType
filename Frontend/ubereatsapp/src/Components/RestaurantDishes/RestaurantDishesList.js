@@ -15,13 +15,11 @@ class RestaurantDishesList extends Component {
   }
 
   componentDidMount() {
-    this.fetchRestaurants();
+    this.fetchDishes();
   }
 
- ;
-
-  fetchRestaurants = () => {
-    const restaurantId =  Cookies.get('user_id')
+  fetchDishes = () => {
+    const restaurantId = Cookies.get('user_id');
     axios
       .get(`${BASE_API_URL}/api/restaurants/${restaurantId}/dishes`, {
         headers: {
@@ -44,15 +42,15 @@ class RestaurantDishesList extends Component {
     const { dishes, error } = this.state;
 
     return (
-    <div className='container'>
-      <div className="row">
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        {dishes.map((dish) => (
-          <div className="col-4" key={dish.id}>
-            <DishCard dish={dish} />
-          </div>
-        ))}
-      </div>
+      <div className='container'>
+        <div className="row">
+          {error && <p style={{ color: 'red' }}>{error}</p>}
+          {dishes.map((dish) => (
+            <div className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" key={dish.id}>
+              <DishCard dish={dish} />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

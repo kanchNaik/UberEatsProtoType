@@ -69,7 +69,7 @@ const { isAuthenticated, userType, loading } = useAuth();
         <Route path="/customer/me" element={<ProtectedRoute isAuthenticated={isAuthenticated} allowedUserType="Customer" userType={userType}> <UserProfile /> </ProtectedRoute>} />
         <Route path="/order/checkout" element={<ProtectedRoute isAuthenticated={isAuthenticated} allowedUserType="Customer" userType={userType}> <Checkout/> </ProtectedRoute>}/>
         <Route path="/orders" element={<ProtectedRoute isAuthenticated={isAuthenticated} allowedUserType="Customer" userType={userType}><CustomerOrderList /> </ProtectedRoute>}/>
-        <Route path="/orders/:id" element={<ProtectedRoute isAuthenticated={isAuthenticated} allowedUserType="Customer" userType={userType}><CustomerOrder /> </ProtectedRoute>} />
+        <Route path="/orders/:id" element={<ProtectedRoute isAuthenticated={isAuthenticated}><CustomerOrder /> </ProtectedRoute>} />
         <Route path="/favorites" element={<ProtectedRoute isAuthenticated={isAuthenticated} allowedUserType="Customer" userType={userType}><FavoriteRestaurants/> </ProtectedRoute>}/>
         
        
