@@ -1,25 +1,29 @@
 import React, { useState } from 'react';
-import './SignIn.css'; // Ensure your CSS file exists
-import axios from 'axios'; // Axios for HTTP requests
-import Cookies from 'js-cookie'; // To manage cookies
+import './SignIn.css'; 
+import axios from 'axios'; 
+import Cookies from 'js-cookie'; 
 import { useNavigate  } from 'react-router-dom';
+import { messageService } from '../Common/Message/MessageService';
+import { BASE_API_URL } from '../../Setupconstants';
+import { useAuth } from '../../AuthContext';
+
 
 function SignIn() {
   const navigate = useNavigate();
-
+  const { login } = useAuth();
   const [inputEmail, setInputEmailValue] = useState('');
   const [inputPassword, setInputPasswordValue] = useState('');
-  const [error, setError] = useState(''); // Error state for displaying errors
+  const [error, setError] = useState('');
 
-  // Handle input changes
+  
   const handleEmailChange = (event) => setInputEmailValue(event.target.value);
   const handlePasswordChange = (event) => setInputPasswordValue(event.target.value);
 
-  // Handle login using Promises
+  
   const handleLogin = (e) => {
-    e.preventDefault(); // Prevent page refresh
+    e.preventDefault(); 
     axios
-      .post('http://localhost:8000/api/login/', {
+      .post(`${BASE_API_URL}/api/login/`, {
         username: inputEmail,
         password: inputPassword,
       }, {
@@ -33,8 +37,9 @@ function SignIn() {
         Cookies.set('user_name', user.username);
         Cookies.set('user_id', user.id);
         Cookies.set('user_email', user.email)
-        console.log('token', token)
-        console.log('Logged in successfully')
+
+        messageService.showMessage('success', 'Logged in successfully');
+        login(token, user.is_customer ? 'Customer' : 'Restaurant');
 
         if(user.is_customer) 
         {
@@ -47,6 +52,7 @@ function SignIn() {
       .catch((error) => {
         console.error('Login failed:', error);
         setError('Invalid email or password'); // Show error message
+        messageService.showMessage('error', 'Invalid email or password');
       });
   };
 

@@ -4,6 +4,8 @@ import './CustomerOrderList.css'; // Add styling for the page
 import Cookies from 'js-cookie';
 import OrderCard from '../OrderCard'
 import { NavLink } from 'react-router-dom';
+import { BASE_API_URL } from '../../../Setupconstants';
+import { messageService } from '../../Common/Message/MessageService';
 
 const CustomerOrderList = () => {
     const [orders, setOrders] = useState([]);
@@ -14,7 +16,7 @@ const CustomerOrderList = () => {
         // Function to fetch the order list from the API
         const fetchOrders = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/api/order/', {
+                const response = await axios.get(`${BASE_API_URL}/api/order/`, {
                     headers: {
                         'X-CSRFToken': Cookies.get('csrftoken'),
                       },
@@ -26,6 +28,7 @@ const CustomerOrderList = () => {
             } catch (err) {
                 setError(err);
                 setLoading(false);
+                messageService.showMessage('error', 'Error in fetching order')
             }
         };
 

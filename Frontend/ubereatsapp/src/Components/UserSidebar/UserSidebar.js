@@ -5,9 +5,12 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import { useNavigate  } from 'react-router-dom';
 import { getUserInfo } from '../../Utilities/UserUtils';
+import { BASE_API_URL } from '../../Setupconstants';
+import { messageService } from '../Common/Message/MessageService';
+import { useAuth } from '../../AuthContext';
 
 const UserSidebar = () => {
-debugger
+  const { logout } = useAuth();
   const user = getUserInfo()
   const navigate = useNavigate();
 
@@ -16,7 +19,7 @@ debugger
     console.log('sessionid', Cookies.get('sessionid'))
     try {
       const response = await axios.post(
-        'http://localhost:8000/api/logout/',  // URL for logout
+        `${BASE_API_URL}/api/logout/`,  // URL for logout
         {},  // No data to send in body for logout
         {
             headers: {
@@ -37,11 +40,14 @@ debugger
           Cookies.remove('user_email');
 
           console.log('Logged out successfully');
+          messageService.showMessage('success', 'Logged out successfully');
+          logout()
           // Redirect to the login page
           navigate('/signin');
         }
       } catch (error) {
           console.log('Logout failed:', error);
+          messageService.showMessage('error', 'Sorry, Could not log out!');
       }
   };
 
@@ -54,7 +60,7 @@ debugger
           </div>
           <div className="user-name">
             <h5>{Cookies.get('user_name')}</h5>
-           <NavLink to="customer/my"> <small>Manage account</small> </NavLink>
+           <NavLink to="customer/me"> <small>Manage account</small> </NavLink>
           </div>
         </div>
       </div>

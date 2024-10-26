@@ -4,6 +4,8 @@ import Cookies from 'js-cookie';
 import './CustomerOrder.css'; // External CSS file for styles
 import { useParams } from 'react-router-dom';
 import { parseDate } from '../../../Utilities/DateUtils'
+import { BASE_API_URL } from '../../../Setupconstants';
+import { messageService } from '../../Common/Message/MessageService';
 
 const CustomerOrder = ({ orderId }) => {
     const [orderDetails, setOrderDetails] = useState(null); // State to store order details
@@ -12,9 +14,8 @@ const CustomerOrder = ({ orderId }) => {
 
     // Fetch order details using the provided API
     const fetchOrderDetails = async () => {
-        debugger
         try {
-            const response = await axios.get(`http://localhost:8000/api/order/${id}/`, {
+            const response = await axios.get(`${BASE_API_URL}/api/order/${id}/`, {
                 withCredentials: true, // Enable sending cookies with the request
                 headers: {
                     'Content-Type': 'application/json',
@@ -25,6 +26,7 @@ const CustomerOrder = ({ orderId }) => {
         } catch (error) {
             console.error('Error fetching order details:', error);
             setError('Failed to load order details. Please try again.');
+            messageService.showMessage('error', 'Failed to load order details. Please try again.')
         }
     };
 

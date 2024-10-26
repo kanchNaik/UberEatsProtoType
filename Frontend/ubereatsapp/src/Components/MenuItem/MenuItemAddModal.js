@@ -1,24 +1,28 @@
 import React, { useState } from 'react';
 import './MenuItemAddModal.css';
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Cookies from 'js-cookie';
-import { setCartItems } from '../../Reducers/cartReducer'; // Import the setCartItems action
+import { setCartItems } from '../../Reducers/cartReducer'; 
+import { BASE_API_URL } from '../../Setupconstants';
+import { messageService } from '../Common/Message/MessageService';
 
-const MenuItemAddModal = ({ item, closeModal }) => {
-  const [quantity, setQuantity] = useState(1); // Default quantity is 1
-  const [loading, setLoading] = useState(false); // Loading state
-  const dispatch = useDispatch(); // Initialize Redux dispatcher
+const MenuItemAddModal = ({ item, closeModal, restaurantid, restaurantname }) => {
+  const [quantity, setQuantity] = useState(1); 
+  const [loading, setLoading] = useState(false); 
+  const dispatch = useDispatch(); 
+  const store_restaurantId = useSelector((state) => state.cart.restaurantId);
+  const store_restaurantName = useSelector((state) => state.cart.restaurantName);
 
   const handleQuantityChange = (value) => {
-    if (value >= 0) setQuantity(value); // Ensure quantity is non-negative
+    if (value >= 0) setQuantity(value); 
   };
 
   const handleAddToCart = async () => {
     try {
       setLoading(true);
       const response = await axios.post(
-        'http://localhost:8000/api/cart/add_to_cart/',
+        `${BASE_API_URL}/api/cart/add_to_cart/`,
         { dish_id: item.id, quantity: quantity },
         { 
           headers: {
@@ -29,6 +33,7 @@ const MenuItemAddModal = ({ item, closeModal }) => {
       );
       console.log('Item added to cart:', response.data);
       console.log('Quantity', quantity);
+      messageService.showMessage('success', `Added ${quantity} items in cart`)
 
       // Create the cart item object
       const cartItem = {
@@ -37,46 +42,100 @@ const MenuItemAddModal = ({ item, closeModal }) => {
       };
 
       // Dispatch the setCartItems action to set the cart in Redux store
-      dispatch(setCartItems({items: [{dish_id: item.id, quantity}], reset: false})); // Replace with logic to append to existing items if necessary
+      dispatch(setCartItems({
+        items: [{ dish_id: item.id, quantity }],
+        restaurantId: restaurantid,
+        restaurantName: restaurantname,
+        reset: false
+      }));
+
       closeModal(); // Close the modal
     } catch (error) {
       console.error('Error adding to cart:', error);
+      messageService.showMessage('error', 'Error in adding item in cart')
     } finally {
       setLoading(false); // Reset loading state
     }
   };
 
+  const handleNewOrder = async () => {
+    // User chooses to start a new order, reset the cart with the new restaurant's items
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        `${BASE_API_URL}/api/cart/add_to_cart/`,
+        { dish_id: item.id, quantity: quantity },
+        { 
+          headers: {
+            'X-CSRFToken': Cookies.get('csrftoken'),
+          },
+          withCredentials: true 
+        }
+      );
+
+      console.log('New order started, item added to cart:', response.data);
+      messageService.showMessage('success', `New order started, item added to cart`)
+
+      dispatch(setCartItems({
+        items: [{ dish_id: item.id, quantity }],
+        restaurantId: restaurantid,
+        restaurantName: restaurantname,
+        reset: true 
+      }));
+
+      closeModal(); 
+    } catch (error) {
+      console.error('Error starting new order:', error);
+      messageService.showMessage('error', 'Error starting new order')
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="modal-overlay">
-      <div className="modal-content">
-        <button className="close-btn" onClick={closeModal}>
-          &times;
-        </button>
-        <h2>{item.dish_name}</h2>
-        <p>${item.price}</p>
-        <p>{item.description}</p>
-
-        {/* Quantity Control */}
-        <div className="quantity-control">
-          <button
-            onClick={() => handleQuantityChange(quantity - 1)}
-            disabled={quantity === 0}
-          >
-            -
+      {(store_restaurantId && store_restaurantId !== restaurantid) ? (
+        <div className="modal-content new-order-prompt">
+          <h2>Create new order?</h2>
+          <p>Your order contains items from {restaurantname}. Create a new order to add items from {store_restaurantName}.</p>
+          <button className="new-order-btn" onClick={handleNewOrder}>
+            New Order
           </button>
-          <span>{quantity}</span>
-          <button onClick={() => handleQuantityChange(quantity + 1)}>+</button>
+          <button className="cancel-btn" onClick={closeModal}>
+            Cancel
+          </button>
         </div>
+      ) : (
+        <div className="modal-content">
+          <button className="close-btn" onClick={closeModal}>
+            &times;
+          </button>
+          <h2>{item.dish_name}</h2>
+          <p>${item.price}</p>
+          <p>{item.description}</p>
 
-        {/* Add to Cart Button */}
-        <button
-          className="submit-btn"
-          onClick={handleAddToCart}
-          disabled={quantity === 0 || loading}
-        >
-          {loading ? 'Adding...' : 'Add to Cart'}
-        </button>
-      </div>
+          {/* Quantity Control */}
+          <div className="quantity-control">
+            <button
+              onClick={() => handleQuantityChange(quantity - 1)}
+              disabled={quantity === 0}
+            >
+              -
+            </button>
+            <span>{quantity}</span>
+            <button onClick={() => handleQuantityChange(quantity + 1)}>+</button>
+          </div>
+
+          {/* Add to Cart Button */}
+          <button
+            className="submit-btn"
+            onClick={handleAddToCart}
+            disabled={quantity === 0 || loading}
+          >
+            {loading ? 'Adding...' : 'Add to Cart'}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

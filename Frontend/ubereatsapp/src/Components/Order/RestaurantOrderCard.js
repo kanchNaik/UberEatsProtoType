@@ -1,31 +1,31 @@
 import React, { useState } from 'react';
-import './RestaurantOrderCard.css'; // External CSS for styling
+import './RestaurantOrderCard.css'; 
 import { NavLink } from 'react-router-dom';
 import { parseDate } from '../../Utilities/DateUtils';
 import axios from 'axios';
-import Cookies from 'js-cookie'; // Ensure you have this for CSRF token handling
+import Cookies from 'js-cookie'; 
 
-// Font Awesome imports
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLink } from '@fortawesome/free-solid-svg-icons'; // Link icon
+import { faLink } from '@fortawesome/free-solid-svg-icons'; 
+import { BASE_API_URL } from '../../Setupconstants';
+import { messageService } from '../Common/Message/MessageService';
 
 const RestaurantOrderCard = ({ order }) => {
-    const [isEditing, setIsEditing] = useState(false); // Track if status is being edited
-    const [newStatus, setNewStatus] = useState(order.status); // Store the selected status
-    const [statusChanged, setStatusChanged] = useState(false); // Track if the status has changed
+    const [isEditing, setIsEditing] = useState(false); 
+    const [newStatus, setNewStatus] = useState(order.status); 
+    const [statusChanged, setStatusChanged] = useState(false); 
 
-    // Handle status selection (but don't update yet)
     const handleStatusSelect = (e) => {
         const updatedStatus = e.target.value;
         setNewStatus(updatedStatus);
-        setStatusChanged(true); // Enable the Save button when a status is selected
+        setStatusChanged(true);
     };
 
-    // Handle status save and update the backend
+
     const handleSaveStatus = async () => {
         try {
             await axios.put(
-                `http://localhost:8000/api/order/${order.id}/`,
+                `${BASE_API_URL}/api/order/${order.id}/`,
                 { status: newStatus },
                 {
                     headers: {
@@ -34,10 +34,11 @@ const RestaurantOrderCard = ({ order }) => {
                     withCredentials: true,
                 }
             );
-            setIsEditing(false); // Close editing mode after saving
-            setStatusChanged(false); // Reset status changed flag
+            setIsEditing(false); 
+            setStatusChanged(false); 
         } catch (error) {
             console.error('Failed to update status:', error);
+            messageService.showMessage('error', 'Failed to update status')
         }
     };
 
@@ -46,7 +47,7 @@ const RestaurantOrderCard = ({ order }) => {
             <div className="order-header">
                 <NavLink to={`/customers/profile/${order.customer}`} className="customer-link">
                     <h3 className="restaurant-name">{order.customer_name}</h3>
-                    {/* Font Awesome Link Icon */}
+                   
                     <FontAwesomeIcon icon={faLink} className="link-icon" />
                 </NavLink>
                 <img
@@ -64,7 +65,7 @@ const RestaurantOrderCard = ({ order }) => {
             </div>
 
             <div className="button-container">
-                {/* Edit Status Section */}
+                
                 <div className="edit-status">
                     {isEditing ? (
                         <>
@@ -82,7 +83,7 @@ const RestaurantOrderCard = ({ order }) => {
                                 <option value="Picked Up">Picked Up</option>
                             </select>
 
-                            {/* Save Status Button */}
+                            
                             <button
                                 className="save-status-btn"
                                 onClick={handleSaveStatus}

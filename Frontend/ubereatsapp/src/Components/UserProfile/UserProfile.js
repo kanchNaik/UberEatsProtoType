@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios'; // Using axios for API calls
 import { Form, Button, Row, Col, Card, Container, Modal } from 'react-bootstrap';
 import Cookies from 'js-cookie';
+import { BASE_API_URL } from '../../Setupconstants';
+import { messageService } from '../Common/Message/MessageService';
 
 // Profile Page Component
 const UserProfile = ({ userId }) => {
@@ -30,7 +32,7 @@ const UserProfile = ({ userId }) => {
 
   const fetchProfileData = () => {
     axios
-      .get('http://localhost:8000/api/customers/me', {
+      .get(`${BASE_API_URL}/api/customers/me`, {
         headers: { 'X-CSRFToken': Cookies.get('csrftoken') },
         withCredentials: true,
       })
@@ -43,7 +45,11 @@ const UserProfile = ({ userId }) => {
         if (response.data.country) fetchStates(response.data.country);
         if (response.data.state) fetchCities(response.data.country, response.data.state);
       })
-      .catch((error) => console.error('Error fetching profile data:', error));
+      .catch((error) => 
+        {
+          console.error('Error fetching profile data:', error)
+          messageService.showMessage('error', 'Error fetching profile data')
+        });
   };
 
   const fetchCountries = () => {
@@ -108,14 +114,18 @@ const UserProfile = ({ userId }) => {
   };
 
   const handleSave = () => {
+    const { profile_image, ...profileDataToSave } = profile;
     setEditMode(false);
     axios
-      .put('http://localhost:8000/api/customers/me/', profile, {
+      .put(`${BASE_API_URL}/api/customers/me/`, profileDataToSave, {
         headers: { 'X-CSRFToken': Cookies.get('csrftoken') },
         withCredentials: true,
       })
       .then((response) => setProfile(response.data))
-      .catch((error) => console.error('Error saving profile data:', error));
+      .catch((error) => {
+        console.error('Error saving profile data:', error)
+        messageService.showMessage('error', 'Error saving profile data')
+      });
   };
 
   const handleImageUpload = () => {
@@ -126,7 +136,7 @@ const UserProfile = ({ userId }) => {
     formData.append('profile_image', imageFile);
 
     axios
-      .put('http://localhost:8000/api/customers/profile-picture/', formData, {
+      .put(`${BASE_API_URL}/api/customers/profile-picture/`, formData, {
         headers: {
           'X-CSRFToken': Cookies.get('csrftoken'),
           'Content-Type': 'multipart/form-data',
@@ -137,7 +147,11 @@ const UserProfile = ({ userId }) => {
         setProfile(response.data);
         setImageModal(false);
       })
-      .catch((error) => console.error('Error uploading image:', error));
+      .catch((error) => 
+        {
+          console.error('Error uploading image:', error)
+          messageService.showMessage('error', 'Error uploading image')
+        });
   };
 
   return (
@@ -182,6 +196,33 @@ const UserProfile = ({ userId }) => {
                       type="text"
                       name="phone_number"
                       value={profile.phone_number || ''}
+                      onChange={handleInputChange}
+                      readOnly={!editMode}
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Row className="mb-3">
+                <Col md={6}>
+                  <Form.Group controlId="formDOB">
+                    <Form.Label>Date of Birth</Form.Label>
+                    <Form.Control
+                      type="date"
+                      name="date_of_birth"
+                      value={profile.date_of_birth || ''}
+                      onChange={handleInputChange}
+                      readOnly={!editMode}
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group controlId="formNickname">
+                    <Form.Label>Nickname</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="nickname"
+                      value={profile.nickname || ''}
                       onChange={handleInputChange}
                       readOnly={!editMode}
                     />

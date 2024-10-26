@@ -5,17 +5,21 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import { useNavigate  } from 'react-router-dom';
 import { getUserInfo } from '../../Utilities/UserUtils';
+import { BASE_API_URL } from '../../Setupconstants';
+import { messageService } from '../Common/Message/MessageService';
+import { useAuth } from '../../AuthContext';
+
 
 const RestaurantProfileSidebar = () => {
 
   const navigate = useNavigate();
-
+  const { logout } = useAuth();
   const handleLogout = async () => {
     console.log('Token', Cookies.get('csrftoken'))
     console.log('sessionid', Cookies.get('sessionid'))
     try {
       const response = await axios.post(
-        'http://localhost:8000/api/logout/',  // URL for logout
+        `${BASE_API_URL}/api/logout/`,  // URL for logout
         {},  // No data to send in body for logout
         {
             headers: {
@@ -36,11 +40,14 @@ const RestaurantProfileSidebar = () => {
           Cookies.remove('user_email');
 
           console.log('Logged out successfully');
+          messageService.showMessage('success', 'Logged out successfully')
+          logout()
           // Redirect to the login page
           navigate('/signin');
         }
       } catch (error) {
           console.log('Logout failed:', error);
+          messageService.showMessage('error', 'Logged out failedSorry, Could not log out!')
       }
   };
 

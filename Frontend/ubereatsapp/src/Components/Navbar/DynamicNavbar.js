@@ -21,13 +21,13 @@ const DynamicNavbar = () => {
   const user = getUserInfo();
 
   const renderNavbar = () => {
-    debugger
     switch (location.pathname) {
       case '/':
       case '/home':
         return <HomeNavbar onClick={toggleSidebar} user={user} />;
       case '/signin':
       case '/signup':
+      case '/merchantsignup':
         return <SignUpNavbar />;
       case '/feed':
         return user && user.userType === 'Customer' ? (

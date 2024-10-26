@@ -5,6 +5,8 @@ import Cookies from 'js-cookie';
 import { useDispatch } from 'react-redux';
 import { setCartItems } from '../../Reducers/cartReducer';
 import { useNavigate  } from 'react-router-dom';
+import { BASE_API_URL } from '../../Setupconstants';
+import { messageService } from '../Common/Message/MessageService';
 
 const CartSidebar = ({ closeCart }) => {
   const [cartItems, setCartItemsState] = useState([]); 
@@ -15,7 +17,7 @@ const CartSidebar = ({ closeCart }) => {
   // Function to fetch cart data
   const fetchCartData = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/cart/get_cart', {
+      const response = await axios.get(`${BASE_API_URL}/api/cart/get_cart`, {
         withCredentials: true, // Enable sending cookies with the request
         headers: {
           'Content-Type': 'application/json',
@@ -31,8 +33,9 @@ const CartSidebar = ({ closeCart }) => {
       }));
 
       setCartItemsState(items); // Update local state
-      dispatch(setCartItems({ items: formattedItems, reset: true })); // Dispatch action to update Redux store with formatted items
+      dispatch(setCartItems({ items: formattedItems, restaurantId: response.data.restaurant_id, reset: true })); // Dispatch action to update Redux store with formatted items
     } catch (error) {
+      messageService.showMessage('error', 'Error ins fetching cart');
       console.error('Error fetching cart data:', error);
     }
   };
@@ -78,7 +81,7 @@ const CartSidebar = ({ closeCart }) => {
       }));
 
       const response = await axios.post(
-          'http://localhost:8000/api/cart/add_multiple_to_cart/',
+          `${BASE_API_URL}/api/cart/add_multiple_to_cart/`,
           {
             formattedItems
           },
@@ -93,15 +96,17 @@ const CartSidebar = ({ closeCart }) => {
       
       console.log('Response:', response.data);
       closeCart() // Handle the response data here
+      messageService.showMessage('success', 'Item succesfully added in cart')
       navigate('/order/checkout')
   } catch (error) {
       console.error('Error adding to cart:', error.response ? error.response.data : error.message);
+      messageService.showMessage('error', 'Error adding item in cart')
   }
   };
 
   const handleClearCart = async () => {
     try {
-      await axios.delete('http://localhost:8000/api/cart/clear_cart/', {
+      await axios.delete(`${BASE_API_URL}/api/cart/clear_cart/`, {
         withCredentials: true, // Enable sending cookies with the request
         headers: {
           'Content-Type': 'application/json',
@@ -112,9 +117,11 @@ const CartSidebar = ({ closeCart }) => {
       // Clear local cartItems state
       setCartItemsState([]);
       dispatch(setCartItems({ items: [], reset: true }));
+      messageService.showMessage('success', 'Cleared cart succefully')
       closeCart() // Dispatch to Redux to clear the cart
     } catch (error) {
       console.error('Error clearing the cart:', error);
+      messageService.showMessage('success', 'Error in clearing cart')
     }
   }
 

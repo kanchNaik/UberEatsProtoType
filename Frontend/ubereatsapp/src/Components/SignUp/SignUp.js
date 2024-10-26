@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './SignUp.css';
 import { useNavigate  } from 'react-router-dom';
+import { messageService } from '../Common/Message/MessageService';
+import { BASE_API_URL } from '../../Setupconstants';
 
 function SignUp() {
   const navigate = useNavigate();
@@ -158,17 +160,17 @@ function SignUp() {
 
   // Validate email and password before submission
   if (!validateEmail(formData.email)) {
-    alert('Please enter a valid email address.');
+    messageService.showMessage('error', 'Please enter a valid email address.');
     return;
   }
 
   if (!validatePassword(formData.password)) {
-    alert('Password must be at least 8 characters long, contain at least one uppercase letter, and one number.');
+     messageService.showMessage('error', 'Password must be at least 8 characters long, contain at least one uppercase letter, and one number.');
     return;
   }
 
   // Send the API request using fetch
-  fetch('http://127.0.0.1:8000/api/signup/', {
+  fetch(`${BASE_API_URL}/api/signup/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -179,17 +181,19 @@ function SignUp() {
 })
     .then((response) => {
       if (!response.ok) {
+        messageService.showMessage('error', 'Signup failed. Please try again.');
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       return response.json();
     })
     .then((data) => {
       console.log('Success:', data);
+      messageService.showMessage('success', 'You are successfully signed up');
       navigate('/signin');
     })
     .catch((error) => {
       console.error('Error:', error);
-      alert('Signup failed. Please try again.'); // Show an error message
+      messageService.showMessage('error', 'Signup failed. Please try again.');
     });
   };
 
@@ -327,7 +331,7 @@ function SignUp() {
             ))}
           </select>
         </div>
-        <button type="submit" className="signup-button">Sign Up</button>
+        <button type="submit" className="continue-button">Sign Up</button>
       </form>
     </div>
   );

@@ -6,7 +6,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import { FaPlus } from 'react-icons/fa'; 
 import MenuItemAddModal from './MenuItemAddModal';
 
-const MenuItem = ({ menu }) => {
+const MenuItem = ({ menu, restaurantid, restaurantname }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => setIsModalOpen(true);
@@ -28,7 +28,7 @@ const MenuItem = ({ menu }) => {
                 <FaPlus className="me-1" /> {/* Icon with margin */}
                 Add
             </button>
-            {isModalOpen && <MenuItemAddModal item = {menu} closeModal={closeModal} />}
+            {isModalOpen && <MenuItemAddModal item = {menu} closeModal={closeModal} restaurantid = {restaurantid} restaurantname={restaurantname}/>}
             </div>
             <p style={{textAlign:'left'}}>${menu.price}</p>
     </ImgTextCard>

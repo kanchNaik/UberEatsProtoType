@@ -4,9 +4,10 @@ import axios from 'axios';
 import './Restaurant.css';
 import OrderOptions from '../OrderOptions/OrderOptions';
 import Menu from '../Menu/Menu';
-import MenuItem from '../MenuItem/MenuItem'
+import MenuItem from '../MenuItem/MenuItem';
+import { BASE_API_URL } from '../../Setupconstants';
+import { messageService } from '../Common/Message/MessageService';
 
-// Group items by category key
 const groupBy = (items, key) => {
   return items.reduce((acc, item) => {
     const group = item[key];
@@ -19,37 +20,36 @@ const groupBy = (items, key) => {
 };
 
 const Restaurant = () => {
-  const { id } = useParams(); // Get restaurant id from the URL
-  const [restaurant, setRestaurant] = useState(null); // Store restaurant details
+  const { id } = useParams();
+  const [restaurant, setRestaurant] = useState(null);
   const [featuredItems, setFeaturedItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeCategory, setActiveCategory] = useState(''); // Track active category
-
-  const categoryRefs = useRef({}); // Store refs for category sections
+  const [activeCategory, setActiveCategory] = useState('');
+  const categoryRefs = useRef({});
 
   useEffect(() => {
-    // Fetch restaurant data by id
     const fetchRestaurant = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/restaurants/${id}`, {
+        const response = await axios.get(`${BASE_API_URL}/api/restaurants/${id}`, {
           withCredentials: true,
         });
         setRestaurant(response.data);
       } catch (error) {
         setError(error.message);
+        messageService.showMessage('error', 'Error in fetching restaurants')
       }
     };
 
-    // Fetch featured items for the restaurant
     const fetchFeaturedItems = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/restaurants/${id}/dishes`, {
+        const response = await axios.get(`${BASE_API_URL}/api/restaurants/${id}/dishes`, {
           withCredentials: true,
         });
         setFeaturedItems(response.data);
       } catch (error) {
         setError(error.message);
+        messageService.showMessage('error', 'Error in fetching menu items')
       } finally {
         setLoading(false);
       }
@@ -59,19 +59,17 @@ const Restaurant = () => {
     fetchFeaturedItems();
   }, [id]);
 
-  const groupedItems = groupBy(featuredItems, 'category'); // Group by 'category' field
+  const groupedItems = groupBy(featuredItems, 'category');
 
-  // Track scroll position to highlight the active category
   const handleScroll = useCallback(() => {
     const scrollTop = window.scrollY;
     let active = '';
 
-    // Check which category is visible
     Object.entries(categoryRefs.current).forEach(([category, ref]) => {
       if (ref.current) {
         const { top } = ref.current.getBoundingClientRect();
         if (top <= 100) {
-          active = category; // Set active category if it's in view
+          active = category;
         }
       }
     });
@@ -83,73 +81,71 @@ const Restaurant = () => {
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll); // Cleanup on unmount
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className="restaurant-container">
-      <div className="container">
-        {restaurant && (
-          <>
-            <section className="restaurant-banner">
-              <img
-                src={restaurant.profile_url}
-                alt={restaurant.restaurant_name}
-                className="banner-image"
-              />
-            </section>
-            <div className="row">
-              <div className="col-4">
-                <div className="restaurant-info-container">
-                  <h2 className="restaurant-name">{restaurant.restaurant_name}</h2>
-                  <div className="restaurant-details">
-                    <span className="restaurant-rating">
-                      {restaurant.rating} <span className="star">★</span> ({restaurant.totalReviews}+)
+    <div className="restaurant-container container">
+      {restaurant && (
+        <>
+          <section className="restaurant-banner">
+            <img
+              src={restaurant.profile_url}
+              alt={restaurant.restaurant_name}
+              className="banner-image img-fluid"
+            />
+          </section>
+          <div className="row mt-4">
+            <div className="col-lg-4 col-md-12">
+              <div className="restaurant-info-container">
+                <h2 className="restaurant-name">{restaurant.restaurant_name}</h2>
+                <div className="restaurant-details d-flex flex-wrap align-items-center">
+                  <span className="restaurant-rating">
+                    {restaurant.rating} <span className="star">★</span> ({restaurant.totalReviews}+)
+                  </span>
+                  <span className="ml-3">{restaurant.price_range}</span>
+                  {restaurant.uberone && (
+                    <span className="uber-one ml-3 d-flex align-items-center">
+                      <img src="/path-to-uber-one-icon.png" alt="Uber One" className="uber-one-icon mr-1" />
+                      Uber One
                     </span>
-                    <span>{restaurant.price_range}</span>
-                    {restaurant.uberone && (
-                      <span className="uber-one">
-                        <img src="/path-to-uber-one-icon.png" alt="Uber One" className="uber-one-icon" />
-                        Uber One
-                      </span>
-                    )}
-                    <a href="/info" className="info-link">Info</a>
-                  </div>
-                  <div className="delivery-info">
-                    <span className="delivery-icon">🚚</span> {restaurant.deliveryInfo}
-                  </div>
+                  )}
+                  <a href="/info" className="info-link ml-3">Info</a>
                 </div>
-                <div className="sticky-menu">
-                  <Menu categories={Object.keys(groupedItems)} activeCategory={activeCategory} />
+                <div className="delivery-info mt-3">
+                  <span className="delivery-icon">🚚</span> {restaurant.deliveryInfo}
                 </div>
               </div>
-              <div className="col-8">
-                <OrderOptions />
-                {Object.entries(groupedItems).map(([category, items], index) => {
-                  const ref = React.createRef(); // Create a ref for each category
-                  categoryRefs.current[category] = ref; // Store ref in the object
-
-                  return (
-                    <div key={index} className="menu-group" ref={ref}>
-                      <h2>{category}</h2> {/* Render category name */}
-                      <div className="row">
-                        {items.map((item, itemIndex) => (
-                          <div className="col-4" key={itemIndex}>
-                            <MenuItem menu={item} /> {/* Render DishCard for each dish */}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
+              <div className="sticky-menu mt-4">
+                <Menu categories={Object.keys(groupedItems)} activeCategory={activeCategory} />
               </div>
             </div>
-          </>
-        )}
-      </div>
+            <div className="col-lg-8 col-md-12">
+              <OrderOptions />
+              {Object.entries(groupedItems).map(([category, items], index) => {
+                const ref = React.createRef();
+                categoryRefs.current[category] = ref;
+
+                return (
+                  <div key={index} className="menu-group mt-4" ref={ref}>
+                    <h2>{category}</h2>
+                    <div className="row">
+                      {items.map((item, itemIndex) => (
+                        <div className="col-md-6 col-lg-4" key={itemIndex}>
+                          <MenuItem menu={item} restaurantid = {id} restaurantname={restaurant.restaurant_name}/>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

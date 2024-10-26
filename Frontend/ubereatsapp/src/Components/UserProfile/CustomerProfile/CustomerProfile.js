@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './CustomerProfile.css'; // External CSS file for styling
 import { useParams } from 'react-router-dom';
+import { BASE_API_URL } from '../../../Setupconstants';
+import { messageService } from '../../Common/Message/MessageService';
 
 const CustomerProfile = () => {
     const [customer, setCustomer] = useState(null);
@@ -10,12 +12,13 @@ const CustomerProfile = () => {
     useEffect(() => {
         const fetchCustomer = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/api/customers/${id}/`, {
+                const response = await axios.get(`${BASE_API_URL}/api/customers/${id}/`, {
                     withCredentials: true // Sends cookies with the request
                 });
                 setCustomer(response.data);
             } catch (error) {
                 console.error('Error fetching customer:', error);
+                messageService.showMessage('error', 'Error fetching customer')
             }
         };
 

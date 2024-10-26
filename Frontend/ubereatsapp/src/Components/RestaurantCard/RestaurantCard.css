@@ -15,7 +15,7 @@ margin: 2%;
 
 .favorite-icon {
     position: absolute;
-    top: 10px;
+    top: 25px;
     right: 10px;
     cursor: pointer;
     background-color: rgba(0, 0, 0, 0.5);

@@ -3,6 +3,8 @@ import axios from 'axios';
 import './Checkout.css'; // External CSS file for styles
 import Cookies from 'js-cookie';
 import { useNavigate  } from 'react-router-dom';
+import { BASE_API_URL } from '../../Setupconstants';
+import { messageService } from '../Common/Message/MessageService';
 
 const Checkout = () => {
     const navigate = useNavigate()
@@ -18,7 +20,7 @@ const Checkout = () => {
     useEffect(() => {
         const fetchCartData = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/api/cart/get_cart',  {
+                const response = await axios.get(`${BASE_API_URL}/api/cart/get_cart`,  {
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRFToken': Cookies.get('csrftoken'),
@@ -29,6 +31,7 @@ const Checkout = () => {
                 setLoading(false);
             } catch (err) {
                 setError('Failed to fetch cart data');
+                messageService.showMessage('Failed to fetch cart data')
                 setLoading(false);
             }
         };
@@ -37,7 +40,6 @@ const Checkout = () => {
     }, []);
 
     const handlePlaceOrder = async () => {
-        debugger
         const formattedItems = cart.items.map((item) => ({
             dish_id: item.dish_id, // Assuming item.id is the dish ID
             quantity: item.quantity || 1, // Get the quantity or default to 1
@@ -45,7 +47,7 @@ const Checkout = () => {
 
         try {
             const response = await axios.post(
-                'http://localhost:8000/api/order/place_order/',
+                `${BASE_API_URL}/api/order/place_order/`,
                 {
                     delivery_address: 'Sunnyvale, CA, USA',
                     special_note: 'leave at door',
@@ -62,10 +64,12 @@ const Checkout = () => {
 
             // Assuming the response contains a success message or order details
             setSuccessMessage('Order placed successfully!'); // Set success message
+            messageService.showMessage('success', 'Order placed successfully!')
             navigate('/feed')
         } catch (error) {
             console.error('Error placing order:', error);
             setError('Failed to place order. Please try again.'); // Set error message
+            messageService.showMessage('error', 'Failed to place order. Please try again.')
         }
     };
 

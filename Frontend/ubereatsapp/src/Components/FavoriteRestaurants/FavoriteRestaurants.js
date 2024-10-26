@@ -1,69 +1,73 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie'; // To handle CSRF token
-import './FavoriteRestaurants.css'; // Optional: External CSS for styling
+import { Container, Row, Col, Button, Card, Spinner } from 'react-bootstrap';
+import './FavoriteRestaurants.css'; // External CSS for custom styling
+import { BASE_API_URL } from '../../Setupconstants';
+import { messageService } from '../Common/Message/MessageService';
 
 const FavoriteRestaurants = () => {
-  const [favorites, setFavorites] = useState([]); // State to store favorite restaurants
-  const [loading, setLoading] = useState(true); // State to handle loading
-  const [error, setError] = useState(null); // State for error handling
+  const [favorites, setFavorites] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Fetch favorite restaurants on component mount
+  // Fetch favorite restaurants
   const fetchFavorites = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/favorite/', {
-        withCredentials: true, // Include credentials (session cookies)
+      const response = await axios.get(`${BASE_API_URL}/api/favorite/`, {
+        withCredentials: true,
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRFToken': Cookies.get('csrftoken'), // Get CSRF token from cookies
+          'X-CSRFToken': Cookies.get('csrftoken'),
         },
       });
 
       if (response.status === 200) {
         const favoriteRestaurants = response.data.map((entry) => ({
-          ...entry.restaurant, // Keep all restaurant details
-          favoriteId: entry.id, // Store the favorite entry's id for removal
+          ...entry.restaurant,
+          favoriteId: entry.id,
         }));
-        setFavorites(favoriteRestaurants); // Set the favorite restaurants
+        setFavorites(favoriteRestaurants);
       }
     } catch (error) {
       console.error('Error fetching favorite restaurants:', error);
       setError('Failed to load favorite restaurants. Please try again.');
+      messageService.showMessage('error', 'Failed to load favorite restaurants. Please try again.')
     } finally {
-      setLoading(false); // Stop loading when the fetch is complete
+      setLoading(false);
     }
   };
 
-  // Handle removing a restaurant from favorites
+  // Remove a restaurant from favorites
   const removeFavorite = async (favoriteId) => {
     try {
-      const response = await axios.delete(`http://localhost:8000/api/favorite/${favoriteId}/`, {
-        withCredentials: true, // Include credentials (session cookies)
+      const response = await axios.delete(`${BASE_API_URL}/api/favorite/${favoriteId}/`, {
+        withCredentials: true,
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRFToken': Cookies.get('csrftoken'), // Get CSRF token from cookies
+          'X-CSRFToken': Cookies.get('csrftoken'),
         },
       });
 
-      if (response.status === 204) { // Success, no content response
-        setFavorites(favorites.filter(favorite => favorite.favoriteId !== favoriteId)); // Remove from list
+      if (response.status === 204) {
+        setFavorites(favorites.filter(favorite => favorite.favoriteId !== favoriteId));
       }
     } catch (error) {
       console.error('Error removing favorite:', error);
+      messageService.showMessage('error', 'Error removing favorite.')
     }
   };
 
-  // Fetch favorites when component mounts
   useEffect(() => {
     fetchFavorites();
   }, []);
 
   if (loading) {
-    return <p>Loading favorite restaurants...</p>;
+    return <Spinner animation="border" variant="primary" />;
   }
 
   if (error) {
-    return <p className="error-message">{error}</p>;
+    return <p className="text-danger">{error}</p>;
   }
 
   if (favorites.length === 0) {
@@ -71,35 +75,39 @@ const FavoriteRestaurants = () => {
   }
 
   return (
-    <div className="favorites-list">
+    <Container className="favorites-list mt-4">
       <h2>Your Favorite Restaurants</h2>
-      <div className="favorites-container">
+      <Row>
         {favorites.map((restaurant) => (
-          <div key={restaurant.favoriteId} className="favorite-card">
-            <img
-              src={restaurant.image || 'default-image.png'} // Placeholder if no image
-              alt={restaurant.restaurant_name}
-              className="favorite-image"
-            />
-            <div className="favorite-details">
-              <h4>{restaurant.restaurant_name}</h4>
-              <h6>{restaurant.location}</h6>
-              <p>Rating: ⭐ {restaurant.rating}</p>
-              <p>Delivery Time: {restaurant.delivery_time}</p>
-              <p>Price Range: {restaurant.price_range}</p>
-              <p>Contact: {restaurant.phone_number}</p>
-              {/* Remove Favorite Button */}
-              <button 
-                className="remove-favorite-button" 
-                onClick={() => removeFavorite(restaurant.favoriteId)}
-              >
-                Remove from Favorites
-              </button>
-            </div>
-          </div>
+          <Col key={restaurant.favoriteId} xs={12} sm={6} md={4} lg={3} className="mb-4">
+            <Card className="favorite-card h-100">
+              <Card.Img
+                variant="top"
+                src={restaurant.image || 'default-image.png'}
+                alt={restaurant.restaurant_name}
+                className="favorite-image"
+              />
+              <Card.Body>
+                <Card.Title>{restaurant.restaurant_name}</Card.Title>
+                <Card.Text>
+                  <strong>Location:</strong> {restaurant.location}<br />
+                  <strong>Rating:</strong> ⭐ {restaurant.rating}<br />
+                  <strong>Delivery Time:</strong> {restaurant.delivery_time}<br />
+                  <strong>Price Range:</strong> {restaurant.price_range}<br />
+                  <strong>Contact:</strong> {restaurant.phone_number}
+                </Card.Text>
+                <Button
+                  variant="danger"
+                  onClick={() => removeFavorite(restaurant.favoriteId)}
+                >
+                  Remove from Favorites
+                </Button>
+              </Card.Body>
+            </Card>
+          </Col>
         ))}
-      </div>
-    </div>
+      </Row>
+    </Container>
   );
 };
 

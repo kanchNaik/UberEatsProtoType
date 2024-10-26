@@ -1,22 +1,24 @@
-// reducers/cartReducer.js
 import { createSlice } from '@reduxjs/toolkit';
 
 const cartSlice = createSlice({
   name: 'cart',
   initialState: {
     cartItemCount: 0,
-    cartItems: [], // Array to hold cart items
+    cartItems: [],
+    restaurantId: null,
+    restaurantName: null,
   },
   reducers: {
     setCartItems: (state, action) => {
-      // Check for the reset flag in the payload
-      const { items, reset } = action.payload; // Destructure items and reset flag
+      const { items, reset, restaurantId, restaurantName } = action.payload;
 
-      if (reset) {
-        // If reset is true, directly assign the new items
+      if (reset || state.restaurantId !== restaurantId) {
+        // If reset is true or the restaurant has changed, clear the cart and set the new items
         state.cartItems = items;
+        state.restaurantId = restaurantId; 
+        state.restaurantName = restaurantName// Update the restaurantId in the state
       } else {
-        // If reset is false, add new items to the existing cart items
+        // If the same restaurant and no reset, update the existing cart items
         const existingItems = state.cartItems;
 
         // Create a map of existing items for easier updating
@@ -39,12 +41,18 @@ const cartSlice = createSlice({
       // Calculate total quantity from the items and update cartItemCount
       state.cartItemCount = state.cartItems.reduce((total, item) => total + item.quantity, 0);
     },
-    // Optionally, you can add other actions here in the future
     assignCartItemCount: (state, action) => {
-      state.cartItemCount = action.payload; // Just in case you need it in the future
+      state.cartItemCount = action.payload;
+    },
+    clearCart: (state) => {
+      // Clear the cart items, item count, and reset restaurant ID
+      state.cartItems = [];
+      state.cartItemCount = 0;
+      state.restaurantId = null;
+      state.restaurantName = null;
     },
   },
 });
 
-export const { setCartItems, assignCartItemCount } = cartSlice.actions; // Exporting both actions
+export const { setCartItems, assignCartItemCount, clearCart } = cartSlice.actions; // Exporting actions
 export default cartSlice.reducer;

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // Using axios for API calls
+import axios from 'axios';
 import { Form, Button, Row, Col, Card, Container, Modal } from 'react-bootstrap';
 import Cookies from 'js-cookie';
+import { BASE_API_URL } from '../../Setupconstants';
+import { messageService } from '../Common/Message/MessageService';
 
-// Profile Page Component
 const RestaurantProfile = ({ userId }) => {
   const [profile, setProfile] = useState({
     restaurant_name: '',
@@ -13,8 +14,8 @@ const RestaurantProfile = ({ userId }) => {
     username: '',
     description: '',
     timings: '',
-    images: [],
-    uberone: false, // Add Uber One state
+    image: '',
+    uberone: false,
   });
 
   const [editMode, setEditMode] = useState(false);
@@ -27,19 +28,20 @@ const RestaurantProfile = ({ userId }) => {
 
   const fetchProfileData = () => {
     axios
-      .get('http://localhost:8000/api/restaurants/me', {
+      .get(`${BASE_API_URL}/api/restaurants/me`, {
         headers: { 'X-CSRFToken': Cookies.get('csrftoken') },
         withCredentials: true,
       })
       .then((response) => {
-        console.log('Profile data:', response.data);
         setProfile((prevProfile) => ({
           ...prevProfile,
           ...response.data,
           profile_image: response.data.profile_image,
         }));
       })
-      .catch((error) => console.error('Error fetching profile data:', error));
+      .catch((error) => {
+        messageService.showMessage('error', 'Error fetching profile data');
+      });
   };
 
   const handleInputChange = (e) => {
@@ -63,12 +65,17 @@ const RestaurantProfile = ({ userId }) => {
   const handleSave = () => {
     setEditMode(false);
     axios
-      .put('http://localhost:8000/api/restaurants/me/', profile, {
+      .put(`${BASE_API_URL}/api/restaurants/me/`, profile, {
         headers: { 'X-CSRFToken': Cookies.get('csrftoken') },
         withCredentials: true,
       })
-      .then((response) => setProfile(response.data))
-      .catch((error) => console.error('Error saving profile data:', error));
+      .then((response) => {
+        setProfile(response.data);
+        messageService.showMessage('success', 'Your profile is saved successfully');
+      })
+      .catch(() => {
+        messageService.showMessage('error', 'Error saving profile data');
+      });
   };
 
   const handlePencilClick = () => setImageModal(true);
@@ -90,45 +97,46 @@ const RestaurantProfile = ({ userId }) => {
     formData.append('profile_image', imageFile);
 
     axios
-      .put('http://localhost:8000/api/customers/profile-picture/', formData, {
+      .put(`${BASE_API_URL}/api/customers/profile-picture/`, formData, {
         headers: {
-          'X-CSRFToken': Cookies.get('csrftoken'), // Ensure the CSRF token is correctly fetched
+          'X-CSRFToken': Cookies.get('csrftoken'),
           'Content-Type': 'multipart/form-data',
         },
-        withCredentials: true, // This ensures the cookies are sent
+        withCredentials: true,
       })
       .then((response) => {
-        console.log('Image and nickname updated:', response.data);
-        setProfile(response.data); // Update the profile state with the new data
-        setImageModal(false); // Close the modal after success
+        setProfile(response.data);
+        setImageModal(false);
+        messageService.showMessage('success', 'Successfully uploaded profile picture');
       })
-      .catch((error) => console.error('Error uploading image:', error));
+      .catch(() => {
+        messageService.showMessage('error', 'Error saving profile picture');
+      });
   };
 
   return (
     <Container className="mt-5">
       <h2 className="text-center">Account Info</h2>
       <Row className="justify-content-center">
-        <Col md={8}>
+        <Col xs={12} md={12} lg={8}>
           <Card className="p-4">
             <div className="text-center">
               <div className="position-relative d-inline-block">
                 <img
-                  src={profile.profile_image || 'https://via.placeholder.com/150'}
+                  src={profile.image || 'https://via.placeholder.com/150'}
                   alt="Profile"
-                  width="700"
-                  height="150"
+                  className="img-fluid mb-3"
+                  style={{ maxHeight: '200px', width: '100%', objectFit: 'cover' }}
                 />
-                <Button variant="light" className="p-1 shadow-sm" onClick={handlePencilClick}>
+                <Button variant="light" className="p-1 shadow-sm position-absolute bottom-0 end-0" onClick={handlePencilClick}>
                   <i className="bi bi-pencil"></i>
                 </Button>
               </div>
             </div>
 
             <Form className="mt-4">
-              {/* Restaurant Name and Phone Number */}
               <Row className="mb-3">
-                <Col md={6}>
+                <Col xs={12} md={6}>
                   <Form.Group controlId="formName">
                     <Form.Label>Restaurant Name</Form.Label>
                     <Form.Control
@@ -140,7 +148,7 @@ const RestaurantProfile = ({ userId }) => {
                     />
                   </Form.Group>
                 </Col>
-                <Col md={6}>
+                <Col xs={12} md={6}>
                   <Form.Group controlId="formPhone">
                     <Form.Label>Phone Number</Form.Label>
                     <Form.Control
@@ -154,9 +162,8 @@ const RestaurantProfile = ({ userId }) => {
                 </Col>
               </Row>
 
-              {/* Email and Location */}
               <Row className="mb-3">
-                <Col md={6}>
+                <Col xs={12} md={6}>
                   <Form.Group controlId="formEmail">
                     <Form.Label>Email</Form.Label>
                     <Form.Control
@@ -168,7 +175,7 @@ const RestaurantProfile = ({ userId }) => {
                     />
                   </Form.Group>
                 </Col>
-                <Col md={6}>
+                <Col xs={12} md={6}>
                   <Form.Group controlId="location">
                     <Form.Label>Location</Form.Label>
                     <Form.Control
@@ -182,9 +189,8 @@ const RestaurantProfile = ({ userId }) => {
                 </Col>
               </Row>
 
-              {/* Description */}
               <Row className="mb-3">
-                <Col md={6}>
+                <Col>
                   <Form.Group controlId="description">
                     <Form.Label>Description</Form.Label>
                     <Form.Control
@@ -199,21 +205,19 @@ const RestaurantProfile = ({ userId }) => {
                 </Col>
               </Row>
 
-              {/* Uber One Checkbox */}
               <Row className="mb-3">
-                <Col md={6}>
-                    <Form.Group controlId="formUberOne">
+                <Col>
+                  <Form.Group controlId="formUberOne">
                     <Form.Check
-                        type="checkbox"
-                        label="Uber One"
-                        checked={profile.uberone}
-                        onChange={editMode ? handleCheckboxChange : null}
-                        disabled={!editMode}
+                      type="checkbox"
+                      label="Uber One"
+                      checked={profile.uberone}
+                      onChange={editMode ? handleCheckboxChange : null}
+                      disabled={!editMode}
                     />
-                    </Form.Group>
+                  </Form.Group>
                 </Col>
-            </Row>
-
+              </Row>
 
               <Button variant="primary" onClick={() => setEditMode(!editMode)}>
                 {editMode ? 'Cancel' : 'Edit Profile'}
@@ -228,7 +232,6 @@ const RestaurantProfile = ({ userId }) => {
         </Col>
       </Row>
 
-      {/* Image Upload Modal */}
       <Modal show={imageModal} onHide={() => setImageModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Upload Profile Picture</Modal.Title>

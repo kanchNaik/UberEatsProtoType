@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import DishCard from './DishCard';
 import Cookies from 'js-cookie';
+import { BASE_API_URL } from '../../Setupconstants';
+import { messageService } from '../Common/Message/MessageService';
 
 class RestaurantDishesList extends Component {
   constructor(props) {
@@ -13,15 +15,13 @@ class RestaurantDishesList extends Component {
   }
 
   componentDidMount() {
-    this.fetchRestaurants();
+    this.fetchDishes();
   }
 
- ;
-
-  fetchRestaurants = () => {
-    const restaurantId =  Cookies.get('user_id')
+  fetchDishes = () => {
+    const restaurantId = Cookies.get('user_id');
     axios
-      .get(`http://localhost:8000/api/restaurants/${restaurantId}/dishes`, {
+      .get(`${BASE_API_URL}/api/restaurants/${restaurantId}/dishes`, {
         headers: {
           'X-CSRFToken': Cookies.get('csrftoken'),
         },
@@ -34,6 +34,7 @@ class RestaurantDishesList extends Component {
       .catch((error) => {
         console.error('Error fetching dishes:', error);
         this.setState({ error: 'Failed to fetch dishes' });
+        messageService.showMessage('error', 'Error fetching dishes');
       });
   };
 
@@ -41,15 +42,15 @@ class RestaurantDishesList extends Component {
     const { dishes, error } = this.state;
 
     return (
-    <div className='container'>
-      <div className="row">
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        {dishes.map((dish) => (
-          <div className="col-4" key={dish.id}>
-            <DishCard dish={dish} />
-          </div>
-        ))}
-      </div>
+      <div className='container'>
+        <div className="row">
+          {error && <p style={{ color: 'red' }}>{error}</p>}
+          {dishes.map((dish) => (
+            <div className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" key={dish.id}>
+              <DishCard dish={dish} />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

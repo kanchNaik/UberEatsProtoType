@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './RestaurantSignUp.css';
-import Cookies from 'js-cookie';
 import { useNavigate  } from 'react-router-dom';
+import { messageService } from '../Common/Message/MessageService';
+import { BASE_API_URL } from '../../Setupconstants';
 
 const RestaurantSignUp = () => {
   const navigate = useNavigate();
@@ -66,20 +67,20 @@ const RestaurantSignUp = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const ip_address = 'http://13.56.179.210/'
     axios
-      .post(ip_address+'/api/signup/', formData, {
+      .post(`${BASE_API_URL}/api/signup/`, formData, {
         headers: {
           'Content-Type': 'application/json',
-        },
-        withCredentials: true,
+        }
       })
       .then((response) => {
         console.log('Success:', response.data);
+        messageService.showMessage('success', 'You are successfully signed up');
         navigate('/signin'); // Navigate on success
       })
       .catch((error) => {
         console.error('Error:', error);
+        messageService.showMessage('error', 'Signup failed. Please try again.');
       });
   };
   
@@ -205,7 +206,7 @@ const RestaurantSignUp = () => {
           </label>
         </div>
 
-        <button type="submit" className="submit-button">Submit</button>
+        <button type="submit" className="continue-button">Submit</button>
       </form>
     </div>
   );
