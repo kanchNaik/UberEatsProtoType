@@ -7,7 +7,6 @@ import { FaPlus } from 'react-icons/fa';
 import MenuItemAddModal from './MenuItemAddModal';
 
 const MenuItem = ({ menu, restaurantid, restaurantname }) => {
-  debugger
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => setIsModalOpen(true);

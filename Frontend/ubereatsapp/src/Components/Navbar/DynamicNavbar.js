@@ -21,7 +21,6 @@ const DynamicNavbar = () => {
   const user = getUserInfo();
 
   const renderNavbar = () => {
-    debugger
     switch (location.pathname) {
       case '/':
       case '/home':

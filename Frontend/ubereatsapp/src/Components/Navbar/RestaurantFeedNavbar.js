@@ -5,7 +5,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 function RestaurantFeedNavbar({onClick, user}) {
     const location = useLocation();
     const navigate = useNavigate();
-    debugger
     const onAddClick = () => navigate('/restaurant/dish/add')
 
   return (

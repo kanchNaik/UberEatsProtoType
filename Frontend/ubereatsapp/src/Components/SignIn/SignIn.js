@@ -5,10 +5,12 @@ import Cookies from 'js-cookie';
 import { useNavigate  } from 'react-router-dom';
 import { messageService } from '../Common/Message/MessageService';
 import { BASE_API_URL } from '../../Setupconstants';
+import { useAuth } from '../../AuthContext';
+
 
 function SignIn() {
   const navigate = useNavigate();
-
+  const { login } = useAuth();
   const [inputEmail, setInputEmailValue] = useState('');
   const [inputPassword, setInputPasswordValue] = useState('');
   const [error, setError] = useState('');
@@ -37,6 +39,7 @@ function SignIn() {
         Cookies.set('user_email', user.email)
 
         messageService.showMessage('success', 'Logged in successfully');
+        login(token, user.is_customer ? 'Customer' : 'Restaurant');
 
         if(user.is_customer) 
         {

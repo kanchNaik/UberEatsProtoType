@@ -40,7 +40,6 @@ const Checkout = () => {
     }, []);
 
     const handlePlaceOrder = async () => {
-        debugger
         const formattedItems = cart.items.map((item) => ({
             dish_id: item.dish_id, // Assuming item.id is the dish ID
             quantity: item.quantity || 1, // Get the quantity or default to 1

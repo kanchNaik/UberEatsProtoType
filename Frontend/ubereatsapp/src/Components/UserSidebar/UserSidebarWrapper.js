@@ -5,7 +5,6 @@ import { useLocation } from 'react-router-dom';
 import {getUserInfo} from '../../Utilities/UserUtils'
 
 const UserSidebarWrapper = ({ isOpen, closeSidebar  }) => {
-  debugger
   const user = getUserInfo();
 
   const sidebarRef = useRef(null);

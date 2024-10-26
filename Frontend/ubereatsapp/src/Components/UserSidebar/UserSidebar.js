@@ -7,9 +7,10 @@ import { useNavigate  } from 'react-router-dom';
 import { getUserInfo } from '../../Utilities/UserUtils';
 import { BASE_API_URL } from '../../Setupconstants';
 import { messageService } from '../Common/Message/MessageService';
+import { useAuth } from '../../AuthContext';
 
 const UserSidebar = () => {
-debugger
+  const { logout } = useAuth();
   const user = getUserInfo()
   const navigate = useNavigate();
 
@@ -40,6 +41,7 @@ debugger
 
           console.log('Logged out successfully');
           messageService.showMessage('success', 'Logged out successfully');
+          logout()
           // Redirect to the login page
           navigate('/signin');
         }

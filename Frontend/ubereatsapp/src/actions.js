@@ -1,7 +1,6 @@
 // actions.js
 import { INCREMENT_CART_ITEM_COUNT, ASSIGN_CART_ITEM_COUNT } from './actionType';
 
-debugger;
 // Action creator for incrementing cart item count
 export const incrementCartItemCount = (quantity) => ({
     type: INCREMENT_CART_ITEM_COUNT,

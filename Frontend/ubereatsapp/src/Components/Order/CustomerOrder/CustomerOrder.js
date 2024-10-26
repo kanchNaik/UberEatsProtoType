@@ -14,7 +14,6 @@ const CustomerOrder = ({ orderId }) => {
 
     // Fetch order details using the provided API
     const fetchOrderDetails = async () => {
-        debugger
         try {
             const response = await axios.get(`${BASE_API_URL}/api/order/${id}/`, {
                 withCredentials: true, // Enable sending cookies with the request
