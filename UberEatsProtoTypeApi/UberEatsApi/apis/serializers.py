@@ -56,7 +56,7 @@ class CartSerializer(serializers.ModelSerializer):
 class CartItemSerializer(serializers.ModelSerializer):
     dish_id = serializers.IntegerField(source='dish.id')
     dish_name = serializers.CharField(source='dish.dish_name')
-    dish_image = serializers.ImageField(source='dish.dish_image')
+    dish_image = serializers.ImageField(source='dish.dish_image',use_url=True)
     description = serializers.CharField(source='dish.description')
     price = serializers.CharField(source='dish.price')
     category = serializers.CharField(source='dish.category')

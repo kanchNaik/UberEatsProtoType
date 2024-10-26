@@ -180,6 +180,8 @@ class CartViewSet(viewsets.ModelViewSet):
     queryset = Cart.objects.all()
     serializer_class = CartSerializer
 
+    def get_serializer_context(self):
+        return {'request': self.request}
     @action(detail=False, methods=['GET'])
     def get_cart(self, request):
         try:
@@ -195,7 +197,7 @@ class CartViewSet(viewsets.ModelViewSet):
             return Response({}, status=status.HTTP_200_OK)
 
         # Serialize the cart items
-        cart_items_serializer = CartItemSerializer(cart_items, many=True)
+        cart_items_serializer = CartItemSerializer(cart_items, many=True, context={'request': request})
         cart_total_price = cart_items.aggregate(total_price=Sum(F('quantity') * F('dish__price')))
         return Response({'restaurant_id': cart_items[0].restaurant.user_id,
                          'restaurant_name': cart_items[0].restaurant.restaurant_name,
@@ -214,6 +216,14 @@ class CartViewSet(viewsets.ModelViewSet):
         dish = Dish.objects.get(id=dish_id)
         restaurant_id = dish.restaurant.user.id
         restaurant = Restaurant.objects.get(user_id=restaurant_id)
+
+        cart_items_before_addition = Cart.objects.filter(customer=customer, is_still_in_cart=True)
+        # // Flush the cart if items in cart with is_still_in_cart=True and is from different restaurant
+        if cart_items_before_addition.exists() and cart_items_before_addition[0].restaurant != restaurant:
+            Cart.objects.filter(customer=customer, is_still_in_cart=True).delete()
+
+
+
         if Cart.objects.filter(customer=customer, dish=dish, is_still_in_cart=True).exists():
             # Update the quantity of the existing cart item
             cart_item = Cart.objects.get(customer=customer, dish=dish, is_still_in_cart=True)
@@ -268,6 +278,7 @@ class OrderViewSet(viewsets.ModelViewSet):
             {
                 'dish_id': item.dish.id,
                 'dish_name': item.dish.dish_name,
+                'dish_image': request.build_absolute_uri(item.dish.dish_image.url) if item.dish.dish_image else None,
                 'quantity': item.quantity,
                 'price': item.dish.price
             }
@@ -299,6 +310,7 @@ class OrderViewSet(viewsets.ModelViewSet):
                         'dish_id': item.dish.id,
                         'dish_name': item.dish.dish_name,
                         'quantity': item.quantity,
+                        'dish_image': request.build_absolute_uri(item.dish.dish_image.url) if item.dish.dish_image.url else None,
                         'price': item.dish.price
                     }
                     for item in ordered_items
@@ -321,6 +333,7 @@ class OrderViewSet(viewsets.ModelViewSet):
                         'dish_id': item.dish.id,
                         'dish_name': item.dish.dish_name,
                         'quantity': item.quantity,
+                        'dish_image': request.build_absolute_uri(item.dish.dish_image.url) if item.dish.dish_image.url else None,
                         'price': item.dish.price
                     }
                     for item in ordered_items
