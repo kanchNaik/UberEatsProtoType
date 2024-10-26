@@ -27,6 +27,7 @@ import CustomerOrder from './Components/Order/CustomerOrder/CustomerOrder'
 import RestaurantOrderList from './Components/Order/RestaurantOrder/RestaurantOrderList/RestaurantOrderList';
 import FavoriteRestaurants from './Components/FavoriteRestaurants/FavoriteRestaurants'
 import CustomerProfile from './Components/UserProfile/CustomerProfile/CustomerProfile';
+import ProtectedRoute from './Components/ProtectedRoute/ProtectedRoute'
 
 function App() {
 
@@ -46,21 +47,27 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/merchantsignup" element={<RestaurantSignUp />} />
-        <Route path="/feed" element={<Feed />} />
-        <Route path="/restaurant/:id" element={<Restaurant />} />
-        <Route path="/customer/me" element={<UserProfile />} />
         <Route path="/test" element={<Testpage/>}/>
-        <Route path="/restaurant/home" element={<RestaurantHome/>}/>
-        <Route path="/restaurant/my" element={<RestaurantProfile/>}/>
-        <Route path="/restaurant/dishes" element={<RestaurantDishesList/>} />
-        <Route path="/restaurant/dish/add" element={<DishAdd/>}/>
-        <Route path="/restaurant/dish/edit/:id" element={<DishAdd isEdit />} />
-        <Route path="/order/checkout" element={<Checkout/>}/>
-        <Route path="/orders" element={<CustomerOrderList />}/>
-        <Route path="/orders/:id" element={<CustomerOrder />} />
-        <Route path="/restaurant/orders" element={<RestaurantOrderList />} />
-        <Route path="/favorites" element={<FavoriteRestaurants/>}/>
-        <Route path="/customers/profile/:id" element={<CustomerProfile />}/>
+
+        <Route path="/feed" element={
+            <ProtectedRoute isAuthenticated={isAuthenticated} allowedUserType="customer" userType={userType}> <Feed /> </ProtectedRoute>} />
+        <Route path="/restaurant/:id" element={<ProtectedRoute isAuthenticated={isAuthenticated} allowedUserType="customer" userType={userType}> <Restaurant /> </ProtectedRoute>} />
+        <Route path="/customer/me" element={<ProtectedRoute isAuthenticated={isAuthenticated} allowedUserType="customer" userType={userType}> <UserProfile /> </ProtectedRoute>} />
+        <Route path="/order/checkout" element={<ProtectedRoute isAuthenticated={isAuthenticated} allowedUserType="customer" userType={userType}> <Checkout/> </ProtectedRoute>}/>
+        <Route path="/orders" element={<ProtectedRoute isAuthenticated={isAuthenticated} allowedUserType="customer" userType={userType}><CustomerOrderList /> </ProtectedRoute>}/>
+        <Route path="/orders/:id" element={<ProtectedRoute isAuthenticated={isAuthenticated} allowedUserType="customer" userType={userType}><CustomerOrder /> </ProtectedRoute>} />
+        <Route path="/favorites" element={<ProtectedRoute isAuthenticated={isAuthenticated} allowedUserType="customer" userType={userType}><FavoriteRestaurants/> </ProtectedRoute>}/>
+        
+       
+        <Route path="/restaurant/home" element={<ProtectedRoute isAuthenticated={isAuthenticated} allowedUserType="customer" userType={userType}> <RestaurantHome/> </ProtectedRoute>}/>
+        <Route path="/restaurant/my" element={<ProtectedRoute isAuthenticated={isAuthenticated} allowedUserType="customer" userType={userType}> <RestaurantProfile/> </ProtectedRoute>}/>
+        <Route path="/restaurant/dishes" element={<ProtectedRoute isAuthenticated={isAuthenticated} allowedUserType="customer" userType={userType}>  <RestaurantDishesList/> </ProtectedRoute>} />
+        <Route path="/restaurant/dish/add" element={<ProtectedRoute isAuthenticated={isAuthenticated} allowedUserType="customer" userType={userType}>  <DishAdd/> </ProtectedRoute>}/>
+        <Route path="/restaurant/dish/edit/:id" element={<ProtectedRoute isAuthenticated={isAuthenticated} allowedUserType="customer" userType={userType}>  <DishAdd isEdit /> </ProtectedRoute>} />
+        
+        
+        <Route path="/restaurant/orders" element={<ProtectedRoute isAuthenticated={isAuthenticated} allowedUserType="customer" userType={userType}>  <RestaurantOrderList /> </ProtectedRoute>} />
+        <Route path="/customers/profile/:id" element={<ProtectedRoute isAuthenticated={isAuthenticated} allowedUserType="customer" userType={userType}>  <CustomerProfile /> </ProtectedRoute>}/>
       </Routes>
     </div>
   );
