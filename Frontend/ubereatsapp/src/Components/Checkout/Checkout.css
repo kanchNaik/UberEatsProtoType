@@ -124,3 +124,16 @@
     border-radius: 5px;
     resize: none;
 }
+
+.delivery-address-section {
+    margin: 20px 0;
+}
+
+.delivery-address-input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: none;
+}
