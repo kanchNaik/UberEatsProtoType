@@ -97,7 +97,7 @@ const RestaurantProfile = ({ userId }) => {
     formData.append('profile_image', imageFile);
 
     axios
-      .put(`${BASE_API_URL}/api/customers/profile-picture/`, formData, {
+      .put(`${BASE_API_URL}/api/restaurants/me/`, formData, {
         headers: {
           'X-CSRFToken': Cookies.get('csrftoken'),
           'Content-Type': 'multipart/form-data',
