@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './Checkout.css'; 
+import './Checkout.css'; // External CSS file for styles
 import Cookies from 'js-cookie';
 import { useNavigate  } from 'react-router-dom';
 import { BASE_API_URL } from '../../Setupconstants';
@@ -13,8 +13,8 @@ const Checkout = () => {
     const [cart, setCart] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [specialNote, setSpecialNote] = useState(''); 
-    const [deliveryAdd, setDeliveryAddress] = useState('');
+    const [specialNote, setSpecialNote] = useState(''); // State to store special note
+    const [successMessage, setSuccessMessage] = useState(''); 
 
     // Fetch cart data when component loads
     useEffect(() => {
@@ -29,7 +29,6 @@ const Checkout = () => {
                 });
                 setCart(response.data);
                 setLoading(false);
-                console.log('cart',cart)
             } catch (err) {
                 setError('Failed to fetch cart data');
                 messageService.showMessage('Failed to fetch cart data')
@@ -42,7 +41,7 @@ const Checkout = () => {
 
     const handlePlaceOrder = async () => {
         const formattedItems = cart.items.map((item) => ({
-            dish_id: item.dish_id,
+            dish_id: item.dish_id, // Assuming item.id is the dish ID
             quantity: item.quantity || 1, // Get the quantity or default to 1
           }));
 
@@ -50,8 +49,8 @@ const Checkout = () => {
             const response = await axios.post(
                 `${BASE_API_URL}/api/order/place_order/`,
                 {
-                    delivery_address: {deliveryAdd},
-                    special_note: {specialNote},
+                    delivery_address: 'Sunnyvale, CA, USA',
+                    special_note: 'leave at door',
                     items: formattedItems,
                 },
                 {
@@ -63,7 +62,8 @@ const Checkout = () => {
                 }
             );
 
-            
+            // Assuming the response contains a success message or order details
+            setSuccessMessage('Order placed successfully!'); // Set success message
             messageService.showMessage('success', 'Order placed successfully!')
             navigate('/feed')
         } catch (error) {
@@ -78,10 +78,6 @@ const Checkout = () => {
         setSpecialNote(e.target.value);
     };
 
-    const handleAddressChange = (e) => {
-        setDeliveryAddress(e.target.value);
-    };
-
 
     // Display loading message while fetching data
     if (loading) {
@@ -93,13 +89,7 @@ const Checkout = () => {
         return <div>{error}</div>;
     }
 
-    debugger;
-    if((cart) => Object.keys(cart).length === 0)
-    {
-        return <div></div>
-    }
     return (
-        
         <div className="card">
             <div className="cart-summary">
                 <h2>Cart summary ({cart.items.length} item{cart.items.length > 1 ? 's' : ''})</h2>
@@ -110,7 +100,7 @@ const Checkout = () => {
                 <div className="item-details" key={index}>
                     <img src="pad-thai.jpg" alt={item.dish_name} className="item-image" />
                     <div className="item-info">
-                        <h3>{item.dish_name} * {item.quantity}</h3>
+                        <h3>{item.dish_name}</h3>
                         <p>{item.description}</p>
                     </div>
                     <p className="price">${item.price}</p>
@@ -144,17 +134,7 @@ const Checkout = () => {
                     className="special-note-input"
                 />
             </div>
-            <div className="delivery-address-section">
-                <label htmlFor="delivery-address">Delivery Address:</label>
-                <textarea
-                    id="delivery-address"
-                    value={deliveryAdd}
-                    onChange={handleAddressChange}
-                    placeholder="Add a address for your order"
-                    rows="3"
-                    className="delivery-address-input"
-                />
-            </div>
+
             <button className="place-order-btn" onClick={handlePlaceOrder}>
                 Place Order
             </button>

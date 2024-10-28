@@ -55,6 +55,9 @@ const UserSidebar = () => {
     user ? (<div className="sidebar">
       <div className="sidebar-header">
         <div className="user-info">
+          <div className="user-avatar">
+            <img src="https://via.placeholder.com/50" alt="User Avatar" />
+          </div>
           <div className="user-name">
             <h5>{Cookies.get('user_name')}</h5>
            <NavLink to="customer/me"> <small>Manage account</small> </NavLink>
