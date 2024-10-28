@@ -21,7 +21,8 @@ pip install drf-yasg
 python3 manage.py runserver
 
 
-<b>Run React Application</b>
+<b>Run React Application </b>
+
 sudo apt install npm (npm install)
 npm install bootstrap-icons
 npm install react-icons
