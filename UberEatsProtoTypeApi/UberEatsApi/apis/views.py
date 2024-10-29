@@ -1,3 +1,4 @@
+from datetime import datetime
 from decimal import Decimal
 
 from django.db.models import Sum, F
@@ -77,8 +78,17 @@ class RestaurantViewSet(viewsets.ModelViewSet):
             restaurant_data['email'] = request.user.email
             return Response(restaurant_data)
         elif request.method in ['PUT', 'PATCH']:
+            if "image" in request.data:
+                del request.data["image"]
             if "delivery_time" in request.data:
-                request.data["delivery_time"] = str(int(request.data["delivery_time"]) * 60)
+                time_str = request.data["delivery_time"]
+                try:
+                    time_obj = datetime.strptime(time_str, '%H:%M:%S')
+                    minutes = time_obj.hour * 60 + time_obj.minute
+                    request.data["delivery_time"] = str(minutes)
+                except ValueError:
+                    return Response({'error': 'Invalid time format. Use HH:MM:SS.'},
+                                    status=status.HTTP_400_BAD_REQUEST)
             serializer = self.get_serializer(restaurant, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
@@ -109,8 +119,8 @@ class RestaurantViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['PUT'], url_path='profile-picture')
     def update_profile_picture(self, request):
         restaurant = Restaurant.objects.get(user=request.user)
-        if 'profile_image' in request.data:
-            restaurant.image = request.data['profile_image']
+        if 'image' in request.data:
+            restaurant.image = request.data['image']
             restaurant.save()
             return Response({'message': 'Profile picture updated successfully'}, status=status.HTTP_200_OK)
         return Response({'error': 'No image file provided'}, status=status.HTTP_400_BAD_REQUEST)
@@ -290,11 +300,13 @@ class OrderViewSet(viewsets.ModelViewSet):
             # Add customer URL for restaurant users
             data['customer_url'] = request.build_absolute_uri(reverse('customer-detail', args=[data['customer']]))
             data['customer_name'] = Customer.objects.get(user_id=data['customer']).name
+            data['customer_image'] = request.build_absolute_uri(Customer.objects.get(user_id=data['customer']).profile_image.url)
 
         elif request.user.is_authenticated and request.user.is_customer:
             # Add restaurant URL for customer users
             data['restaurant_url'] = request.build_absolute_uri(reverse('restaurant-detail', args=[data['restaurant']]))
             data['restaurant_name'] = Restaurant.objects.get(user_id=data['restaurant']).restaurant_name
+            data['restaurant_image'] = request.build_absolute_uri(Restaurant.objects.get(user_id=data['restaurant']).image.url)
 
         return Response(data)
 
@@ -310,7 +322,7 @@ class OrderViewSet(viewsets.ModelViewSet):
                         'dish_id': item.dish.id,
                         'dish_name': item.dish.dish_name,
                         'quantity': item.quantity,
-                        'dish_image': request.build_absolute_uri(item.dish.dish_image.url) if item.dish.dish_image.url else None,
+                        'dish_image': request.build_absolute_uri(item.dish.dish_image.url) if item.dish.dish_image else None,
                         'price': item.dish.price
                     }
                     for item in ordered_items
@@ -321,6 +333,9 @@ class OrderViewSet(viewsets.ModelViewSet):
                 order['restaurant_url'] = request.build_absolute_uri(
                     reverse('restaurant-detail', args=[order['restaurant']]))
                 order['restaurant_name'] = Restaurant.objects.get(user_id=order['restaurant']).restaurant_name
+                order['restaurant_image'] = request.build_absolute_uri(
+                    Restaurant.objects.get(user_id=order['restaurant']).image.url) if Restaurant.objects.get(
+                    user_id=order['restaurant']).image else None
             return Response(serializer.data)
         elif request.user.is_authenticated and request.user.is_restaurant:
             orders = Order.objects.filter(restaurant=request.user.restaurant).order_by('-created_at')
@@ -343,6 +358,7 @@ class OrderViewSet(viewsets.ModelViewSet):
                 order['item_count'] = Cart.objects.filter(order_history=order['id']).count()
                 order['customer_url'] = request.build_absolute_uri(reverse('customer-detail', args=[order['customer']]))
                 order['customer_name'] = Customer.objects.get(user_id=order['customer']).name
+                order['customer_image'] = request.build_absolute_uri(Customer.objects.get(user_id=order['customer']).profile_image.url)
             return Response(serializer.data)
         else:
             return Response({'error': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
