@@ -1,0 +1,1282 @@
+{
+	"info": {
+		"_postman_id": "157ca71b-fd58-4552-a5de-284443455147",
+		"name": "UberEats",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38983066"
+	},
+	"item": [
+		{
+			"name": "Customer",
+			"item": [
+				{
+					"name": "POST Signup",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"test@gmail.com\",\n  \"password\": \"Test123\",\n  \"is_customer\": true,\n  \"username\": \"TestYashasvi\",\n  \"customer\": {\n    \"phone_number\": \"8805947163\",\n    \"date_of_birth\": \"2024-10-17\",\n    \"city\": \"Alameda\",\n    \"state\": \"California\",\n    \"country\": \"United States\",\n    \"name\": \"Test\",\n    \"nickname\": \"asdas\"\n  }\n}\n\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/signup/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"signup",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"// Extract CSRF token from cookies",
+									"var csrfToken = pm.cookies.get('csrftoken');  // Replace 'csrf_token' with your actual cookie name",
+									"",
+									"// Set the CSRF token in the environment",
+									"pm.environment.set('csrfToken', csrfToken);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"",
+									"// Extract CSRF token from cookies",
+									"var csrfToken = pm.cookies.get('csrftoken');  // Replace 'csrf_token' with your actual cookie name",
+									"",
+									"// Set the CSRF token in the environment",
+									"pm.environment.set('csrfToken', csrfToken);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\" : \"TestYashasvi\",\n    \"password\" : \"Test123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/login/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"login",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT me - customer",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "kSTb3NzRgkgkGiaKKpIuFHAHAsneT5tN",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"yashasvi\",\n    \"phone_number\": \"1234567890\",\n    \"city\": \"San Francisco\",\n    \"state\": \"CA\",\n    \"country\": \"USA\",\n    \"profile_image\": null,\n    \"date_of_birth\": \"1990-01-01\",\n    \"nickname\": \"testuser- me updated\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/customers/me/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"customers",
+								"me",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET me - customer",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true,
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "T828kkvT37p064ZMOEHb3p1yxRS5s7VE;",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "b6f8f7657f79ca2bc4bad793ba857157128b1c9e",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/customers/me",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"customers",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT me - Prof picture",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "kSTb3NzRgkgkGiaKKpIuFHAHAsneT5tN",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "nickname",
+									"value": "nickname-updated",
+									"type": "text"
+								},
+								{
+									"key": "profile_image",
+									"type": "file",
+									"src": "/Users/yashasvi/Downloads/0K1A9890.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/customers/profile-picture/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"customers",
+								"profile-picture",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET ALL customers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "kSTb3NzRgkgkGiaKKpIuFHAHAsneT5tN",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/customers/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"customers",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "T828kkvT37p064ZMOEHb3p1yxRS5s7VE",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/logout/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"logout",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Restaurants list",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "KYwBfn1HeyXEkZzkyHqGtfz22VO755yo",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/restaurants",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"restaurants"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Dish list",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "KYwBfn1HeyXEkZzkyHqGtfz22VO755yo",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/restaurants/5/dishes",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"restaurants",
+								"5",
+								"dishes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Cart",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "T828kkvT37p064ZMOEHb3p1yxRS5s7VE",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dish_id\": 2,\n  \"quantity\" : 6\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/cart/add_to_cart/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"cart",
+								"add_to_cart",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Multiple Cart items",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"items\": [\n    {\n        \"dish_id\": 4,\n        \"quantity\": 2\n    },\n    {\n        \"dish_id\": 5,\n        \"quantity\": 3\n    }\n]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/cart/add_multiple_to_cart/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"cart",
+								"add_multiple_to_cart",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "T828kkvT37p064ZMOEHb3p1yxRS5s7VE",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"delivery_address\" : \"Sunnyvale, CA, USA\",\n    \"items\" : [\n        {\n            \"dish_id\": 2,\n            \"quantity\": 3\n        }, \n        {\n            \"dish_id\": 5,\n            \"quantity\" : 6\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/order/place_order/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"order",
+								"place_order",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Order",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "T828kkvT37p064ZMOEHb3p1yxRS5s7VE",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/order/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"order",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Order by ID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "T828kkvT37p064ZMOEHb3p1yxRS5s7VE",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/order/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"order",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Cart",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/cart/get_cart",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"cart",
+								"get_cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Flush Cart",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/cart/clear_cart/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"cart",
+								"clear_cart",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Restaurant by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/restaurants/1/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"restaurants",
+								"1",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Favorites",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/restaurants/1/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"restaurants",
+								"1",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Favorites",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/favorite/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"favorite",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Favorites Copy",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/favorite/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"favorite",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							"// Get the CSRF token from the environment (or global) variable",
+							"var csrfToken = pm.environment.get('csrfToken');  // or use pm.globals.get if you stored it globally",
+							"",
+							"// Add the CSRF token to the headers",
+							"pm.request.headers.add({key: \"X-CSRFToken\", value: csrfToken});",
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							"// Get the CSRF token from the environment (or global) variable",
+							"var csrfToken = pm.environment.get('csrfToken');  // or use pm.globals.get if you stored it globally",
+							"",
+							"// Add the CSRF token to the headers",
+							"pm.request.headers.add({key: \"X-CSRFToken\", value: csrfToken});",
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Restaurant",
+			"item": [
+				{
+					"name": "POST Login Copy",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"",
+									"// Extract CSRF token from cookies",
+									"var csrfToken = pm.cookies.get('csrftoken');  // Replace 'csrf_token' with your actual cookie name",
+									"",
+									"// Set the CSRF token in the environment",
+									"pm.environment.set('csrfToken', csrfToken);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Extract CSRF token from cookies",
+									"var csrfToken = pm.cookies.get('csrftoken');  // Replace 'csrf_token' with your actual cookie name",
+									"",
+									"// Set the CSRF token in the environment",
+									"pm.environment.set('csrfToken', csrfToken);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\" : \"IndoChineseSantaJose\",\n    \"password\" : \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/login/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"login",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Signup Copy",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"testrestaurant@example.com\",\n    \"password\": \"password123\",\n    \"is_restaurant\": true,\n    \"username\":\"IndoChineseSantaJose\",\n    \"restaurant\": {\n        \"phone_number\": \"1234567890\",\n        \"location\": \"test location is given\",\n        \"restaurant_name\": \"IndoChineseSanJose\",\n        \"description\": \"Indian Cuisine\",\n        \"price_range\": \"medium\",\n        \"rating\": null,\n        \"delivery_time\": \"0 00:30:00\",\n        \"uberone\": false\n    }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/signup/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"signup",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET me-Restaurant",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "KYwBfn1HeyXEkZzkyHqGtfz22VO755yo",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/restaurants/me",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"restaurants",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT me - Restaurant",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "KYwBfn1HeyXEkZzkyHqGtfz22VO755yo",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/restaurants/me",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"restaurants",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Logout Copy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "GrBAAOTmafIwdmJ7xpjWz1P1JyzYCEXi",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/logout/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"logout",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST Dishes",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "3UrAWikd0oIEo8KZbto0jX4ThdSkgEzg",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dish_name\": \"Rasmalai\",\n  \"description\": \"Delicious Begali Dessert.\",\n  \"price\": \"5.99\",\n  \"category\": \"Dessert\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/dishes/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"dishes",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT DIshes",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "3UrAWikd0oIEo8KZbto0jX4ThdSkgEzg",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dish_name\": \"Biryani-Mushroom\",\n  \"description\": \"Delicious Hyderabadi Food.\",\n  \"price\": \"20.99\",\n  \"category\": \"Main Course\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/dishes/3/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"dishes",
+								"3",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Dish",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "3UrAWikd0oIEo8KZbto0jX4ThdSkgEzg",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dish_name\": \"Biryani\",\n  \"description\": \"Delicious Hyderabadi Food.\",\n  \"price\": \"20.99\",\n  \"category\": \"Main Course\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/dishes/3/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"dishes",
+								"3",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Dishes",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "KYwBfn1HeyXEkZzkyHqGtfz22VO755yo",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/restaurants/5/dishes",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"restaurants",
+								"5",
+								"dishes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Orders",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "KYwBfn1HeyXEkZzkyHqGtfz22VO755yo",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/order/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"order",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Order by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "KYwBfn1HeyXEkZzkyHqGtfz22VO755yo",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/order/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"order",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Order Status",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "KYwBfn1HeyXEkZzkyHqGtfz22VO755yo",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/order",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"order"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							"// Get the CSRF token from the environment (or global) variable",
+							"var csrfToken = pm.environment.get('csrfToken');  // or use pm.globals.get if you stored it globally",
+							"",
+							"// Add the CSRF token to the headers",
+							"pm.request.headers.add({key: \"X-CSRFToken\", value: csrfToken});",
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	]
+}
