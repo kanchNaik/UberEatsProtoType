@@ -70,3 +70,6 @@ Restaurant profile management
 Menu creation and management
 Order placement and tracking
 Favorites management for customers
+
+Notion link for API responses and additional screenshots
+https://amenable-caraway-df3.notion.site/Uber-Eats-12493a8d4c5380479aa5c4384c0e79fb
