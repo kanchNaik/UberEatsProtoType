@@ -63,9 +63,10 @@ const RestaurantProfile = ({ userId }) => {
   };
 
   const handleSave = () => {
+    const { profile_image, ...profileDataToSave } = profile;
     setEditMode(false);
     axios
-      .put(`${BASE_API_URL}/api/restaurants/me/`, profile, {
+      .put(`${BASE_API_URL}/api/restaurants/me/`, profileDataToSave, {
         headers: { 'X-CSRFToken': Cookies.get('csrftoken') },
         withCredentials: true,
       })
@@ -94,10 +95,10 @@ const RestaurantProfile = ({ userId }) => {
 
     const formData = new FormData();
     formData.append('nickname', profile.nickname);
-    formData.append('profile_image', imageFile);
+    formData.append('image', imageFile);
 
     axios
-      .put(`${BASE_API_URL}/api/customers/profile-picture/`, formData, {
+      .put(`${BASE_API_URL}/api/restaurants/profile-picture/`, formData, {
         headers: {
           'X-CSRFToken': Cookies.get('csrftoken'),
           'Content-Type': 'multipart/form-data',

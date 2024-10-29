@@ -25,6 +25,7 @@ const CartSidebar = ({ closeCart }) => {
         },
       });
       const items = response.data.items; // Assuming response.data.items contains the cart items
+      const restaurantName = response.data.restaurant_name; // Assuming response.data.restaurant_name contains the restaurant name
 
       // Map items to include only dish_id and quantity
       const formattedItems = items.map((item) => ({
@@ -33,7 +34,8 @@ const CartSidebar = ({ closeCart }) => {
       }));
 
       setCartItemsState(items); // Update local state
-      dispatch(setCartItems({ items: formattedItems, restaurantId: response.data.restaurant_id, reset: true })); // Dispatch action to update Redux store with formatted items
+      setRestaurantName(restaurantName); // Set the restaurant name
+      dispatch(setCartItems({ items: formattedItems, restaurantId: response.data.restaurant_id,restaurantName: restaurantName , reset: true })); // Dispatch action to update Redux store with formatted items
     } catch (error) {
       messageService.showMessage('error', 'Error ins fetching cart');
       console.error('Error fetching cart data:', error);
@@ -132,7 +134,7 @@ const CartSidebar = ({ closeCart }) => {
           &times;
         </button>
 
-        <h2>Thaibodia Bistro</h2>
+        <h2>{restaurantName}</h2>
         <p>{cartItems.length} item{cartItems.length !== 1 ? 's' : ''}</p>
         <hr />
 

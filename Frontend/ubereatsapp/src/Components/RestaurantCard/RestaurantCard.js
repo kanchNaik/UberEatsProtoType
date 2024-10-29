@@ -89,7 +89,7 @@ const RestaurantCard = ({ restaurantid, restaurant }) => {
         <NavLink to={`/restaurant/${restaurant.id}`}>
           <div>
             <img
-              src={`${process.env.PUBLIC_URL}/Assets/dominos.webp`} // Replace with the actual image URL
+              src={restaurant.image} // Replace with the actual image URL
               alt={restaurant.restaurant_name}
               className="img-fluid" // Make the image responsive
             />

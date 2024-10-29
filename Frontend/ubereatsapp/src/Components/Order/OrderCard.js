@@ -8,12 +8,13 @@ const OrderCard = ({ order }) => {
         <div className="order-card">
             <div className="order-header">
                 <h3 className="restaurant-name">{order.restaurant_name}</h3>
-                <img
-                    src="partner-logo.png"
+                
+            </div>
+            <img
+                    src={order.restaurant_image}
                     alt="Partner Logo"
                     className="partner-logo"
                 />
-            </div>
 
             <div className="order-details">
                 <p className="order-info">

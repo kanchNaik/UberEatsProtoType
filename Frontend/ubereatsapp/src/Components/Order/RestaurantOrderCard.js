@@ -51,7 +51,7 @@ const RestaurantOrderCard = ({ order }) => {
                     <FontAwesomeIcon icon={faLink} className="link-icon" />
                 </NavLink>
                 <img
-                    src="partner-logo.png"
+                    src={order.customer_image}
                     alt="Partner Logo"
                     className="partner-logo"
                 />

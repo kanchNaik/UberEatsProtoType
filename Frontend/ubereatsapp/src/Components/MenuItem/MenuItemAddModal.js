@@ -97,7 +97,7 @@ const MenuItemAddModal = ({ item, closeModal, restaurantid, restaurantname }) =>
       {(store_restaurantId && store_restaurantId !== restaurantid) ? (
         <div className="modal-content new-order-prompt">
           <h2>Create new order?</h2>
-          <p>Your order contains items from {restaurantname}. Create a new order to add items from {store_restaurantName}.</p>
+          <p>Your order contains items from {store_restaurantName}. Create a new order to add items from {restaurantname}.</p>
           <button className="new-order-btn" onClick={handleNewOrder}>
             New Order
           </button>

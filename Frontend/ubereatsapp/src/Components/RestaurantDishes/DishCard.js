@@ -14,7 +14,7 @@ function DishCard({dish}) {
     maindivclass = "menu-item"
     txtdivclass = 'text-left menu-item-text'
     imgclass = 'img-fluid'
-    imgsrc= {`${process.env.PUBLIC_URL}/Assets/menuPizza.webp`}       
+    imgsrc= {dish.dish_image}       
     alttext= 'Feed Your Employees'>
         <h5>{dish.dish_name}</h5>
         <p className='description'>{dish.description}</p>
