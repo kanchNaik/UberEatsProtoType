@@ -54,7 +54,7 @@ const CustomerOrder = ({ orderId }) => {
                         <h3>Items</h3>
                         {orderDetails.ordered_items.map((item, index) => (
                            <div key={index} className="order-item">
-                           <img src={item.image_url || 'default-image.png'} alt={item.name} className="order-image" />
+                           <img src={item.dish_image || 'default-image.png'} alt={item.name} className="order-image" />
                            <div className="order-item-info">
                                <h4>{item.dish_name}</h4>
                                <p>Qty: {item.quantity}</p>

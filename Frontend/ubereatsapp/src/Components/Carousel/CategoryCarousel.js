@@ -19,9 +19,10 @@ const categories = [
 ];
 
 const CategoryCarousel = () => {
-  const itemsPerSlide = 8; 
-  const [activeIndex, setActiveIndex] = useState(0); 
+  const itemsPerSlide = 8; // Adjust the number of items per slide
+  const [activeIndex, setActiveIndex] = useState(0); // Track the current slide index
 
+  // Group the items into slides
   const groupedItems = [];
   for (let i = 0; i < categories.length; i += itemsPerSlide) {
 
@@ -37,18 +38,29 @@ const CategoryCarousel = () => {
     groupedItems.push(categories.slice(start, start + itemsPerSlide));
   }
 
+  // Handler for moving to the next slide
+  const handleNext = () => {
+    const nextIndex = activeIndex === groupedItems.length - 1 ? 0 : activeIndex + 1;
+    setActiveIndex(nextIndex);
+  };
+
+  // Handler for moving to the previous slide
+  const handlePrev = () => {
+    const prevIndex = activeIndex === 0 ? groupedItems.length - 1 : activeIndex - 1;
+    setActiveIndex(prevIndex);
+  };
 
   return (
     <Carousel
       activeIndex={activeIndex}
       onSelect={(selectedIndex) => setActiveIndex(selectedIndex)}
       controls={true}
-      indicators={false} 
+      indicators={false} // Disable the indicators if not needed
       prevIcon={<span aria-hidden="true" className="carousel-control-prev-icon" />}
       nextIcon={<span aria-hidden="true" className="carousel-control-next-icon" />}
       nextLabel=""
       prevLabel=""
-      interval={null}
+      interval={null} // Disable automatic sliding
     >
       {groupedItems.map((group, index) => (
         <Carousel.Item key={index}>

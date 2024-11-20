@@ -11,6 +11,7 @@ const DishAdd = ({ isEdit }) => {
     description: '',
     price: '',
     category: '',
+    dish_image: '',
   });
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
@@ -41,7 +42,12 @@ const DishAdd = ({ isEdit }) => {
   };
 
   const handleChange = (event) => {
-    setDishDetails({ ...dishDetails, [event.target.name]: event.target.value });
+    if (event.target.name === 'dish_image') {
+      setDishDetails({ ...dishDetails, dish_image: event.target.files[0] });
+    } else {
+      setDishDetails({ ...dishDetails, [event.target.name]: event.target.value });
+    }
+
   };
 
   const handleSubmit = (event) => {
@@ -51,11 +57,13 @@ const DishAdd = ({ isEdit }) => {
 
   const addDish = async () => {
     try {
-      await axios.post(`${BASE_API_URL}/api/dishes/`, dishDetails, {
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': Cookies.get('csrftoken'),
-        },
+      const formData = new FormData();
+      for (const key in dishDetails) {
+        formData.append(key, dishDetails[key]);
+      }
+
+      await axios.post(`${BASE_API_URL}/api/dishes/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data', 'X-CSRFToken': Cookies.get('csrftoken') },
         withCredentials: true,
       });
       setSuccessMessage('Dish added successfully!');
@@ -70,11 +78,13 @@ const DishAdd = ({ isEdit }) => {
 
   const updateDish = async () => {
     try {
-      await axios.put(`${BASE_API_URL}/api/dishes/${id}/`, dishDetails, {
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': Cookies.get('csrftoken'),
-        },
+      const formData = new FormData();
+      for (const key in dishDetails) {
+        formData.append(key, dishDetails[key]);
+      }
+
+      await axios.put(`${BASE_API_URL}/api/dishes/${id}/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data', 'X-CSRFToken': Cookies.get('csrftoken') },
         withCredentials: true,
       });
       setSuccessMessage('Dish updated successfully!');
@@ -91,6 +101,37 @@ const DishAdd = ({ isEdit }) => {
     <div className="container mt-5">
       <h2 className="text-center mb-4">{isEdit ? 'Edit Dish' : 'Add a New Dish'}</h2>
       <form onSubmit={handleSubmit} className="border p-4 rounded shadow">
+      {isEdit && dishDetails.dish_image && (
+          <div className="form-group">
+            <img src={dishDetails.dish_image} alt={dishDetails.dish_name} style={{ maxWidth: '100%', height: 'auto' }} />
+          </div>
+        )}
+        {isEdit ? (
+          <div className="form-group">
+            <button type="button" className="btn btn-secondary" onClick={() => document.getElementById('fileInput').click()}>
+              Choose New Image
+            </button>
+            <input
+              type="file"
+              id="fileInput"
+              name="dish_image"
+              onChange={handleChange}
+              style={{ display: 'none' }}
+              className="form-control-file"
+            />
+          </div>
+        ) : (
+          <div className="form-group">
+            <label htmlFor="dish_image">Image:</label>
+            <input
+              type="file"
+              name="dish_image"
+              onChange={handleChange}
+              className="form-control-file"
+            />
+          </div>
+        )}
+
         <div className="form-group">
           <label htmlFor="dish_name">Dish Name:</label>
           <input

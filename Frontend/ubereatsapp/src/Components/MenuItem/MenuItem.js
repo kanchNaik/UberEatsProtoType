@@ -18,7 +18,7 @@ const MenuItem = ({ menu, restaurantid, restaurantname }) => {
         maindivclass = "menu-item"
         txtdivclass = 'text-left menu-item-text'
         imgclass = 'img-fluid'
-        imgsrc={`${process.env.PUBLIC_URL}/Assets/menuPizza.webp`}   
+        imgsrc={menu.dish_image}  
         alttext= 'Feed Your Employees'>
             <h5>{menu.dish_name}</h5>
             <p>{menu.description}</p>

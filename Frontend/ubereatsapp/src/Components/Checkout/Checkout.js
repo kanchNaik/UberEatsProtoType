@@ -1,167 +1,152 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './Checkout.css'; 
+import './Checkout.css';
 import Cookies from 'js-cookie';
-import { useNavigate  } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { BASE_API_URL } from '../../Setupconstants';
 import { messageService } from '../Common/Message/MessageService';
 
 const Checkout = () => {
-    const navigate = useNavigate()
-
-    // State to store cart details
+    const navigate = useNavigate();
     const [cart, setCart] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [specialNote, setSpecialNote] = useState(''); 
-    const [deliveryAdd, setDeliveryAddress] = useState('');
+    const [specialNote, setSpecialNote] = useState('');
+    const [deliveryAddress, setDeliveryAddress] = useState('');
 
-    // Fetch cart data when component loads
     useEffect(() => {
-        const fetchCartData = async () => {
-            try {
-                const response = await axios.get(`${BASE_API_URL}/api/cart/get_cart`,  {
+        fetchCartData();
+    }, []);
+
+    const fetchCartData = async () => {
+        try {
+            const response = await axios.get(`${BASE_API_URL}/api/cart/get_cart`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': Cookies.get('csrftoken'),
+                },
+                withCredentials: true,
+            });
+            setCart(response.data);
+            setLoading(false);
+        } catch (err) {
+            setError('Failed to fetch cart data');
+            messageService.showMessage('error', 'Failed to fetch cart data');
+            setLoading(false);
+        }
+    };
+
+    const handleQuantityChange = async (dishId, newQuantity) => {
+        try {
+            await axios.post(
+                `${BASE_API_URL}/api/cart/add_multiple_to_cart/`,
+                {
+                    items: [{ dish_id: dishId, quantity: newQuantity }]
+                },
+                {
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRFToken': Cookies.get('csrftoken'),
                     },
-                    withCredentials: true, // Ensure that cookies are included in the request
-                });
-                setCart(response.data);
-                setLoading(false);
-                console.log('cart',cart)
-            } catch (err) {
-                setError('Failed to fetch cart data');
-                messageService.showMessage('Failed to fetch cart data')
-                setLoading(false);
-            }
-        };
-
-        fetchCartData();
-    }, []);
+                    withCredentials: true,
+                }
+            );
+            fetchCartData(); // Refresh cart data after updating
+        } catch (error) {
+            messageService.showMessage('error', 'Failed to update quantity');
+        }
+    };
 
     const handlePlaceOrder = async () => {
-        const formattedItems = cart.items.map((item) => ({
-            dish_id: item.dish_id,
-            quantity: item.quantity || 1, // Get the quantity or default to 1
-          }));
+        if (!deliveryAddress) {
+            messageService.showMessage('error', 'Please enter a delivery address');
+            return;
+        }
 
         try {
             const response = await axios.post(
                 `${BASE_API_URL}/api/order/place_order/`,
                 {
-                    delivery_address: {deliveryAdd},
-                    special_note: {specialNote},
-                    items: formattedItems,
+                    delivery_address: deliveryAddress,
+                    special_note: specialNote,
+                    items: cart.items.map(item => ({
+                        dish_id: item.dish_id,
+                        quantity: item.quantity
+                    }))
                 },
                 {
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRFToken': Cookies.get('csrftoken'), // Get CSRF token from cookies
+                        'X-CSRFToken': Cookies.get('csrftoken'),
                     },
-                    withCredentials: true, // Enable sending cookies with the request
+                    withCredentials: true,
                 }
             );
-
-            
-            messageService.showMessage('success', 'Order placed successfully!')
-            navigate('/feed')
+            messageService.showMessage('success', 'Order placed successfully!');
+            navigate('/feed');
         } catch (error) {
-            console.error('Error placing order:', error);
-            setError('Failed to place order. Please try again.'); // Set error message
-            messageService.showMessage('error', 'Failed to place order. Please try again.')
+            messageService.showMessage('error', 'Failed to place order. Please try again.');
         }
     };
 
-    // Handle special note input change
-    const handleNoteChange = (e) => {
-        setSpecialNote(e.target.value);
-    };
+    if (loading) return <div>Loading cart...</div>;
+    if (error) return <div>{error}</div>;
+    if (!cart || !cart.items || cart.items.length === 0) return <div>Your cart is empty</div>;
 
-    const handleAddressChange = (e) => {
-        setDeliveryAddress(e.target.value);
-    };
-
-
-    // Display loading message while fetching data
-    if (loading) {
-        return <div>Loading cart...</div>;
-    }
-
-    // Display error message if something goes wrong
-    if (error) {
-        return <div>{error}</div>;
-    }
-
-    debugger;
-    if((cart) => Object.keys(cart).length === 0)
-    {
-        return <div></div>
-    }
     return (
-        
         <div className="card">
             <div className="cart-summary">
                 <h2>Cart summary ({cart.items.length} item{cart.items.length > 1 ? 's' : ''})</h2>
             </div>
 
-            {/* Map through cart items */}
-            {cart.items.map((item, index) => (
-                <div className="item-details" key={index}>
-                    <img src="pad-thai.jpg" alt={item.dish_name} className="item-image" />
+            {cart.items.map((item) => (
+                <div className="item-details" key={item.dish_id}>
+                    <img src={item.dish_image} alt={item.dish_name} className="item-image" />
                     <div className="item-info">
-                        <h3>{item.dish_name} * {item.quantity}</h3>
+                        <h3>{item.dish_name}</h3>
                         <p>{item.description}</p>
+                        <div className="quantity-control">
+                            <button onClick={() => handleQuantityChange(item.dish_id, Math.max(1, item.quantity - 1))}>-</button>
+                            <span>{item.quantity}</span>
+                            <button onClick={() => handleQuantityChange(item.dish_id, item.quantity + 1)}>+</button>
+                        </div>
                     </div>
-                    <p className="price">${item.price}</p>
+                    <p className="price">${(item.price * item.quantity).toFixed(2)}</p>
                 </div>
             ))}
 
-            <div className="promo-section">
-                <a href="#">Add promo code</a>
-            </div>
-            
-            <div className="order-total">
-                <div className="total-row">
-                    <span>Subtotal</span>
-                    <span>${cart.cart_total_price}</span>
-                </div>
-            </div>
-
             <div className="total">
-                Total: ${cart.cart_total_price}
+                Total: ${cart.cart_total_price.toFixed(2)}
             </div>
 
-            {/* Special Note Section */}
+            <div className="delivery-address-section">
+                <label htmlFor="delivery-address">Delivery Address:</label>
+                <input
+                    type="text"
+                    id="delivery-address"
+                    value={deliveryAddress}
+                    onChange={(e) => setDeliveryAddress(e.target.value)}
+                    placeholder="Enter your delivery address"
+                    className="delivery-address-input"
+                    required
+                />
+            </div>
+
             <div className="special-note-section">
                 <label htmlFor="special-note">Special Note:</label>
                 <textarea
                     id="special-note"
                     value={specialNote}
-                    onChange={handleNoteChange}
+                    onChange={(e) => setSpecialNote(e.target.value)}
                     placeholder="Add a special note for your order (e.g., 'Leave at the door')"
                     rows="3"
                     className="special-note-input"
                 />
             </div>
-            <div className="delivery-address-section">
-                <label htmlFor="delivery-address">Delivery Address:</label>
-                <textarea
-                    id="delivery-address"
-                    value={deliveryAdd}
-                    onChange={handleAddressChange}
-                    placeholder="Add a address for your order"
-                    rows="3"
-                    className="delivery-address-input"
-                />
-            </div>
+
             <button className="place-order-btn" onClick={handlePlaceOrder}>
                 Place Order
             </button>
-
-            <div className="footer-text">
-                If you're not around when the delivery person arrives, they'll leave the food at your door.
-            </div>
         </div>
     );
 };
