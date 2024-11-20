@@ -8,10 +8,12 @@ import { getUserInfo } from '../../Utilities/UserUtils';
 import { BASE_API_URL } from '../../Setupconstants';
 import { messageService } from '../Common/Message/MessageService';
 import { useAuth } from '../../AuthContext';
+import { useDispatch } from 'react-redux';
+import { clearAuthToken } from '../../actions';
 
 
 const RestaurantProfileSidebar = () => {
-
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const { logout } = useAuth();
   const handleLogout = async () => {
@@ -42,6 +44,7 @@ const RestaurantProfileSidebar = () => {
           console.log('Logged out successfully');
           messageService.showMessage('success', 'Logged out successfully')
           logout()
+          dispatch(clearAuthToken());
           // Redirect to the login page
           navigate('/signin');
         }

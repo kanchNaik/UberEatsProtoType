@@ -27,6 +27,7 @@ const Restaurant = () => {
   const [error, setError] = useState(null);
   const [activeCategory, setActiveCategory] = useState('');
   const categoryRefs = useRef({});
+  
 
   useEffect(() => {
     const fetchRestaurant = async () => {

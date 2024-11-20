@@ -6,10 +6,14 @@ import { useNavigate  } from 'react-router-dom';
 import { messageService } from '../Common/Message/MessageService';
 import { BASE_API_URL } from '../../Setupconstants';
 import { useAuth } from '../../AuthContext';
+import { useDispatch } from 'react-redux';
+import { setAuthToken } from '../../actions';
 
 
 function SignIn() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const { login } = useAuth();
   const [inputEmail, setInputEmailValue] = useState('');
   const [inputPassword, setInputPasswordValue] = useState('');
@@ -40,7 +44,7 @@ function SignIn() {
 
         messageService.showMessage('success', 'Logged in successfully');
         login(token, user.is_customer ? 'Customer' : 'Restaurant');
-
+        dispatch(setAuthToken(token));
         if(user.is_customer) 
         {
            navigate('/feed')

@@ -3,10 +3,11 @@ import axios from 'axios';
 import './CartSidebar.css';
 import Cookies from 'js-cookie';
 import { useDispatch } from 'react-redux';
-import { setCartItems } from '../../Reducers/cartReducer';
+import { setCartItems } from '../../actions';
 import { useNavigate  } from 'react-router-dom';
 import { BASE_API_URL } from '../../Setupconstants';
 import { messageService } from '../Common/Message/MessageService';
+import {clearCart} from '../../actions'
 
 const CartSidebar = ({ closeCart }) => {
   const [cartItems, setCartItemsState] = useState([]); 
@@ -113,7 +114,7 @@ const CartSidebar = ({ closeCart }) => {
 
      
       setCartItemsState([]);
-      dispatch(setCartItems({ items: [], reset: true }));
+      dispatch(clearCart());
       messageService.showMessage('success', 'Cleared cart succefully')
       closeCart() 
     } catch (error) {

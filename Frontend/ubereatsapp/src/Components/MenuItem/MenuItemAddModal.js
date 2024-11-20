@@ -3,7 +3,7 @@ import './MenuItemAddModal.css';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import Cookies from 'js-cookie';
-import { setCartItems } from '../../Reducers/cartReducer'; 
+import { setCartItems } from '../../actions'; 
 import { BASE_API_URL } from '../../Setupconstants';
 import { messageService } from '../Common/Message/MessageService';
 
@@ -42,13 +42,13 @@ const MenuItemAddModal = ({ item, closeModal, restaurantid, restaurantname }) =>
       };
 
       // Dispatch the setCartItems action to set the cart in Redux store
-      dispatch(setCartItems({
-        items: [{ dish_id: item.id, quantity }],
-        restaurantId: restaurantid,
-        restaurantName: restaurantname,
-        reset: false
-      }));
-
+      dispatch(setCartItems(
+        [{ dish_id: item.id, quantity }], // Directly passing the array of items
+        false,                            // reset flag
+        restaurantid,                     // restaurantId
+        restaurantname                    // restaurantName
+      ));
+      
       closeModal(); // Close the modal
     } catch (error) {
       console.error('Error adding to cart:', error);

@@ -11,7 +11,7 @@ import { getUserInfo } from '../../Utilities/UserUtils';
 import { useSelector } from 'react-redux';
 
 const DynamicNavbar = () => {
-  const cartCount = useSelector((state) => state.cart?.cartItemCount ?? 0);
+  const cartCount = useSelector((state) => state.cart?.count ?? 0);
 
   const location = useLocation();
   const [isSidebarOpen, setSidebarOpen] = useState(false); // Sidebar state

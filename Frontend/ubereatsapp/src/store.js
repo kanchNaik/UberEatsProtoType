@@ -1,12 +1,12 @@
 // store.js
-import { configureStore } from '@reduxjs/toolkit';
-import cartReducer from './Reducers/cartReducer'; // Adjust path as needed
+import { createStore, applyMiddleware } from 'redux';
+import { thunk } from 'redux-thunk'; // Correct way to import thunk
+import rootReducer from './Reducers/rootReducer'; // Import your combined reducers
 
-const store = configureStore({
-  reducer: {
-    cart: cartReducer,
-    // Add other reducers here if necessary
-  },
-});
+// Create the Redux store
+const store = createStore(
+  rootReducer, // The root reducer
+  applyMiddleware(thunk) // Apply the thunk middleware
+);
 
 export default store;

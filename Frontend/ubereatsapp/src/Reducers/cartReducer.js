@@ -1,58 +1,51 @@
-import { createSlice } from '@reduxjs/toolkit';
+// action types
+const SET_CART_ITEMS = 'SET_CART_ITEMS';
+const CLEAR_CART = 'CLEAR_CART';
 
-const cartSlice = createSlice({
-  name: 'cart',
-  initialState: {
-    cartItemCount: 0,
-    cartItems: [],
-    restaurantId: null,
-    restaurantName: null,
-  },
-  reducers: {
-    setCartItems: (state, action) => {
-      const { items, reset, restaurantId, restaurantName } = action.payload;
+// Initial state for the cart
+const initialState = {
+  items: [],  // List of cart items
+  reset: false,  // Whether the cart should be reset or not
+  restaurantId: null,  // The ID of the restaurant from which the items are added
+  restaurantName: null,  // The name of the restaurant
+  count: 0,  // The total number of items in the cart
+};
 
-      if (reset || state.restaurantId !== restaurantId) {
-        // If reset is true or the restaurant has changed, clear the cart and set the new items
-        state.cartItems = items;
-        state.restaurantId = restaurantId; 
-        state.restaurantName = restaurantName// Update the restaurantId in the state
+// Reducer function
+const cartReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case SET_CART_ITEMS:
+      let updatedItems;
+      if (action.payload.reset) {
+        updatedItems = action.payload.items; // Reset the items
       } else {
-        // If the same restaurant and no reset, update the existing cart items
-        const existingItems = state.cartItems;
-
-        // Create a map of existing items for easier updating
-        const existingItemMap = Object.fromEntries(existingItems.map(item => [item.id, item]));
-
-        items.forEach(newItem => {
-          if (existingItemMap[newItem.id]) {
-            // If the item already exists, update the quantity
-            existingItemMap[newItem.id].quantity += newItem.quantity;
-          } else {
-            // Otherwise, add the new item
-            existingItems.push({ ...newItem });
-          }
-        });
-
-        // Assign the updated cartItems back to state
-        state.cartItems = existingItems;
+        updatedItems = [...state.items, ...action.payload.items]; // Append new items
       }
+      
+      // Calculate the new item count
+      const itemCount = updatedItems.reduce((total, item) => total + item.quantity, 0); // Count based on quantity
 
-      // Calculate total quantity from the items and update cartItemCount
-      state.cartItemCount = state.cartItems.reduce((total, item) => total + item.quantity, 0);
-    },
-    assignCartItemCount: (state, action) => {
-      state.cartItemCount = action.payload;
-    },
-    clearCart: (state) => {
-      // Clear the cart items, item count, and reset restaurant ID
-      state.cartItems = [];
-      state.cartItemCount = 0;
-      state.restaurantId = null;
-      state.restaurantName = null;
-    },
-  },
-});
+      return {
+        ...state,
+        items: updatedItems,
+        restaurantId: action.payload.restaurantId,
+        restaurantName: action.payload.restaurantName,
+        count: itemCount, // Set the count
+      };
 
-export const { setCartItems, assignCartItemCount, clearCart } = cartSlice.actions; // Exporting actions
-export default cartSlice.reducer;
+    case CLEAR_CART:
+      // Reset cart and count
+      return {
+        ...state,
+        items: [],
+        restaurantId: null,
+        restaurantName: null,
+        count: 0, // Reset count
+      };
+
+    default:
+      return state;
+  }
+};
+
+export default cartReducer;

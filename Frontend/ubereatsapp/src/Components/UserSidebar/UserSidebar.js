@@ -8,8 +8,11 @@ import { getUserInfo } from '../../Utilities/UserUtils';
 import { BASE_API_URL } from '../../Setupconstants';
 import { messageService } from '../Common/Message/MessageService';
 import { useAuth } from '../../AuthContext';
+import { useDispatch } from 'react-redux';
+import { clearAuthToken } from '../../actions';
 
 const UserSidebar = () => {
+  const dispatch = useDispatch();
   const { logout } = useAuth();
   const user = getUserInfo()
   const navigate = useNavigate();
@@ -42,6 +45,7 @@ const UserSidebar = () => {
           console.log('Logged out successfully');
           messageService.showMessage('success', 'Logged out successfully');
           logout()
+          dispatch(clearAuthToken());
           // Redirect to the login page
           navigate('/signin');
         }

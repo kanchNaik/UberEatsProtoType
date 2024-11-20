@@ -1,7 +1,7 @@
 
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { setCartItems } from '../../Reducers/cartReducer';
+import { setCartItems } from '../../actions';
 import { BASE_API_URL } from '../../Setupconstants';
 import { messageService } from '../Common/Message/MessageService';
 
