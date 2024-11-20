@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
-    'drf_yasg'
+    'drf_yasg',
+    'djongo'
 ]
 AUTH_USER_MODEL = 'apis.User'
 REST_FRAMEWORK = {
@@ -98,8 +99,11 @@ WSGI_APPLICATION = 'UberEatsApi.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'djongo',
+        'NAME': 'your_database_name',
+        'CLIENT': {
+            'host': 'mongodb://localhost:27017',
+        }
     }
 }
 
@@ -160,3 +164,17 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost:3000', 'http://127.0.0.1:3000']
+
+
+
+from mongoengine import connect
+
+MONGO_DATABASE_NAME = 'ubereatsprototype'
+MONGO_HOST = 'localhost'
+MONGO_PORT = 27017
+
+connect(
+    db=MONGO_DATABASE_NAME,
+    host=MONGO_HOST,
+    port=MONGO_PORT
+)
