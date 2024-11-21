@@ -13,6 +13,7 @@ const MenuItemAddModal = ({ item, closeModal, restaurantid, restaurantname }) =>
   const dispatch = useDispatch(); 
   const store_restaurantId = useSelector((state) => state.cart.restaurantId);
   const store_restaurantName = useSelector((state) => state.cart.restaurantName);
+  const token = useSelector((state) => state.auth.token);
 
   const handleQuantityChange = (value) => {
     if (value >= 0) setQuantity(value); 
@@ -27,6 +28,7 @@ const MenuItemAddModal = ({ item, closeModal, restaurantid, restaurantname }) =>
         { 
           headers: {
             'X-CSRFToken': Cookies.get('csrftoken'),
+            'Authorization': `Bearer ${token}`,
           },
           withCredentials: true 
         }
@@ -68,6 +70,7 @@ const MenuItemAddModal = ({ item, closeModal, restaurantid, restaurantname }) =>
         { 
           headers: {
             'X-CSRFToken': Cookies.get('csrftoken'),
+            'Authorization': `Bearer ${token}`,
           },
           withCredentials: true 
         }

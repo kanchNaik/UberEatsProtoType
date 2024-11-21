@@ -8,10 +8,12 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import { BASE_API_URL } from '../../Setupconstants';
 import { messageService } from '../Common/Message/MessageService';
+import { useSelector } from 'react-redux';
 
 const RestaurantCard = ({ restaurantid, restaurant }) => {
   const [isFavorite, setIsFavorite] = useState(restaurant.isFavorite);
   const [favoriteId, setFavoriteId] = useState(restaurant.favoriteId);
+  const token = useSelector((state) => state.auth.token);
 
   const toggleFavorite = async (e) => {
     e.preventDefault(); // Prevent NavLink navigation
@@ -26,6 +28,7 @@ const RestaurantCard = ({ restaurantid, restaurant }) => {
             headers: {
               'Content-Type': 'application/json',
               'X-CSRFToken': Cookies.get('csrftoken'), // Get CSRF token from cookies
+              'Authorization': `Bearer ${token}`,
             },
           }
         );
@@ -51,6 +54,7 @@ const RestaurantCard = ({ restaurantid, restaurant }) => {
             headers: {
               'Content-Type': 'application/json',
               'X-CSRFToken': Cookies.get('csrftoken'), // Get CSRF token from cookies
+              'Authorization': `Bearer ${token}`,
             },
             withCredentials: true,
           }

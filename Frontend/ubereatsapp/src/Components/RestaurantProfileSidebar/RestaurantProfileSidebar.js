@@ -19,20 +19,20 @@ const RestaurantProfileSidebar = () => {
   const handleLogout = async () => {
     console.log('Token', Cookies.get('csrftoken'))
     console.log('sessionid', Cookies.get('sessionid'))
-    try {
-      const response = await axios.post(
-        `${BASE_API_URL}/api/logout/`,  // URL for logout
-        {},  // No data to send in body for logout
-        {
-            headers: {
-                'X-CSRFToken': Cookies.get('csrftoken'),  // CSRF token from cookies
-            },
-            withCredentials: true,  // Include cookies with the request
-        }
-    );
-      console.log('response status', response.status)
+    // try {
+    //   const response = await axios.post(
+    //     `${BASE_API_URL}/api/logout/`,  // URL for logout
+    //     {},  // No data to send in body for logout
+    //     {
+    //         headers: {
+    //             'X-CSRFToken': Cookies.get('csrftoken'),  // CSRF token from cookies
+    //         },
+    //         withCredentials: true,  // Include cookies with the request
+    //     }
+    // );
+    //   console.log('response status', response.status)
 
-      if (response.status === 200) {
+    //   if (response.status === 200) {
           // Remove user data from cookies
           Cookies.remove('access_token');
           Cookies.remove('refresh_token');
@@ -47,11 +47,11 @@ const RestaurantProfileSidebar = () => {
           dispatch(clearAuthToken());
           // Redirect to the login page
           navigate('/signin');
-        }
-      } catch (error) {
-          console.log('Logout failed:', error);
-          messageService.showMessage('error', 'Logged out failedSorry, Could not log out!')
-      }
+      //   }
+      // } catch (error) {
+      //     console.log('Logout failed:', error);
+      //     messageService.showMessage('error', 'Logged out failedSorry, Could not log out!')
+      // }
   };
 
   return (

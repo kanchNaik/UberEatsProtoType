@@ -5,13 +5,16 @@ import { setCartItems } from '../../actions';
 import { BASE_API_URL } from '../../Setupconstants';
 import { messageService } from '../Common/Message/MessageService';
 
-export const fetchCartData = async (dispatch) => {
+export const fetchCartData = async (dispatch, getState) => {
+  const token = getState().auth.token;
   try {
+    
     const response = await axios.get(`${BASE_API_URL}/api/cart/get_cart`, {
       withCredentials: true, 
       headers: {
         'Content-Type': 'application/json',
         'X-CSRFToken': Cookies.get('csrftoken'),
+        'Authorization': `Bearer ${token}`,
       },
     });
 

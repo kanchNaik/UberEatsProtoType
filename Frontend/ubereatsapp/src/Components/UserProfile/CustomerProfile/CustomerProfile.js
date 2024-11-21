@@ -4,15 +4,20 @@ import './CustomerProfile.css'; // External CSS file for styling
 import { useParams } from 'react-router-dom';
 import { BASE_API_URL } from '../../../Setupconstants';
 import { messageService } from '../../Common/Message/MessageService';
+import { useSelector } from 'react-redux';
 
 const CustomerProfile = () => {
     const [customer, setCustomer] = useState(null);
     const { id } = useParams();
+    const token = useSelector((state) => state.auth.token);
 
     useEffect(() => {
         const fetchCustomer = async () => {
             try {
                 const response = await axios.get(`${BASE_API_URL}/api/customers/${id}/`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
                     withCredentials: true // Sends cookies with the request
                 });
                 setCustomer(response.data);

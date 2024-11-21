@@ -71,6 +71,7 @@ const RestaurantSignUp = () => {
       .post(`${BASE_API_URL}/api/signup/`, formData, {
         headers: {
           'Content-Type': 'application/json',
+          
         }
       })
       .then((response) => {

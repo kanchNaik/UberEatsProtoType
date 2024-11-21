@@ -4,6 +4,7 @@ import Cookies from 'js-cookie';
 import { useNavigate, useParams } from 'react-router-dom';
 import { BASE_API_URL } from '../../Setupconstants';
 import { messageService } from '../Common/Message/MessageService';
+import { useSelector } from 'react-redux';
 
 const DishAdd = ({ isEdit }) => {
   const [dishDetails, setDishDetails] = useState({
@@ -15,7 +16,8 @@ const DishAdd = ({ isEdit }) => {
   });
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
-  
+  const token = useSelector((state) => state.auth.token);
+
   const navigate = useNavigate();
   const { id } = useParams(); // Get the dish ID from the URL if editing
 
@@ -30,6 +32,7 @@ const DishAdd = ({ isEdit }) => {
       const response = await axios.get(`${BASE_API_URL}/api/dishes/${id}`, {
         headers: {
           'X-CSRFToken': Cookies.get('csrftoken'),
+          'Authorization': `Bearer ${token}`,
         },
         withCredentials: true,
       });
@@ -63,7 +66,11 @@ const DishAdd = ({ isEdit }) => {
       }
 
       await axios.post(`${BASE_API_URL}/api/dishes/`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data', 'X-CSRFToken': Cookies.get('csrftoken') },
+        headers: { 
+          'Content-Type': 'multipart/form-data', 
+          'X-CSRFToken': Cookies.get('csrftoken'),
+          'Authorization': `Bearer ${token}`,
+        },
         withCredentials: true,
       });
       setSuccessMessage('Dish added successfully!');
@@ -84,7 +91,11 @@ const DishAdd = ({ isEdit }) => {
       }
 
       await axios.put(`${BASE_API_URL}/api/dishes/${id}/`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data', 'X-CSRFToken': Cookies.get('csrftoken') },
+        headers: { 
+          'Content-Type': 'multipart/form-data', 
+          'X-CSRFToken': Cookies.get('csrftoken'),
+          'Authorization': `Bearer ${token}`,
+        },
         withCredentials: true,
       });
       setSuccessMessage('Dish updated successfully!');

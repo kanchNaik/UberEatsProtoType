@@ -4,6 +4,7 @@ import { Form, Button, Row, Col, Card, Container, Modal } from 'react-bootstrap'
 import Cookies from 'js-cookie';
 import { BASE_API_URL } from '../../Setupconstants';
 import { messageService } from '../Common/Message/MessageService';
+import { useSelector } from 'react-redux';
 
 // Profile Page Component
 const UserProfile = ({ userId }) => {
@@ -24,6 +25,7 @@ const UserProfile = ({ userId }) => {
   const [editMode, setEditMode] = useState(false);
   const [imageModal, setImageModal] = useState(false);
   const [imageFile, setImageFile] = useState(null);
+  const token = useSelector((state) => state.auth.token);
 
   useEffect(() => {
     fetchProfileData();
@@ -33,7 +35,10 @@ const UserProfile = ({ userId }) => {
   const fetchProfileData = () => {
     axios
       .get(`${BASE_API_URL}/api/customers/me`, {
-        headers: { 'X-CSRFToken': Cookies.get('csrftoken') },
+        headers: { 
+          'X-CSRFToken': Cookies.get('csrftoken'),
+          'Authorization': `Bearer ${token}`,
+         },
         withCredentials: true,
       })
       .then((response) => {
@@ -118,7 +123,10 @@ const UserProfile = ({ userId }) => {
     setEditMode(false);
     axios
       .put(`${BASE_API_URL}/api/customers/me/`, profileDataToSave, {
-        headers: { 'X-CSRFToken': Cookies.get('csrftoken') },
+        headers: { 
+          'X-CSRFToken': Cookies.get('csrftoken'),
+          'Authorization': `Bearer ${token}`,
+         },
         withCredentials: true,
       })
       .then((response) => setProfile(response.data))
@@ -140,6 +148,7 @@ const UserProfile = ({ userId }) => {
         headers: {
           'X-CSRFToken': Cookies.get('csrftoken'),
           'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`,
         },
         withCredentials: true,
       })

@@ -9,11 +9,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLink } from '@fortawesome/free-solid-svg-icons'; 
 import { BASE_API_URL } from '../../Setupconstants';
 import { messageService } from '../Common/Message/MessageService';
+import { useSelector } from 'react-redux';
 
 const RestaurantOrderCard = ({ order }) => {
     const [isEditing, setIsEditing] = useState(false); 
     const [newStatus, setNewStatus] = useState(order.status); 
     const [statusChanged, setStatusChanged] = useState(false); 
+    const token = useSelector((state) => state.auth.token);
 
     const handleStatusSelect = (e) => {
         const updatedStatus = e.target.value;
@@ -30,6 +32,7 @@ const RestaurantOrderCard = ({ order }) => {
                 {
                     headers: {
                         'X-CSRFToken': Cookies.get('csrftoken'),
+                        'Authorization': `Bearer ${token}`,
                     },
                     withCredentials: true,
                 }

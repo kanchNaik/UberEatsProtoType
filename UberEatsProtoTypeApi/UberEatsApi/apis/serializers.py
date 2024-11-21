@@ -5,7 +5,7 @@ from .models import Cart, Customer, Favorite, Order, Restaurant, Dish, User
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ['name', 'phone_number', 'city', 'state', 'country', 'profile_image', 'date_of_birth', 'nickname', 'profile_image']
+        fields = ['name', 'phone_number', 'city', 'state', 'country', 'profile_image', 'date_of_birth', 'nickname']
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
@@ -34,9 +34,14 @@ class UserSerializer(serializers.ModelSerializer):
 
         # Handle customer or restaurant creation based on user type
         if user.is_customer and customer_data:
-            Customer.objects.create(user=user, **customer_data)
+            customer_instance = Customer.objects.create(user=user, **customer_data)
+            user.customer = customer_instance  # Set the customer instance explicitly
         elif user.is_restaurant and restaurant_data:
-            Restaurant.objects.create(user=user, **restaurant_data)
+            restaurant_instance = Restaurant.objects.create(user=user, **restaurant_data)
+            user.restaurant = restaurant_instance  # Set the restaurant instance explicitly
+
+        # Save user after assigning customer or restaurant
+        user.save()
 
         return user
 

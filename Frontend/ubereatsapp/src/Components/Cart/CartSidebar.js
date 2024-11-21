@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './CartSidebar.css'; // Change to the new CSS file for the sidebar
 import Cookies from 'js-cookie';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setCartItems } from '../../actions';
 import { useNavigate  } from 'react-router-dom';
 import { BASE_API_URL } from '../../Setupconstants';
@@ -14,15 +14,18 @@ const CartSidebar = ({ closeCart }) => {
   const [restaurantName, setRestaurantName] = useState('')// Local state for cart items
   const navigate = useNavigate()
   const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
 
   // Function to fetch cart data
   const fetchCartData = async () => {
+    
     try {
       const response = await axios.get(`${BASE_API_URL}/api/cart/get_cart`, {
         withCredentials: true, // Enable sending cookies with the request
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': Cookies.get('csrftoken'),
+          'Authorization': `Bearer ${token}`,
         },
       });
       const items = response.data.items; // Assuming response.data.items contains the cart items
@@ -92,6 +95,7 @@ const CartSidebar = ({ closeCart }) => {
               headers: {
                   'Content-Type': 'application/json',
                   'X-CSRFToken': Cookies.get('csrftoken'),
+                  'Authorization': `Bearer ${token}`,
               },
               withCredentials: true, // Ensure that cookies are included in the request
           }
@@ -114,6 +118,7 @@ const CartSidebar = ({ closeCart }) => {
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': Cookies.get('csrftoken'),
+          'Authorization': `Bearer ${token}`,
         },
       });
 

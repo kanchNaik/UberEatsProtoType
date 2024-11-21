@@ -7,6 +7,7 @@ import Menu from '../Menu/Menu';
 import MenuItem from '../MenuItem/MenuItem';
 import { BASE_API_URL } from '../../Setupconstants';
 import { messageService } from '../Common/Message/MessageService';
+import { useSelector } from 'react-redux';
 
 const groupBy = (items, key) => {
   return items.reduce((acc, item) => {
@@ -27,12 +28,16 @@ const Restaurant = () => {
   const [error, setError] = useState(null);
   const [activeCategory, setActiveCategory] = useState('');
   const categoryRefs = useRef({});
+  const token = useSelector((state) => state.auth.token);
   
 
   useEffect(() => {
     const fetchRestaurant = async () => {
       try {
         const response = await axios.get(`${BASE_API_URL}/api/restaurants/${id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
           withCredentials: true,
         });
         setRestaurant(response.data);
@@ -45,6 +50,9 @@ const Restaurant = () => {
     const fetchFeaturedItems = async () => {
       try {
         const response = await axios.get(`${BASE_API_URL}/api/restaurants/${id}/dishes`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
           withCredentials: true,
         });
         setFeaturedItems(response.data);

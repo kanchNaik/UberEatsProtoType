@@ -60,12 +60,15 @@ export const clearAuthToken = () => ({
 });
 
 
-export const fetchRestaurantsAndFavorites = () => async (dispatch) => {
+export const fetchRestaurantsAndFavorites = () => async (dispatch, getState) => {
   try {
+    const { auth } = getState();
+    const token = auth.token;
     // Fetch restaurants
     const restaurantResponse = await axios.get(`${BASE_API_URL}/api/restaurants`, {
       headers: {
         'X-CSRFToken': Cookies.get('csrftoken'),
+        'Authorization': `Bearer ${token}`,
       },
       withCredentials: true,
     });
@@ -76,6 +79,7 @@ export const fetchRestaurantsAndFavorites = () => async (dispatch) => {
     const favoriteResponse = await axios.get(`${BASE_API_URL}/api/favorite/`, {
       headers: {
         'X-CSRFToken': Cookies.get('csrftoken'),
+        'Authorization': `Bearer ${token}`,
       },
       withCredentials: true,
     });
@@ -113,7 +117,8 @@ export const fetchRestaurantsAndFavorites = () => async (dispatch) => {
 
 // Fetch restaurant details
 export const fetchRestaurantDetails = (id) => async (dispatch, getState) => {
-  const { restaurants } = getState();
+  const { restaurants, auth } = getState();
+  const token = auth.token;
   const details = restaurants.details[id];
 
   if (details?.lastFetched && Date.now() - details.lastFetched < ONE_HOUR) {
@@ -122,7 +127,13 @@ export const fetchRestaurantDetails = (id) => async (dispatch, getState) => {
   }
 
   try {
-    const response = await axios.get(`${BASE_API_URL}/api/restaurants/${id}`);
+    const response = await axios.get(`${BASE_API_URL}/api/restaurants/${id}`, {
+      headers: {
+        'X-CSRFToken': Cookies.get('csrftoken'),
+        'Authorization': `Bearer ${token}`,
+      },
+      withCredentials: true,
+    });
     dispatch({
       type: FETCH_RESTAURANT_DETAILS_SUCCESS,
       payload: { id, data: response.data },
@@ -137,7 +148,8 @@ export const fetchRestaurantDetails = (id) => async (dispatch, getState) => {
 
 // Fetch restaurant menu
 export const fetchRestaurantMenu = (id) => async (dispatch, getState) => {
-  const { restaurants } = getState();
+  const { restaurants, auth } = getState();
+  const token = auth.token;
   const menu = restaurants.menus[id];
 
   if (menu?.lastFetched && Date.now() - menu.lastFetched < ONE_HOUR) {
@@ -146,7 +158,13 @@ export const fetchRestaurantMenu = (id) => async (dispatch, getState) => {
   }
 
   try {
-    const response = await axios.get(`${BASE_API_URL}/api/restaurants/${id}/dishes`);
+    const response = await axios.get(`${BASE_API_URL}/api/restaurants/${id}/dishes`, {
+      headers: {
+        'X-CSRFToken': Cookies.get('csrftoken'),
+        'Authorization': `Bearer ${token}`,
+      },
+      withCredentials: true,
+    });
     dispatch({
       type: FETCH_RESTAURANT_MENU_SUCCESS,
       payload: { id, data: response.data },

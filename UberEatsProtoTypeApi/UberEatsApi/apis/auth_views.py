@@ -7,11 +7,13 @@ from django.contrib.auth import authenticate, login, logout
 from .serializers import UserSerializer, CustomerSerializer, RestaurantSerializer
 from .models import User, Customer, Restaurant
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework_simplejwt.tokens import RefreshToken
 
 class SignUpView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
+        print("Received data:", request.data)
         # Convert this minute string to second string by multiplying with 60 and theren convert it to string
         if "restaurant" in request.data:
             request.data["restaurant"]["delivery_time"] = str(int(request.data["restaurant"]["delivery_time"]) * 60)
@@ -37,15 +39,18 @@ class LoginView(APIView):
         print("authenticated user: ", user)  # Debugging output
         
         if user is not None:
-            login(request, user)  # Log the user in
+            # login(request, user)  # Log the user in
             
             # If using token authentication, get or create a token
-            token, created = Token.objects.get_or_create(user=user)
+            # token, created = Token.objects.get_or_create(user=user)
+
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
             
             # Optionally return user data and token
             return Response({
                 'message': 'Login successful',
-                'token': token.key,  # Return the token
+                'token': access_token,  # Return the token
                 'user': UserSerializer(user).data  # Return user data
             }, status=status.HTTP_200_OK)
         

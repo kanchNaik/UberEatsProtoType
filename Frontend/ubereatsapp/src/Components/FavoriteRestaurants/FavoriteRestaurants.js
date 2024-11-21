@@ -5,11 +5,13 @@ import { Container, Row, Col, Button, Card, Spinner } from 'react-bootstrap';
 import './FavoriteRestaurants.css'; // External CSS for custom styling
 import { BASE_API_URL } from '../../Setupconstants';
 import { messageService } from '../Common/Message/MessageService';
+import { useSelector } from 'react-redux';
 
 const FavoriteRestaurants = () => {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const token = useSelector((state) => state.auth.token);
 
   // Fetch favorite restaurants
   const fetchFavorites = async () => {
@@ -19,6 +21,7 @@ const FavoriteRestaurants = () => {
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': Cookies.get('csrftoken'),
+          'Authorization': `Bearer ${token}`,
         },
       });
 
@@ -46,6 +49,7 @@ const FavoriteRestaurants = () => {
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': Cookies.get('csrftoken'),
+          'Authorization': `Bearer ${token}`,
         },
       });
 

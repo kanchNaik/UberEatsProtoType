@@ -4,6 +4,7 @@ import { Form, Button, Row, Col, Card, Container, Modal } from 'react-bootstrap'
 import Cookies from 'js-cookie';
 import { BASE_API_URL } from '../../Setupconstants';
 import { messageService } from '../Common/Message/MessageService';
+import { useSelector } from 'react-redux';
 
 const RestaurantProfile = ({ userId }) => {
   const [profile, setProfile] = useState({
@@ -21,6 +22,7 @@ const RestaurantProfile = ({ userId }) => {
   const [editMode, setEditMode] = useState(false);
   const [imageModal, setImageModal] = useState(false);
   const [imageFile, setImageFile] = useState(null);
+  const token = useSelector((state) => state.auth.token);
 
   useEffect(() => {
     fetchProfileData();
@@ -29,7 +31,10 @@ const RestaurantProfile = ({ userId }) => {
   const fetchProfileData = () => {
     axios
       .get(`${BASE_API_URL}/api/restaurants/me`, {
-        headers: { 'X-CSRFToken': Cookies.get('csrftoken') },
+        headers: { 
+          'X-CSRFToken': Cookies.get('csrftoken'),
+          'Authorization': `Bearer ${token}`,
+        },
         withCredentials: true,
       })
       .then((response) => {
@@ -67,7 +72,10 @@ const RestaurantProfile = ({ userId }) => {
     setEditMode(false);
     axios
       .put(`${BASE_API_URL}/api/restaurants/me/`, profileDataToSave, {
-        headers: { 'X-CSRFToken': Cookies.get('csrftoken') },
+        headers: { 
+          'X-CSRFToken': Cookies.get('csrftoken'),
+          'Authorization': `Bearer ${token}`,
+        },
         withCredentials: true,
       })
       .then((response) => {
@@ -102,6 +110,7 @@ const RestaurantProfile = ({ userId }) => {
         headers: {
           'X-CSRFToken': Cookies.get('csrftoken'),
           'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`,
         },
         withCredentials: true,
       })

@@ -5,6 +5,7 @@ import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import { BASE_API_URL } from '../../Setupconstants';
 import { messageService } from '../Common/Message/MessageService';
+import { useSelector } from 'react-redux';
 
 const Checkout = () => {
     const navigate = useNavigate();
@@ -13,6 +14,7 @@ const Checkout = () => {
     const [error, setError] = useState(null);
     const [specialNote, setSpecialNote] = useState('');
     const [deliveryAddress, setDeliveryAddress] = useState('');
+    const token = useSelector((state) => state.auth.token); // Access token directly
 
     useEffect(() => {
         fetchCartData();
@@ -24,6 +26,7 @@ const Checkout = () => {
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': Cookies.get('csrftoken'),
+                    'Authorization': `Bearer ${token}`,
                 },
                 withCredentials: true,
             });
@@ -47,6 +50,7 @@ const Checkout = () => {
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRFToken': Cookies.get('csrftoken'),
+                        'Authorization': `Bearer ${token}`,
                     },
                     withCredentials: true,
                 }
@@ -78,6 +82,7 @@ const Checkout = () => {
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRFToken': Cookies.get('csrftoken'),
+                        'Authorization': `Bearer ${token}`,
                     },
                     withCredentials: true,
                 }

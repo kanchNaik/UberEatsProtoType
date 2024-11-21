@@ -6,11 +6,13 @@ import { useParams } from 'react-router-dom';
 import { parseDate } from '../../../Utilities/DateUtils'
 import { BASE_API_URL } from '../../../Setupconstants';
 import { messageService } from '../../Common/Message/MessageService';
+import { useSelector } from 'react-redux';
 
 const CustomerOrder = ({ orderId }) => {
     const [orderDetails, setOrderDetails] = useState(null); // State to store order details
     const [error, setError] = useState(null); // State for error handling
     const { id } = useParams();
+    const token = useSelector((state) => state.auth.token);
 
     // Fetch order details using the provided API
     const fetchOrderDetails = async () => {
@@ -20,6 +22,7 @@ const CustomerOrder = ({ orderId }) => {
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': Cookies.get('csrftoken'), // Get CSRF token from cookies
+                    'Authorization': `Bearer ${token}`,
                 },
             });
             setOrderDetails(response.data); // Update state with fetched order details

@@ -5,6 +5,7 @@ import Cookies from 'js-cookie';
 import RestaurantOrderCard from '../../RestaurantOrderCard';
 import { BASE_API_URL } from '../../../../Setupconstants';
 import { messageService } from '../../../Common/Message/MessageService';
+import { useSelector } from 'react-redux';
 
 const RestaurantOrderList = () => {
     const [orders, setOrders] = useState([]);
@@ -12,6 +13,7 @@ const RestaurantOrderList = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedStatus, setSelectedStatus] = useState('All'); // Default filter is "All"
+    const token = useSelector((state) => state.auth.token);
 
     useEffect(() => {
         // Function to fetch the order list from the API
@@ -20,6 +22,7 @@ const RestaurantOrderList = () => {
                 const response = await axios.get(`${BASE_API_URL}/api/order/`, {
                     headers: {
                         'X-CSRFToken': Cookies.get('csrftoken'),
+                        'Authorization': `Bearer ${token}`,
                     },
                     withCredentials: true, // Include cookies in request
                 });

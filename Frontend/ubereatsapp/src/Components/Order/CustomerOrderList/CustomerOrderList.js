@@ -6,11 +6,13 @@ import OrderCard from '../OrderCard'
 import { NavLink } from 'react-router-dom';
 import { BASE_API_URL } from '../../../Setupconstants';
 import { messageService } from '../../Common/Message/MessageService';
+import { useSelector } from 'react-redux';
 
 const CustomerOrderList = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const token = useSelector((state) => state.auth.token);
 
     useEffect(() => {
         // Function to fetch the order list from the API
@@ -19,6 +21,7 @@ const CustomerOrderList = () => {
                 const response = await axios.get(`${BASE_API_URL}/api/order/`, {
                     headers: {
                         'X-CSRFToken': Cookies.get('csrftoken'),
+                        'Authorization': `Bearer ${token}`,
                       },
 
                     withCredentials: true, // Include cookies in request
