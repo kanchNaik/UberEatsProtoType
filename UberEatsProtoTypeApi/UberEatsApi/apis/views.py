@@ -143,9 +143,14 @@ class DishViewSet(viewsets.ModelViewSet):
         return Dish.objects.filter(restaurant__user=self.request.user)
 
     def perform_create(self, serializer):
-        # Set the restaurant to the authenticated user's restaurant
-        restaurant = Restaurant.objects.get(user=self.request.user)
-        serializer.save(restaurant=restaurant)
+        # Fetch the restaurant linked to the authenticated user
+        try:
+            restaurant = Restaurant.objects.get(user=self.request.user)
+            print(f"Authenticated user: {self.request.user}, Restaurant: {restaurant}")
+            print(restaurant)
+            serializer.save(restaurant=restaurant)
+        except Restaurant.DoesNotExist:
+            raise serializer.ValidationError("No restaurant is associated with this user.")
 
 
 class RestaurantDishesView(generics.ListAPIView):

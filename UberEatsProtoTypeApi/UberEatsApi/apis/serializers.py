@@ -13,6 +13,10 @@ class RestaurantSerializer(serializers.ModelSerializer):
         model = Restaurant
         fields = ['restaurant_name', 'location', 'description', 'phone_number', 'rating', 'image', 'uberone',
                   'price_range', 'delivery_time']
+        extra_kwargs = {
+            'rating': {'required': False},
+            'image': {'required': False},
+        }
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -25,6 +29,7 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
+        print(validated_data)
         # Separate customer/restaurant data from user data
         customer_data = validated_data.pop('customer', None)
         restaurant_data = validated_data.pop('restaurant', None)

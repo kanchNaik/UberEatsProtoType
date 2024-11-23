@@ -31,6 +31,7 @@ import CustomerProfile from './Components/UserProfile/CustomerProfile/CustomerPr
 import ProtectedRoute from './Components/ProtectedRoutes/ProtectedRoutes';
 import { useAuth } from './AuthContext';
 import { useLocation } from 'react-router-dom';
+import store from './store';
 
 function App() {
 const { isAuthenticated, userType, loading } = useAuth();
@@ -52,6 +53,8 @@ const { isAuthenticated, userType, loading } = useAuth();
   if (loading) {
     return <div>Loading...</div>; // Show a loading state until authentication status is verified
   }
+
+  window.store = store;
 
   return (
     <div className="App">

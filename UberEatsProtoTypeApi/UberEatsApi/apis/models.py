@@ -32,7 +32,7 @@ class Restaurant(models.Model):
     description = models.TextField()
     phone_number = models.CharField(max_length=20)
     rating = models.IntegerField()
-    image = models.ImageField(upload_to='restaurant_images/')
+    image = models.ImageField(upload_to='restaurant_images/', null=True)
     price_range = models.TextField()
     uberone = models.BooleanField(default=False)
     delivery_time = models.DurationField()
@@ -41,7 +41,7 @@ class Restaurant(models.Model):
         return f"{self.restaurant_name} {self.location}"
 
 class Dish(models.Model):
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, null=True, blank=True)
     dish_name = models.CharField(max_length=100)
     description = models.TextField()
     price = models.DecimalField(max_digits=5, decimal_places=2)

@@ -62,8 +62,17 @@ export const clearAuthToken = () => ({
 
 export const fetchRestaurantsAndFavorites = () => async (dispatch, getState) => {
   try {
-    const { auth } = getState();
+    const { restaurants, auth } = getState();
     const token = auth.token;
+
+    console.log("action restaurants",restaurants)
+    if (restaurants.list?.lastFetched && Date.now() - restaurants.list.lastFetched < ONE_HOUR) {
+      // Data is fresh; no need to fetch again
+      console.log("Restaurant Data is in store; no need to fetch again");
+      return;
+      
+    }
+
     // Fetch restaurants
     const restaurantResponse = await axios.get(`${BASE_API_URL}/api/restaurants`, {
       headers: {
@@ -72,7 +81,7 @@ export const fetchRestaurantsAndFavorites = () => async (dispatch, getState) => 
       },
       withCredentials: true,
     });
-
+    console.log("Restaurant Data is not in store; fetching again");
     const fetchedRestaurants = restaurantResponse.data;
 
     // Fetch favorites
@@ -123,6 +132,7 @@ export const fetchRestaurantDetails = (id) => async (dispatch, getState) => {
 
   if (details?.lastFetched && Date.now() - details.lastFetched < ONE_HOUR) {
     // Data is fresh; no need to fetch again
+    console.log("Restaurant Details Data is in store; no need to fetch again");
     return;
   }
 
@@ -134,9 +144,12 @@ export const fetchRestaurantDetails = (id) => async (dispatch, getState) => {
       },
       withCredentials: true,
     });
+
+    console.log("Restaurant Details Data is not in store; fetching again");
+
     dispatch({
       type: FETCH_RESTAURANT_DETAILS_SUCCESS,
-      payload: { id, data: response.data },
+      payload: { id, data: response.data, lastFetched: Date.now() },
     });
   } catch (error) {
     dispatch({
@@ -154,6 +167,7 @@ export const fetchRestaurantMenu = (id) => async (dispatch, getState) => {
 
   if (menu?.lastFetched && Date.now() - menu.lastFetched < ONE_HOUR) {
     // Data is fresh; no need to fetch again
+    console.log("Restaurant Menu Data is in store; no need to fetch again");
     return;
   }
 
@@ -165,6 +179,8 @@ export const fetchRestaurantMenu = (id) => async (dispatch, getState) => {
       },
       withCredentials: true,
     });
+
+    console.log("Restaurant Menu Data is not in store; fetching again");
     dispatch({
       type: FETCH_RESTAURANT_MENU_SUCCESS,
       payload: { id, data: response.data },
