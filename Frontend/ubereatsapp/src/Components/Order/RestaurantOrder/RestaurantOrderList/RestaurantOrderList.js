@@ -5,39 +5,23 @@ import Cookies from 'js-cookie';
 import RestaurantOrderCard from '../../RestaurantOrderCard';
 import { BASE_API_URL } from '../../../../Setupconstants';
 import { messageService } from '../../../Common/Message/MessageService';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchOrders } from '../../../../actions';
 
 const RestaurantOrderList = () => {
-    const [orders, setOrders] = useState([]);
     const [filteredOrders, setFilteredOrders] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [selectedStatus, setSelectedStatus] = useState('All'); // Default filter is "All"
     const token = useSelector((state) => state.auth.token);
+    const dispatch = useDispatch();
+    const { list: orders, error } = useSelector((state) => state.orders);
 
     useEffect(() => {
-        // Function to fetch the order list from the API
-        const fetchOrders = async () => {
-            try {
-                const response = await axios.get(`${BASE_API_URL}/api/order/`, {
-                    headers: {
-                        'X-CSRFToken': Cookies.get('csrftoken'),
-                        'Authorization': `Bearer ${token}`,
-                    },
-                    withCredentials: true, // Include cookies in request
-                });
-                setOrders(response.data);
-                setFilteredOrders(response.data); // Set the initial filtered orders to all orders
-                setLoading(false);
-            } catch (err) {
-                setError(err);
-                setLoading(false);
-                messageService.showMessage('error', 'Failed to load orders. Please try again.')
-            }
-        };
+        dispatch(fetchOrders());
+    }, [dispatch]);
 
-        fetchOrders();
-    }, []);
+    if (error) {
+        return <div className="error">Error fetching orders: {error}</div>;
+    }
 
     // Function to handle the filter change
     const handleStatusChange = (e) => {
@@ -51,10 +35,6 @@ const RestaurantOrderList = () => {
             setFilteredOrders(filtered); // Update the filtered orders based on status
         }
     };
-
-    if (loading) {
-        return <div className="loading">Loading...</div>;
-    }
 
     if (error) {
         return <div className="error">Error fetching orders</div>;

@@ -13,7 +13,8 @@ import { INCREMENT_CART_ITEM_COUNT,
   FETCH_RESTAURANT_DETAILS_SUCCESS,
   FETCH_RESTAURANT_DETAILS_FAILURE,
   FETCH_RESTAURANT_MENU_SUCCESS,
-  FETCH_RESTAURANT_MENU_FAILURE
+  FETCH_RESTAURANT_MENU_FAILURE,
+  SET_ORDERS 
 } from './actionType';
 
 
@@ -190,6 +191,31 @@ export const fetchRestaurantMenu = (id) => async (dispatch, getState) => {
       type: FETCH_RESTAURANT_MENU_FAILURE,
       payload: error.message,
     });
+  }
+};
+
+export const fetchOrders = () => async (dispatch, getState) => {
+  const { auth } = getState();
+  const token = auth.token;
+
+  try {
+      const response = await axios.get(`${BASE_API_URL}/api/order/`, {
+          headers: {
+              'X-CSRFToken': Cookies.get('csrftoken'),
+              'Authorization': `Bearer ${token}`,
+          },
+          withCredentials: true,
+      });
+
+      dispatch({
+          type: SET_ORDERS,
+          payload: { orders: response.data, error: null }, // Success case
+      });
+  } catch (error) {
+      dispatch({
+          type: SET_ORDERS,
+          payload: { orders: [], error: error.message }, // Failure case
+      });
   }
 };
 

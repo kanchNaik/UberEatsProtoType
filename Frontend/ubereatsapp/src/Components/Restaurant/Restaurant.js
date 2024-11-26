@@ -7,66 +7,49 @@ import Menu from '../Menu/Menu';
 import MenuItem from '../MenuItem/MenuItem';
 import { BASE_API_URL } from '../../Setupconstants';
 import { messageService } from '../Common/Message/MessageService';
-import { useSelector } from 'react-redux';
-
-const groupBy = (items, key) => {
-  return items.reduce((acc, item) => {
-    const group = item[key];
-    if (!acc[group]) {
-      acc[group] = [];
-    }
-    acc[group].push(item);
-    return acc;
-  }, {});
-};
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchRestaurantDetails, fetchRestaurantMenu } from '../../actions';
 
 const Restaurant = () => {
   const { id } = useParams();
   const [restaurant, setRestaurant] = useState(null);
-  const [featuredItems, setFeaturedItems] = useState([]);
+  const [featuredItems, setFeaturedItems] = useState([]); // Ensure it's an array
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeCategory, setActiveCategory] = useState('');
   const categoryRefs = useRef({});
   const token = useSelector((state) => state.auth.token);
-  
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const fetchRestaurant = async () => {
-      try {
-        const response = await axios.get(`${BASE_API_URL}/api/restaurants/${id}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-          withCredentials: true,
-        });
-        setRestaurant(response.data);
-      } catch (error) {
-        setError(error.message);
-        messageService.showMessage('error', 'Error in fetching restaurants')
-      }
-    };
+    dispatch(fetchRestaurantDetails(id));
+    dispatch(fetchRestaurantMenu(id));
+  }, [dispatch, id]);
 
-    const fetchFeaturedItems = async () => {
-      try {
-        const response = await axios.get(`${BASE_API_URL}/api/restaurants/${id}/dishes`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-          withCredentials: true,
-        });
-        setFeaturedItems(response.data);
-      } catch (error) {
-        setError(error.message);
-        messageService.showMessage('error', 'Error in fetching menu items')
-      } finally {
-        setLoading(false);
-      }
-    };
+  const restaurantList = useSelector(state => state.restaurants.details[id]).data;
+  const featuredItemsList = useSelector(state => state.restaurants.menus[id]).data;
 
-    fetchRestaurant();
-    fetchFeaturedItems();
-  }, [id]);
+  useEffect(() => {
+    if (restaurantList) {
+      setRestaurant(restaurantList);
+    }
+    if (featuredItemsList) {
+      setFeaturedItems(featuredItemsList);
+    }
+    setLoading(false);
+  }, [restaurantList, featuredItemsList]);
+
+  const groupBy = (items = [], key) => {
+    return items.reduce((acc, item) => {
+      const group = item[key];
+      if (!acc[group]) {
+        acc[group] = [];
+      }
+      acc[group].push(item);
+      return acc;
+    }, {});
+  };
 
   const groupedItems = groupBy(featuredItems, 'category');
 
@@ -144,7 +127,7 @@ const Restaurant = () => {
                     <div className="row">
                       {items.map((item, itemIndex) => (
                         <div className="col-md-6 col-lg-4" key={itemIndex}>
-                          <MenuItem menu={item} restaurantid = {id} restaurantname={restaurant.restaurant_name}/>
+                          <MenuItem menu={item} restaurantid={id} restaurantname={restaurant.restaurant_name} />
                         </div>
                       ))}
                     </div>

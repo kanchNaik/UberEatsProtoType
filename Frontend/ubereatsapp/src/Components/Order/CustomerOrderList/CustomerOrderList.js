@@ -6,44 +6,21 @@ import OrderCard from '../OrderCard'
 import { NavLink } from 'react-router-dom';
 import { BASE_API_URL } from '../../../Setupconstants';
 import { messageService } from '../../Common/Message/MessageService';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchOrders } from '../../../actions';
 
 const CustomerOrderList = () => {
-    const [orders, setOrders] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const token = useSelector((state) => state.auth.token);
 
+    const dispatch = useDispatch();
+    const { list: orders, error } = useSelector((state) => state.orders || { list: [], error: null });
+
     useEffect(() => {
-        // Function to fetch the order list from the API
-        const fetchOrders = async () => {
-            try {
-                const response = await axios.get(`${BASE_API_URL}/api/order/`, {
-                    headers: {
-                        'X-CSRFToken': Cookies.get('csrftoken'),
-                        'Authorization': `Bearer ${token}`,
-                      },
-
-                    withCredentials: true, // Include cookies in request
-                });
-                setOrders(response.data);
-                setLoading(false);
-            } catch (err) {
-                setError(err);
-                setLoading(false);
-                messageService.showMessage('error', 'Error in fetching order')
-            }
-        };
-
-        fetchOrders();
-    }, []);
-
-    if (loading) {
-        return <div className="loading">Loading...</div>;
-    }
+        dispatch(fetchOrders());
+    }, [dispatch]);
 
     if (error) {
-        return <div className="error">Error fetching orders</div>;
+        return <div className="error">Error fetching orders: {error}</div>;
     }
 
     return (
