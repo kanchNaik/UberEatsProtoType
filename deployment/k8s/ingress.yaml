@@ -1,0 +1,74 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: localhost
+    http:
+      paths:
+      - path: /signup
+        pathType: Prefix
+        backend:
+          service:
+            name: auth-service
+            port:
+              number: 8000
+      - path: /login
+        pathType: Prefix
+        backend:
+          service:
+            name: auth-service
+            port:
+              number: 8000
+      - path: /logout
+        pathType: Prefix
+        backend:
+          service:
+            name: auth-service
+            port:
+              number: 8000
+      - path: /customers
+        pathType: Prefix
+        backend:
+          service:
+            name: customer-service
+            port:
+              number: 8000
+      - path: /favorite
+        pathType: Prefix
+        backend:
+          service:
+            name: customer-service
+            port:
+              number: 8000
+      - path: /restaurants
+        pathType: Prefix
+        backend:
+          service:
+            name: restaurant-service
+            port:
+              number: 8000
+      - path: /dishes
+        pathType: Prefix
+        backend:
+          service:
+            name: restaurant-service
+            port:
+              number: 8000
+      - path: /order
+        pathType: Prefix
+        backend:
+          service:
+            name: order-service
+            port:
+              number: 8000
+      - path: /cart
+        pathType: Prefix
+        backend:
+          service:
+            name: order-service
+            port:
+              number: 8000

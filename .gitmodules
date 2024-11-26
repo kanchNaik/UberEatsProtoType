@@ -1,0 +1,3 @@
+[submodule "ubereats-deployment"]
+	path = ubereats-deployment
+	url = https://github.com/Yashasvi1225/ubereats-deployment
